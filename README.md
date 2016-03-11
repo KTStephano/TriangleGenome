@@ -1,1 +1,3 @@
-# cs351_project2_justin_george
+# The Triangle Genome Project
+
+Authors: George Boujaoude, Justin Hall
