@@ -49,6 +49,12 @@ public final class ParallelJobGroup
    * This will check to see if there is another job in the list and return
    * it if there is. If no jobs are left, null is returned.
    *
+   * If you are trying to get the next job from this group, it is best
+   * to just call this function and then check to see if the result is null. Calling
+   * hasJobs() will return a value that is consistent at that instant, but from
+   * the time it returns and the time you call getNextJob() some other thread
+   * could have come in and taken the last job.
+   *
    * @return a valid job if there is one and null if not
    */
   public Job getNextJob()
