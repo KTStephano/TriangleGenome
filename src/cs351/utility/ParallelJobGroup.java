@@ -60,12 +60,12 @@ public final class ParallelJobGroup
   public Job getNextJob()
   {
     if (!hasJobs()) return null;
-    // The - 1 since the counter represents the length of the list, not
-    // a valid index into the list
-    int current = counter.getAndDecrement() - 1;
     try
     {
       LOCK.lock();
+      // The - 1 since the counter represents the length of the list, not
+      // a valid index into the list
+      int current = counter.getAndDecrement() - 1;
       return current >= 0 ? availableJobs.get(current) : null;
     }
     finally
@@ -83,10 +83,10 @@ public final class ParallelJobGroup
    */
   public AtomicInteger addJobs(Collection<Job> jobs)
   {
-    counter.set(counter.get() + jobs.size());
     try
     {
       LOCK.lock();
+      counter.set(counter.get() + jobs.size());
       availableJobs.addAll(jobs);
       return counter;
     }
