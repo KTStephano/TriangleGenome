@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A ParallelJobSystem provides an easy way to manage up to 256 threads. The best way to
@@ -19,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public final class ParallelJobSystem
 {
+  private final ReentrantLock LOCK;
   private final int NUM_WORKER_THREADS;
   private final WorkerThread[] WORKER_THREADS;
   private final AtomicInteger RUNNING_THREADS;
@@ -40,6 +42,7 @@ public final class ParallelJobSystem
    */
   public ParallelJobSystem(int numWorkerThreads)
   {
+    LOCK = new ReentrantLock();
     // Establish the min/max values and then make sure numWorkerThreads
     // does not fall outside of them
     final int MIN_THREADS = 1;
@@ -107,13 +110,22 @@ public final class ParallelJobSystem
    *         has been completed by the worker threads
    * @throws IllegalStateException thrown if used after destruction or before init
    */
-  public AtomicInteger submit(Collection<Job> jobs, int priority) throws IllegalStateException
+  public AtomicInteger submit(Collection<Job> jobs, int priority, boolean clearGivenJobList) throws IllegalStateException
   {
     if (WAS_DESTROYED.get() || !IS_STARTED.get()) throw new IllegalStateException("Job system used before init/after destruction");
     ParallelJobGroup group = new ParallelJobGroup(priority);
     AtomicInteger counter = group.addJobs(jobs);
-    if (!JOB_BACK_BUFFER.containsKey(priority)) JOB_BACK_BUFFER.put(priority, new ConcurrentLinkedDeque<>());
-    JOB_BACK_BUFFER.get(priority).add(group);
+    try
+    {
+      LOCK.lock();
+      if (!JOB_BACK_BUFFER.containsKey(priority)) JOB_BACK_BUFFER.put(priority, new ConcurrentLinkedDeque<>());
+      JOB_BACK_BUFFER.get(priority).add(group);
+    }
+    finally
+    {
+      LOCK.unlock();
+    }
+    if (clearGivenJobList) jobs.clear();
     return counter;
   }
 
@@ -134,7 +146,8 @@ public final class ParallelJobSystem
   public void signalWork(int threadID) throws RuntimeException
   {
     if (threadID < 0 || threadID >= NUM_WORKER_THREADS) throw new RuntimeException("Invalid thread id");
-    if (JOB_FRONT_BUFFER.size() == 0) dispatchJobs(); // see if the back buffer has anything new
+    dispatchJobs(); // see if the back buffer has anything new
+    // TODO I don't think this needs a lock since every thread signals constantly, but double check at some point
     ParallelJobGroup group = JOB_FRONT_BUFFER.poll();
     if (group == null) return;
     for (WorkerThread thread : WORKER_THREADS) thread.addJobGroup(group);
@@ -162,15 +175,23 @@ public final class ParallelJobSystem
 
   private void dispatchJobs()
   {
-    // Once the job groups are submitted, they need to be cleared out
-    LinkedList<ConcurrentLinkedDeque<ParallelJobGroup>> listsToClear = new LinkedList<>();
-    for (Map.Entry<Integer, ConcurrentLinkedDeque<ParallelJobGroup>> entry : JOB_BACK_BUFFER.entrySet())
+    try
     {
-      if (entry.getValue().size() == 0) continue;
-      listsToClear.add(entry.getValue());
-      for (ParallelJobGroup group : entry.getValue()) JOB_FRONT_BUFFER.add(group);
+      LOCK.lock();
+      // Once the job groups are submitted, they need to be cleared out
+      LinkedList<ConcurrentLinkedDeque<ParallelJobGroup>> listsToClear = new LinkedList<>();
+      for (Map.Entry<Integer, ConcurrentLinkedDeque<ParallelJobGroup>> entry : JOB_BACK_BUFFER.entrySet())
+      {
+        //if (entry.getValue().size() == 0) continue;
+        listsToClear.add(entry.getValue());
+        for (ParallelJobGroup group : entry.getValue()) JOB_FRONT_BUFFER.add(group);
+      }
+      // Clear all lists
+      for (ConcurrentLinkedDeque<ParallelJobGroup> list : listsToClear) list.clear();
     }
-    // Clear all lists
-    for (ConcurrentLinkedDeque<ParallelJobGroup> list : listsToClear) list.clear();
+    finally
+    {
+      LOCK.unlock();
+    }
   }
 }

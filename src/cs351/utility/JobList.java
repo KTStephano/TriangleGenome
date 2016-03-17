@@ -82,14 +82,12 @@ public class JobList
    */
   public void submitJobs()
   {
-    LinkedList<LinkedList<Job>> pendingDeletion = new LinkedList<>();
     for (Map.Entry<Integer, LinkedList<Job>> entry : JOBS.entrySet())
     {
-      ACTIVE_COUNTERS.add(JOB_SYSTEM.submit(entry.getValue(), entry.getKey()));
-      pendingDeletion.add(entry.getValue());
+      // 'true' tells the job system to clear the list it is being given after it
+      // is finished using it
+      ACTIVE_COUNTERS.add(JOB_SYSTEM.submit(entry.getValue(), entry.getKey(), true));
     }
-    // Clear out each list
-    for (LinkedList<Job> jobList : pendingDeletion) jobList.clear();
     // Reset the size
     size = 0;
     //System.out.println("Here I am");
@@ -117,6 +115,8 @@ public class JobList
           }
         }
       }
+      // Clear the counters since by now they're all 0
+      ACTIVE_COUNTERS.clear();
     }
     catch (InterruptedException e)
     {
