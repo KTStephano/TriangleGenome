@@ -73,12 +73,12 @@ public final class ParallelJobSystem
     System.out.println("Logical Cores Available: " + Runtime.getRuntime().availableProcessors());
     System.out.println("Requested Worker Threads: " + NUM_WORKER_THREADS);
     // Create and start each worker thread
+    RUNNING_THREADS.set(NUM_WORKER_THREADS);
     for (int i = 0; i < NUM_WORKER_THREADS; i++)
     {
       WORKER_THREADS[i] = new WorkerThread(i, this);
       WORKER_THREADS[i].start();
     }
-    RUNNING_THREADS.set(NUM_WORKER_THREADS);
     IS_STARTED.getAndSet(true);
   }
 
