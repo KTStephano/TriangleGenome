@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * This is the WorkerThread class used by the job system.
  */
-public class WorkerThread extends Thread
+public final class WorkerThread extends Thread
 {
   //private final ReentrantLock LOCK;
   private final int THREAD_ID;
@@ -44,11 +44,15 @@ public class WorkerThread extends Thread
       else
       {
         final ParallelJobGroup GROUP = JOB_QUEUE.poll();
-        Job currentJob;
+        ParallelJobGroup.JobWrapper currentJob;
         // Multiple threads might be working on this same group, so just keep getting
         // the next job and checking for null - ParallelJobGroup guarantees that no
         // two calls to getNextJob will return the same value
-        while ((currentJob = GROUP.getNextJob()) != null) currentJob.start(THREAD_ID);
+        while ((currentJob = GROUP.getNextJob()) != null)
+        {
+          currentJob.getJob().start(THREAD_ID);
+          currentJob.markCompleted();
+        }
       }
     }
     JOB_SYSTEM.notifyOfThreadTermination(THREAD_ID);

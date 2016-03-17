@@ -18,8 +18,31 @@ public final class ParallelJobGroup
 {
   private final ReentrantLock LOCK;
   private final int PRIORITY;
-  private AtomicInteger counter;
+  private final AtomicInteger BACK_COUNTER; // Kept hidden from outside classes
+  private final AtomicInteger FRONT_COUNTER; // This is returned to other classes
   private ArrayList<Job> availableJobs;
+
+  public final class JobWrapper
+  {
+    private final Job JOB;
+    private final AtomicInteger COUNTER;
+
+    public JobWrapper(Job job, AtomicInteger counter)
+    {
+      JOB = job;
+      COUNTER = counter;
+    }
+
+    public Job getJob()
+    {
+      return JOB;
+    }
+
+    public void markCompleted()
+    {
+      COUNTER.getAndDecrement();
+    }
+  }
 
   /**
    * Creates a ParallelJobGroup of the specified priority. Only jobs of the same
@@ -31,7 +54,8 @@ public final class ParallelJobGroup
   {
     LOCK = new ReentrantLock();
     PRIORITY = priority;
-    counter = new AtomicInteger(0);
+    BACK_COUNTER = new AtomicInteger(0);
+    FRONT_COUNTER = new AtomicInteger(0);
     availableJobs = new ArrayList<>(25);
   }
 
@@ -57,7 +81,7 @@ public final class ParallelJobGroup
    *
    * @return a valid job if there is one and null if not
    */
-  public Job getNextJob()
+  public JobWrapper getNextJob()
   {
     if (!hasJobs()) return null;
     try
@@ -65,8 +89,8 @@ public final class ParallelJobGroup
       LOCK.lock();
       // The - 1 since the counter represents the length of the list, not
       // a valid index into the list
-      int current = counter.getAndDecrement() - 1;
-      return current >= 0 ? availableJobs.get(current) : null;
+      int current = BACK_COUNTER.getAndDecrement() - 1;
+      return current >= 0 ? new JobWrapper(availableJobs.get(current), FRONT_COUNTER) : null;
     }
     finally
     {
@@ -86,9 +110,10 @@ public final class ParallelJobGroup
     try
     {
       LOCK.lock();
-      counter.set(counter.get() + jobs.size());
+      BACK_COUNTER.set(BACK_COUNTER.get() + jobs.size());
+      FRONT_COUNTER.set(BACK_COUNTER.get());
       availableJobs.addAll(jobs);
-      return counter;
+      return FRONT_COUNTER;
     }
     finally
     {
@@ -103,6 +128,6 @@ public final class ParallelJobGroup
    */
   public boolean hasJobs()
   {
-    return counter.get() > 0;
+    return BACK_COUNTER.get() > 0;
   }
 }
