@@ -1,4 +1,4 @@
-package cs351.project2;
+package cs351.core;
 
 import cs351.utility.ParallelJobSystem;
 

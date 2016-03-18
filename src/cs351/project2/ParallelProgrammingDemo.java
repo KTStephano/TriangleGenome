@@ -1,5 +1,6 @@
 package cs351.project2;
 
+import cs351.core.Globals;
 import cs351.utility.Job;
 import cs351.utility.JobList;
 

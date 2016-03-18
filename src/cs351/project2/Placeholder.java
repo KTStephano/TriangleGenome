@@ -1,5 +1,7 @@
 package cs351.project2;
 
+import cs351.core.Globals;
+
 /**
  * Placeholder class
  */
