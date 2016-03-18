@@ -23,6 +23,13 @@ public interface Tribe
   void setFitnessFunction(FitnessFunction function);
 
   /**
+   * Gets the fitness function that this tribe is using.
+   *
+   * @return fitness function for this tribe
+   */
+  FitnessFunction getFitnessFunction();
+
+  /**
    * Adds a genome to the tribe.
    *
    * @param genome genome to add
