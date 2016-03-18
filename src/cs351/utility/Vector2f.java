@@ -1,24 +1,24 @@
 package cs351.utility;
 
 /**
- * Vector2i can maintain integer x/y values and perform some vector
+ * Vector2f can maintain double values for x/y components and perform some vector
  * operations with them.
  */
-public class Vector2i
+public class Vector2f
 {
   Vector3f vec3;
 
-  public Vector2i(int value)
+  public Vector2f(double value)
   {
     vec3 = new Vector3f(value);
   }
 
-  public Vector2i(int x, int y)
+  public Vector2f(double x, double y)
   {
     vec3 = new Vector3f(x, y, 0.0);
   }
 
-  public Vector2i(Vector2i other)
+  public Vector2f(Vector2f other)
   {
     vec3 = new Vector3f(other.vec3);
   }
@@ -44,8 +44,8 @@ public class Vector2i
   public boolean equals(Object other)
   {
     if (this == other) return true;
-    else if (!(other instanceof Vector2i)) return false;
-    Vector2i vec2i = (Vector2i)other;
+    else if (!(other instanceof Vector2f)) return false;
+    Vector2f vec2i = (Vector2f)other;
     return vec3.equals(vec2i.vec3);
   }
 
@@ -55,34 +55,34 @@ public class Vector2i
    * @param x x value
    * @param y y value
    */
-  public void set(int x, int y)
+  public void set(double x, double y)
   {
     vec3.set(x, y, 0.0);
   }
 
-  public void set(Vector2i other)
+  public void set(Vector2f other)
   {
     vec3.set(other.vec3);
   }
 
-  public void setX(int x)
+  public void setX(double x)
   {
     vec3.setX(x);
   }
 
-  public void setY(int y)
+  public void setY(double y)
   {
     vec3.setY(y);
   }
 
-  public int getX()
+  public double getX()
   {
-    return (int)vec3.getX();
+    return vec3.getX();
   }
 
-  public int getY()
+  public double getY()
   {
-    return (int)vec3.getY();
+    return vec3.getY();
   }
 
   public double magnitude()
