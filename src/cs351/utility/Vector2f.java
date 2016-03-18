@@ -85,6 +85,11 @@ public class Vector2f
     return vec3.getY();
   }
 
+  public void normalize()
+  {
+    vec3.normalize();
+  }
+
   public double magnitude()
   {
     return vec3.magnitude();
