@@ -6,21 +6,21 @@ package cs351.utility;
  */
 public class Vector2f
 {
-  Vector3f vec3;
+  Vector4f vec4;
 
   public Vector2f(double value)
   {
-    vec3 = new Vector3f(value);
+    vec4 = new Vector4f(value);
   }
 
   public Vector2f(double x, double y)
   {
-    vec3 = new Vector3f(x, y, 0.0);
+    vec4 = new Vector4f(x, y, 0.0, 0.0);
   }
 
   public Vector2f(Vector2f other)
   {
-    vec3 = new Vector3f(other.vec3);
+    vec4 = new Vector4f(other.vec4);
   }
 
   /**
@@ -31,7 +31,7 @@ public class Vector2f
   @Override
   public int hashCode()
   {
-    return vec3.hashCode();
+    return vec4.hashCode();
   }
 
   /**
@@ -46,7 +46,7 @@ public class Vector2f
     if (this == other) return true;
     else if (!(other instanceof Vector2f)) return false;
     Vector2f vec2i = (Vector2f)other;
-    return vec3.equals(vec2i.vec3);
+    return vec4.equals(vec2i.vec4);
   }
 
   /**
@@ -57,41 +57,41 @@ public class Vector2f
    */
   public void set(double x, double y)
   {
-    vec3.set(x, y, 0.0);
+    vec4.set(x, y, 0.0, 0.0);
   }
 
   public void set(Vector2f other)
   {
-    vec3.set(other.vec3);
+    vec4.set(other.vec4);
   }
 
   public void setX(double x)
   {
-    vec3.setX(x);
+    vec4.setX(x);
   }
 
   public void setY(double y)
   {
-    vec3.setY(y);
+    vec4.setY(y);
   }
 
   public double getX()
   {
-    return vec3.getX();
+    return vec4.getX();
   }
 
   public double getY()
   {
-    return vec3.getY();
+    return vec4.getY();
   }
 
   public void normalize()
   {
-    vec3.normalize();
+    vec4.normalize();
   }
 
   public double magnitude()
   {
-    return vec3.magnitude();
+    return vec4.magnitude();
   }
 }
