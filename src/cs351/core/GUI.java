@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 public interface GUI
 {
   /**
-   * Initializes the renderer with the given JavaFX stage and the given engine.
+   * Initializes the GUI with the given JavaFX stage and the given engine.
    *
    * @param stage JavaFX stage to use to initialize the main GUI
    * @param engine evolution engine to use for callbacks during init
