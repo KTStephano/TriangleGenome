@@ -2,8 +2,6 @@ package cs351.core;
 
 import cs351.utility.Job;
 
-import java.util.Collection;
-
 /**
  * An evolution engine sets the stage for the entire process
  * of the mutation/evolution of a population. As part of its initialization,
@@ -24,9 +22,9 @@ public interface EvolutionEngine
    * init function at a good point during the engine's init sequence).
    *
    * @param imageFile image file
-   * @param renderer renderer to use
+   * @param mainGUI gui to use
    */
-  void init(String imageFile, Renderer renderer);
+  void init(String imageFile, GUI mainGUI);
 
   /**
    * Gets the number of generations that have passed since the engine was initialized.
