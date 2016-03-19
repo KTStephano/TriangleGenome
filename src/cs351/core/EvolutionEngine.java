@@ -1,5 +1,7 @@
 package cs351.core;
 
+import cs351.utility.Job;
+
 import java.util.Collection;
 
 /**
@@ -25,6 +27,22 @@ public interface EvolutionEngine
    * @param renderer renderer to use
    */
   void init(String imageFile, Renderer renderer);
+
+  /**
+   * Gets the number of generations that have passed since the engine was initialized.
+   *
+   * @return number of generations
+   */
+  int getGenerationCount();
+
+  /**
+   * The engine may have any number of jobs running as part of a generation,
+   * and this is an easy way for jobs to let the engine know when they are done
+   * so it knows when the generation is complete.
+   *
+   * @param job job that just completed
+   */
+  void notifyEngineOfJobCompletion(Job job);
 
   /**
    * Gets all tribes managed by this engine.
