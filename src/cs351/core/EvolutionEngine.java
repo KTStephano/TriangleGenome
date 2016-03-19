@@ -45,11 +45,11 @@ public interface EvolutionEngine
   void notifyEngineOfJobCompletion(Job job);
 
   /**
-   * Gets all tribes managed by this engine.
+   * Gets the main tribe managed by the engine.
    *
-   * @return collection of tribes
+   * @return tribe
    */
-  Collection<Tribe> getPopulation();
+  Tribe getTribe();
 
   /**
    * Returns the target genome that was generated during initialization.
