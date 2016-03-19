@@ -5,7 +5,7 @@ import javafx.stage.Stage;
 /**
  * The GUI is responsible for managing the user interface and handling
  * all triangle rendering. During an update, the gui should decide
- * which genome are highlighted for the user to see (Ex: selects the
+ * which genomes are highlighted for the user to see (Ex: selects the
  * most fit genomes and renders them to the screen).
  */
 public interface GUI
