@@ -37,11 +37,6 @@ public class EvolutionLoop extends Application
       @Override
       public void handle(long now)
       {
-        // Check to see if we need to quit
-        if (engine.getGUI() != null)
-        {
-          if (engine.getGUI().hasUserSignaledQuit() && !engine.isEnginePendingShutdown()) engine.beginShutdown();
-        }
         if (engine.isEngineShutdown())
         {
           shutdownJobSystem();
@@ -50,11 +45,21 @@ public class EvolutionLoop extends Application
         }
         // Start the next generation
         engine.generation();
+        // Check to see if we need to quit
+        if (engine.getGUI() != null)
+        {
+          if (engine.getGUI().hasUserSignaledQuit() && !engine.isEnginePendingShutdown()) closeApplication();
+        }
       }
     }.start();
   }
 
   private void windowClosed(WindowEvent event)
+  {
+    closeApplication();
+  }
+
+  private void closeApplication()
   {
     // Let the engine know it's time to quit
     engine.beginShutdown();

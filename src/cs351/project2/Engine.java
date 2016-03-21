@@ -176,7 +176,7 @@ public class Engine implements EvolutionEngine
         for (int i = 0; i < LAST_100_FRAME_TIMESTAMPS.length; i++) totalMilliseconds += LAST_100_FRAME_TIMESTAMPS[i];
         double averageTime = totalMilliseconds / (double)LAST_100_FRAME_TIMESTAMPS.length;
         double avgFPS = averageTime / 1000.0; // convert to seconds
-        enginePrint("Average time per generation: " + avgFPS);
+        enginePrint("Average time per generation: " + avgFPS + " seconds");
         //System.out.println("Average time per generation: " + avgFPS);
       }
     }
