@@ -14,7 +14,6 @@ public class HistogramTest
       System.out.print("R: " + rData.getFrequencyOfColorShade(i) + "; ");
       System.out.print("G: " + gData.getFrequencyOfColorShade(i) + "; ");
       System.out.println("B: " + bData.getFrequencyOfColorShade(i));
-      int j;
     }
   }
 }
