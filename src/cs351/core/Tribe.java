@@ -15,21 +15,6 @@ package cs351.core;
 public interface Tribe
 {
   /**
-   * All tribes should have a fitness function so that they can use it
-   * to compare the genomes in their collection.
-   *
-   * @param function fitness function
-   */
-  void setFitnessFunction(FitnessFunction function);
-
-  /**
-   * Gets the fitness function that this tribe is using.
-   *
-   * @return fitness function for this tribe
-   */
-  FitnessFunction getFitnessFunction();
-
-  /**
    * Adds a genome to the tribe.
    *
    * @param genome genome to add
@@ -42,6 +27,11 @@ public interface Tribe
    * @param genome genome to remove
    */
   void remove(Genome genome);
+
+  /**
+   * Clears the tribe of all genomes.
+   */
+  void clear();
 
   /**
    * Gets the number of genomes that are part of the tribe.
