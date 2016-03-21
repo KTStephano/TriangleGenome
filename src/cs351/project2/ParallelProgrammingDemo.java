@@ -76,11 +76,11 @@ public class ParallelProgrammingDemo
 
     // Submit the first list and wait - waiting stalls whichever thread it runs
     // on so we should probably be careful
-    list0.submitJobs();
+    list0.submitJobs(true);
     list0.waitForCompletion();
     // Submit the second list and wait
     System.out.println("Jobs from the first list completed");
-    list1.submitJobs();
+    list1.submitJobs(true);
     list1.waitForCompletion();
     System.out.println("Jobs from the second list completed");
   }

@@ -32,7 +32,7 @@ public interface EvolutionEngine
    *
    * @return main GUI or null if none
    */
-  GUI getGui();
+  GUI getGUI();
 
   /**
    * Returns the target genome that was generated during initialization.
@@ -67,6 +67,20 @@ public interface EvolutionEngine
   void beginShutdown();
 
   /**
+   * Checks to see if the engine is currently working on shutting down.
+   *
+   * @return true if it is and false if not
+   */
+  boolean isEnginePendingShutdown();
+
+  /**
+   * Checks to see if the engine has successfully shutdown.
+   *
+   * @return true if it has shutdown and false if not
+   */
+  boolean isEngineShutdown();
+
+  /**
    * Gets the number of generations that have passed since the engine was initialized.
    *
    * @return number of generations
@@ -80,7 +94,7 @@ public interface EvolutionEngine
    *
    * @param job job that just completed
    */
-  void notifyEngineOfJobCompletion(Job job);
+  //void notifyEngineOfJobCompletion(Job job);
 
   /**
    * Creates the next generation of the given population. Each time this is called,

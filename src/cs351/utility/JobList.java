@@ -79,8 +79,11 @@ public class JobList
    * Submits all jobs to the given job system. All lists are wiped afterwards
    * so future calls to submitJobs will have no effect unless jobs are
    * re-added.
+   *
+   * @param clearExistingData true if the job list should clear out the submitted jobs
+   *                          and false if it should keep them around for re-submission
    */
-  public void submitJobs()
+  public void submitJobs(boolean clearExistingData)
   {
     for (Map.Entry<Integer, LinkedList<Job>> entry : JOBS.entrySet())
     {
@@ -91,6 +94,23 @@ public class JobList
     // Reset the size
     size = 0;
     //System.out.println("Here I am");
+  }
+
+  /**
+   * Checks to see if there are still jobs related to this job list that are pending
+   * completion with the multithreading system.
+   *
+   * @return true if jobs exist and false if all jobs have completed
+   */
+  public boolean containsActiveJobs()
+  {
+    for (AtomicInteger counter : ACTIVE_COUNTERS)
+    {
+      if (counter.get() > 0) return true; // at least 1 job is left
+    }
+    // Clear the counters since by now they're all 0
+    ACTIVE_COUNTERS.clear();
+    return false; // all jobs completed
   }
 
   /**
@@ -105,18 +125,15 @@ public class JobList
       while (!isComplete)
       {
         isComplete = true;
-        for (AtomicInteger counter : ACTIVE_COUNTERS)
+        if (containsActiveJobs())
         {
-          if (counter.get() > 0)
-          {
-            isComplete = false;
-            Thread.sleep(1);
-            break;
-          }
+          isComplete = false;
+          Thread.sleep(1);
         }
       }
+      // handled by containsActiveJobs() function - commented out
       // Clear the counters since by now they're all 0
-      ACTIVE_COUNTERS.clear();
+      //ACTIVE_COUNTERS.clear();
     }
     catch (InterruptedException e)
     {
