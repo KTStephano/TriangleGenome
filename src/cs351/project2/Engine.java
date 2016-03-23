@@ -110,9 +110,14 @@ public class Engine implements EvolutionEngine
     if (population != null)
     {
       population.generateStartingState(this, 1);
-      Tribe tribe = population.getTribe();
+      //Tribe tribe = population.getTribe();
       // Initialize the mutator jobs
-      for (int i = 0; i < tribe.size(); i++) MAIN_JOB_LIST.add(new MutatorJob(population, tribe.get(i)), 1);
+      //for (int i = 0; i < tribe.size(); i++) MAIN_JOB_LIST.add(new MutatorJob(population, tribe.get(i)), 1);
+      // TODO destroy this
+      for (Tribe tribe : population.getTribes())
+      {
+        for(Genome genome : tribe.getGenomes()) MAIN_JOB_LIST.add(new MutatorJob(population, genome), 1);
+      }
     }
 
     IS_INITIALIZED.set(true);

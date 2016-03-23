@@ -21,8 +21,9 @@ public class GenomeTree implements Tribe
   }
 
   @Override
-  public Mutator getMutatorForGenome(Genome genome) throws RuntimeException {
-    return null;
+  public Mutator getMutatorForGenome(Genome genome) throws RuntimeException
+  {
+    throw new RuntimeException("getMutatorForGenome() not finished");
   }
 
   @Override
@@ -32,7 +33,7 @@ public class GenomeTree implements Tribe
     {
       UNSORTED_GENOMES.add(genome);
       GENOME_TREE.add(genome);
-      System.out.println(GENOME_TREE.first().getFitness());
+      //System.out.println(GENOME_TREE.first().getFitness());
     }
   }
 
@@ -66,15 +67,15 @@ public class GenomeTree implements Tribe
   }
 
   @Override
-  public Genome get(int index)
+  public Genome getBest()
   {
-    return null;
+    return GENOME_TREE.first();
   }
 
   @Override
   public Collection<Genome> getGenomes()
   {
-    return null;
+    return GENOME_TREE;
   }
 
   @Override

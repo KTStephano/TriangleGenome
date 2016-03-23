@@ -2,6 +2,8 @@ package cs351.core.Engine;
 
 import cs351.core.*;
 
+import java.util.Collection;
+
 /**
  * A population is used by an evolution engine to set the initial state
  * of a group of genomes and then manage any changes/removals as the engine
@@ -37,11 +39,11 @@ public interface Population
   Selector getSelector();
 
   /**
-   * Returns the working tribe for the population.
+   * Returns the working tribes for the population.
    *
    * @return working tribe
    */
-  Tribe getTribe();
+  Collection<Tribe> getTribes();
 
   /**
    * This function should clear the existing tribe and reinitialize it

@@ -61,13 +61,11 @@ public interface Tribe
   int size();
 
   /**
-   * Gets the genome at the specified index. Index 0 should be the most
-   * fit genome.
+   * Gets the best genome in the tribe.
    *
-   * @param index index of the genome
-   * @return genome at the specified index
+   * @return best genome
    */
-  Genome get(int index);
+  Genome getBest();
 
   /**
    * Returns an ordered list of genomes. The first is the most fit and the last
