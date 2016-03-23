@@ -5,7 +5,6 @@ import cs351.core.Engine.GUI;
 import cs351.core.Engine.Globals;
 import cs351.core.Engine.Population;
 import cs351.core.Genome;
-import cs351.core.Mutator;
 import cs351.core.Tribe;
 import cs351.utility.Job;
 import cs351.utility.JobList;
@@ -14,8 +13,13 @@ import javafx.stage.Stage;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Engine implements EvolutionEngine
+public final class Engine implements EvolutionEngine
 {
+  // Engine version info
+  private final int VERSION_MINOR = 1;
+  private final int VERSION_MAJOR = 0;
+
+  // General class members
   private Population population;
   private GUI gui;
   private Genome target;
@@ -91,6 +95,7 @@ public class Engine implements EvolutionEngine
     else if (IS_INITIALIZED.get()) throw new IllegalStateException("Engine already initialized");
 
     System.out.println("--- Initializing Engine ---");
+    System.out.println("Engine Version: " + getFullVersion());
     System.out.println("Available Memory (JVM): " + Runtime.getRuntime().totalMemory() + " bytes");
     System.out.println("Target Image: " + imageFile);
     System.out.println("Valid Population: " + (population != null));
@@ -195,6 +200,21 @@ public class Engine implements EvolutionEngine
     // TODO add rest of loop here
     GENERATIONS.getAndIncrement();
     MAIN_JOB_LIST.submitJobs(false);
+  }
+
+  public int getVersionMinor()
+  {
+    return VERSION_MINOR;
+  }
+
+  public int getVersionMajor()
+  {
+    return VERSION_MAJOR;
+  }
+
+  public String getFullVersion()
+  {
+    return Integer.toString(getVersionMajor()) + "." + Integer.toString(getVersionMinor());
   }
 
   private void enginePrint(String message)

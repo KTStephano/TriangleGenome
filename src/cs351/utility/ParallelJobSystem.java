@@ -169,7 +169,7 @@ public final class ParallelJobSystem
     if (RUNNING_THREADS.get() == 0)
     {
       WAS_DESTROYED.getAndSet(true);
-      System.out.println("--- ParallelJobSystem Terminated Successfully ---");
+      System.out.println("--- ParallelJobSystem Shutdown Successfully ---");
     }
   }
 
