@@ -5,54 +5,82 @@ import cs351.core.Mutator;
 import cs351.core.Tribe;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.TreeSet;
 
 /**
  * Implements the Tribe interface using a tree.
  */
 public class GenomeTree implements Tribe
 {
+  private final HashSet<Genome> UNSORTED_GENOMES = new HashSet<>(2000);
+  private final TreeSet<Genome> GENOME_TREE;
+
+  {
+    GENOME_TREE = new TreeSet<>((first, second) -> -1 * Double.compare(first.getFitness(), second.getFitness()));
+  }
+
   @Override
   public Mutator getMutatorForGenome(Genome genome) throws RuntimeException {
     return null;
   }
 
   @Override
-  public void add(Genome genome) {
-
+  public void add(Genome genome)
+  {
+    if (!contains(genome))
+    {
+      UNSORTED_GENOMES.add(genome);
+      GENOME_TREE.add(genome);
+      System.out.println(GENOME_TREE.first().getFitness());
+    }
   }
 
   @Override
-  public void remove(Genome genome) {
-
+  public void remove(Genome genome)
+  {
+    if (contains(genome))
+    {
+      UNSORTED_GENOMES.remove(genome);
+      GENOME_TREE.remove(genome);
+    }
   }
 
   @Override
-  public void clear() {
-
+  public void clear()
+  {
+    UNSORTED_GENOMES.clear();
+    GENOME_TREE.clear();
   }
 
   @Override
-  public boolean contains(Genome genome) {
-    return false;
+  public boolean contains(Genome genome)
+  {
+    return UNSORTED_GENOMES.contains(genome);
   }
 
   @Override
-  public int size() {
-    return 0;
+  public int size()
+  {
+    return UNSORTED_GENOMES.size();
   }
 
   @Override
-  public Genome get(int index) {
+  public Genome get(int index)
+  {
     return null;
   }
 
   @Override
-  public Collection<Genome> getGenomes() {
+  public Collection<Genome> getGenomes()
+  {
     return null;
   }
 
   @Override
-  public void recalculate() {
-
+  public void recalculate()
+  {
+    GENOME_TREE.clear();
+    GENOME_TREE.addAll(UNSORTED_GENOMES);
   }
 }
