@@ -11,7 +11,7 @@ package cs351.core;
  * The fitness function relies on an external source being able to
  * take a target image and break it down into a Genome that is similar
  * in structure to all other Genomes in the population. For example, if
- * all the Genomes in the population have 200 triangles which each have
+ * all the Genomes in the population have 200 TRIANGLES which each have
  * 10 genes, then the target Genome should also be represented with this
  * same structure.
  */

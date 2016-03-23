@@ -14,14 +14,6 @@ import cs351.core.*;
 public interface Population
 {
   /**
-   * Adds a genome to the population's tribe. A mutator should be assigned to it at this
-   * point by the population.
-   *
-   * @param genome genome to add
-   */
-  void add(Genome genome);
-
-  /**
    * Gets the fitness function that the population wants to be used
    * for all genomes.
    *
@@ -36,16 +28,6 @@ public interface Population
    * @return Cross object
    */
   Cross getCrossObject();
-
-  /**
-   * Gets the mutator object that was assigned to the genome when
-   * it was added to the population.
-   *
-   * @param genome genome object that is apart of the population
-   * @return Mutator object for the given genome
-   * @throws RuntimeException thrown if the given genome is not apart of the population
-   */
-  Mutator getMutatorForGenome(Genome genome) throws RuntimeException;
 
   /**
    * Returns the selector that is being used to perform random genome selections.
@@ -68,8 +50,9 @@ public interface Population
    * want to create genomes.
    *
    * @param engine engine object for callbacks
+   * @param numTribes number of tribes to initialize
    */
-  void generateStartingState(EvolutionEngine engine);
+  void generateStartingState(EvolutionEngine engine, int numTribes);
 
   /**
    * This should only ever be called by an evolution engine. The purpose is to allow

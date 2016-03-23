@@ -1,14 +1,37 @@
 package cs351.core;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
-public interface Genome
+public class Genome
 {
+  protected double fitness = 0.0;
+  protected final LinkedList<Triangle> TRIANGLES = new LinkedList<>();
+  protected final LinkedList<Gene> GENES = new LinkedList<>();
+
+  @Override
+  public int hashCode()
+  {
+    return TRIANGLES.hashCode() * GENES.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object other)
+  {
+    return this == other || (other instanceof Genome &&
+            ((Genome)other).TRIANGLES.equals(TRIANGLES) &&
+            ((Genome)other).GENES.equals(GENES));
+  }
+
   /**
-   * Adds a triangle to the genome. The order that triangles are added
+   * Adds a triangle to the genome. The order that TRIANGLES are added
    * should be maintained.
    */
-  void add(Triangle triangle);
+  public void add(Triangle triangle)
+  {
+    TRIANGLES.add(triangle);
+    GENES.addAll(triangle.getGenes());
+  }
 
   /**
    * Removes a triangle from the genome. The result should be like removing
@@ -18,28 +41,41 @@ public interface Genome
    *
    * @param triangle triangle to remove
    */
-  void remove(Triangle triangle);
+  public void remove(Triangle triangle)
+  {
+    if (TRIANGLES.contains(triangle)) TRIANGLES.remove(triangle);
+  }
 
   /**
    * Gets the normalized fitness that was assigned to this genome.
    *
    * @return normalzed fitness
    */
-  double getFitness();
+  public double getFitness()
+  {
+    return fitness;
+  }
+
 
   /**
    * Sets the fitness for this genome.
    *
    * @param fitness normalized fitness value
    */
-  void setFitness(double fitness);
+  public void setFitness(double fitness)
+  {
+    this.fitness = fitness;
+  }
 
   /**
-   * This should return an ordered list of triangles.
+   * This should return an ordered list of TRIANGLES.
    *
-   * @return ordered list of triangles
+   * @return ordered list of TRIANGLES
    */
-  Collection<Triangle> getTriangles();
+  public Collection<Triangle> getTriangles()
+  {
+    return TRIANGLES;
+  }
 
   /**
    * The output from this should be the same as calling getTriangles()
@@ -47,9 +83,12 @@ public interface Genome
    *
    * Example output: {triangle 1's genes}, {triangle 2's genes}, etc.
    *
-   * The size of this list should be equal to the number of triangles * number of genes per triangle.
+   * The size of this list should be equal to the number of TRIANGLES * number of genes per triangle.
    *
    * @return ordered list of genes
    */
-  Collection<Gene> getGenes();
+  public Collection<Gene> getGenes()
+  {
+    return GENES;
+  }
 }

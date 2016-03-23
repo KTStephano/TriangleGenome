@@ -49,8 +49,8 @@ public class Engine implements EvolutionEngine
     @Override
     public void start(int threadID)
     {
-      Mutator mutator = POPULATION.getMutatorForGenome(GENOME);
-      mutator.mutate();
+      //Mutator mutator = POPULATION.getMutatorForGenome(GENOME);
+      //mutator.mutate();
     }
   }
 
@@ -100,18 +100,19 @@ public class Engine implements EvolutionEngine
     gui = mainGUI;
 
     // Init the population and main GUI if they are not null
-    if (population != null)
-    {
-      population.generateStartingState(this);
-      Tribe tribe = population.getTribe();
-      // Initialize the mutator jobs
-      for (int i = 0; i < tribe.size(); i++) MAIN_JOB_LIST.add(new MutatorJob(population, tribe.get(i)), 1);
-    }
     if (mainGUI == null) isRunningConsoleMode = true;
     else
     {
       isRunningConsoleMode = false;
       gui.init(stage, this);
+    }
+
+    if (population != null)
+    {
+      population.generateStartingState(this, 1);
+      Tribe tribe = population.getTribe();
+      // Initialize the mutator jobs
+      for (int i = 0; i < tribe.size(); i++) MAIN_JOB_LIST.add(new MutatorJob(population, tribe.get(i)), 1);
     }
 
     IS_INITIALIZED.set(true);

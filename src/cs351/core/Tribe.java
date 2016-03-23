@@ -1,5 +1,7 @@
 package cs351.core;
 
+import java.util.Collection;
+
 /**
  * See slide 29.
  *
@@ -14,6 +16,16 @@ package cs351.core;
  */
 public interface Tribe
 {
+  /**
+   * Gets the mutator object that was assigned to the genome when
+   * it was added to the tribe.
+   *
+   * @param genome genome object that is apart of the population
+   * @return Mutator object for the given genome
+   * @throws RuntimeException thrown if the given genome is not apart of the population
+   */
+  Mutator getMutatorForGenome(Genome genome) throws RuntimeException;
+
   /**
    * Adds a genome to the tribe.
    *
@@ -34,6 +46,14 @@ public interface Tribe
   void clear();
 
   /**
+   * Checks to see if the genome is part of the tribe.
+   *
+   * @param genome genome to check for
+   * @return true if it exists and false if not
+   */
+  boolean contains(Genome genome);
+
+  /**
    * Gets the number of genomes that are part of the tribe.
    *
    * @return number of genomes
@@ -50,7 +70,15 @@ public interface Tribe
   Genome get(int index);
 
   /**
-   * Runs through all genomes in the tribe and reorders them based on their fitnesses.
+   * Returns an ordered list of genomes. The first is the most fit and the last
+   * is the least fit.
+   *
+   * @return ordered list of genomes
+   */
+  Collection<Genome> getGenomes();
+
+  /**
+   * Runs through all genomes in the tribe and reorders them based on their fitness.
    *
    * This is needed since the genomes in a population might mutate at some point, but
    * the tribe won't know about these mutations.
