@@ -43,7 +43,11 @@ public class Genome
    */
   public void remove(Triangle triangle)
   {
-    if (TRIANGLES.contains(triangle)) TRIANGLES.remove(triangle);
+    if (TRIANGLES.contains(triangle))
+    {
+      TRIANGLES.remove(triangle);
+      GENES.removeAll(triangle.getGenes());
+    }
   }
 
   /**
