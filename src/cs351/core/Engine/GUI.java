@@ -35,5 +35,9 @@ public interface GUI
    */
   boolean hasUserSignaledQuit();
 
+  /**
+   * This method is used to check if the user has pressed the pause button in the GUI class
+   * @return true if user has pressed pause button
+   */
   boolean isGenomePaused();
 }
