@@ -3,6 +3,7 @@ package cs351.project2;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.GUI;
 
+import java.io.InputStream;
 import java.util.Random;
 
 import cs351.utility.Vector2f;
@@ -25,7 +26,7 @@ import javafx.stage.WindowEvent;
 
 /**
  * GameWindow creates the GUI. The GUI is responsible for showing two images: the original image and the
- * image created by the Genetic Algorithm. 
+ * image created by the Genetic Algorithm.
  *
  */
 public class GameWindow implements GUI
@@ -106,7 +107,8 @@ public class GameWindow implements GUI
       gcOriginal.setStroke(Color.BLACK);
       gcOriginal.strokeRect(0, 0, canvasWidth, canvasHeight);
       gcOriginal.fillText("Placeholder for MonaLisa", canvasWidth / 4, canvasHeight / 2);
-      Image monaLisa = new Image("file:src/cs351/core/project2/images/MonaLisa.jpg");
+      InputStream stream = GameWindow.class.getResourceAsStream("images/MonaLisa.jpg");
+      Image monaLisa = new Image(stream);
       gcOriginal.drawImage(monaLisa, 0, 0, canvasWidth, canvasHeight);
 
       // Draw Triangles
