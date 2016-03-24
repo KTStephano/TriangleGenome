@@ -24,7 +24,7 @@ public class EvolutionLoop extends Application
     stage.setOnCloseRequest(this::windowClosed); // Just in case the GUI doesn't overwrite this
     engine = new Engine();
     // null for population and gui for now until those classes are up and running
-    engine.init(stage, "images/MonaLisa.jpg", null, null);
+    engine.init(stage, "images/MonaLisa.jpg", null, new GameWindow());
     if (!stage.isShowing()) stage.show();
     loop();
   }
