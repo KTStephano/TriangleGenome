@@ -24,7 +24,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.WindowEvent;
 
 /**
- *
+ * GameWindow creates the GUI. The GUI is responsible for showing two images: the original image and the
+ * image created by the Genetic Algorithm. 
  *
  */
 public class GameWindow implements GUI
@@ -55,7 +56,7 @@ public class GameWindow implements GUI
   private GraphicsContext gcOriginal;
   private GraphicsContext gcGenetic;
 
-  private boolean canvasDebugging = true;
+  private boolean canvasDebugging = false;
 
   private Slider genomeListSlider;
 
@@ -84,6 +85,8 @@ public class GameWindow implements GUI
     {
       BorderPane root = new BorderPane();
       Scene scene = new Scene(root, sceneWidth, sceneHeight);
+      stage.setWidth(sceneWidth);
+      stage.setHeight(sceneHeight);
 
       // Two canvas' to hold the Mona Lisa and the triangles
       canvasOriginal = new Canvas(canvasWidth, canvasHeight);
@@ -103,7 +106,7 @@ public class GameWindow implements GUI
       gcOriginal.setStroke(Color.BLACK);
       gcOriginal.strokeRect(0, 0, canvasWidth, canvasHeight);
       gcOriginal.fillText("Placeholder for MonaLisa", canvasWidth / 4, canvasHeight / 2);
-      Image monaLisa = new Image("file:images/MonaLisa.jpg");
+      Image monaLisa = new Image("file:src/cs351/core/project2/images/MonaLisa.jpg");
       gcOriginal.drawImage(monaLisa, 0, 0, canvasWidth, canvasHeight);
 
       // Draw Triangles
@@ -193,9 +196,9 @@ public class GameWindow implements GUI
       y3 = y1 + (double) randNum.nextInt(triangleSize);
 
       // Generate RGB values
-      red = randNum.nextInt(256);
-      green = randNum.nextInt(256);
-      blue = randNum.nextInt(256);
+      red = randNum.nextInt(255);
+      green = randNum.nextInt(255);
+      blue = randNum.nextInt(255);
 
       System.out.printf("red: %d \t green: %d \t blue: %d\n", red, green, blue);
 
@@ -244,9 +247,10 @@ public class GameWindow implements GUI
       rColor = (int) vectorColorList[i].getX();
       gColor = (int) vectorColorList[i].getY();
       bColor = (int) vectorColorList[i].getZ();
-      alpha = (int) vectorColorList[i].getW();
+      alpha = vectorColorList[i].getW();
 
       gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
+//      gcGenetic.setFill(Color.BLACK);
 
       // Get triangle points
       x1 = vector1List[i].getX();
@@ -258,7 +262,6 @@ public class GameWindow implements GUI
       y1 = vector1List[i].getY();
       y2 = vector2List[i].getY();
       y3 = vector3List[i].getY();
-
 
       gcGenetic.fillPolygon(new double[]{x1, x2, x3}, new double[]{y1, y2, y3}, 3);
     }
