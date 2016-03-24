@@ -40,4 +40,11 @@ public interface GUI
    * @return true if user has pressed pause button
    */
   boolean isGenomePaused();
+
+  /**
+   * This allows the Engine to know how many tribes are being used
+   * @return tribeSize The amount of tribes
+   */
+  int getTribes();
+
 }

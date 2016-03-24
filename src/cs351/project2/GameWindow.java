@@ -4,6 +4,9 @@ import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.GUI;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import cs351.utility.Vector2f;
@@ -11,12 +14,11 @@ import cs351.utility.Vector4f;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -38,10 +40,10 @@ public class GameWindow implements GUI
   private double canvasHeight = 300;
 
   private double canvasMargin = 40;
-
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
   private double canvasStartY = sceneHeight / 2 - canvasHeight / 2 - canvasHeight / 4;
 
+  private int tribeSize = 8;
   private int genomeSize = 200;
   Vector2f[] vector1List = new Vector2f[genomeSize];
   Vector2f[] vector2List = new Vector2f[genomeSize];
@@ -61,15 +63,121 @@ public class GameWindow implements GUI
 
   private Slider genomeListSlider;
 
-  private HBox sliderContainer;
+  private HBox topRowContainer;
   private HBox middleRowContainer;
   private HBox bottomRowContainer;
-  private HBox optionsContainer;
   private VBox allContainer;
 
   private Button pauseButton;
   private boolean genomePaused = false;
   private Boolean userWantsToClose = false;
+
+
+  /**
+   * This method is called from the popup dialog box when the user has clicked on the "close" button
+   */
+  private void dialogWindowClose()
+  {
+    userWantsToClose = true;
+  }
+
+
+  /**
+   * Creates a popup dialog box prompting the user for the amount
+   * of tribes that they would like to use
+   *
+   * @param stage Stage of the game
+   */
+  private void askForTribes(Stage stage)
+  {
+    try
+    {
+      // Give choice how many threads user would like to have running
+      List<String> choices = new ArrayList<String>();
+      choices.add("1");
+      choices.add("2");
+      choices.add("3");
+      choices.add("4");
+      choices.add("5");
+      choices.add("6");
+      choices.add("7");
+      choices.add("8");
+      choices.add("9");
+      choices.add("10");
+      choices.add("11");
+      choices.add("12");
+      choices.add("13");
+      choices.add("14");
+      choices.add("15");
+      choices.add("16");
+
+      ChoiceDialog<String> prompt = new ChoiceDialog<>("--", choices);
+      prompt.setContentText("How many tribes would you like to use?");
+      prompt.setHeaderText("Triangle Genome Project");
+//      prompt.setOnCloseRequest(new EventHandler<DialogEvent>()
+//      {
+//        /**
+//         * Called when the user wants to quit from the choice dialog
+//         *
+//         * @param event the event which occurred
+//         */
+//        @Override
+//        public void handle(DialogEvent event)
+//        {
+//          if (event.getEventType().equals(DialogEvent.DIALOG_CLOSE_REQUEST))
+//          {
+//            System.out.println(">>>> HERE");
+//            dialogWindowClose();
+//          }
+//        }
+//      });
+
+      // Makes everything wait until prompt is finished being used
+      Optional<String> result = prompt.showAndWait();
+
+      // Assign their answer to variables list
+      if (result.get().equals("1"))
+        tribeSize = 1;
+      else if (result.get().equals("2"))
+        tribeSize = 2;
+      else if (result.get().equals("3"))
+        tribeSize = 3;
+      else if (result.get().equals("4"))
+        tribeSize = 4;
+      else if (result.get().equals("5"))
+        tribeSize = 5;
+      else if (result.get().equals("6"))
+        tribeSize = 6;
+      else if (result.get().equals("7"))
+        tribeSize = 7;
+      else if (result.get().equals("8"))
+        tribeSize = 8;
+      else if (result.get().equals("9"))
+        tribeSize = 9;
+      else if (result.get().equals("10"))
+        tribeSize = 10;
+      else if (result.get().equals("11"))
+        tribeSize = 11;
+      else if (result.get().equals("12"))
+        tribeSize = 12;
+      else if (result.get().equals("13"))
+        tribeSize = 13;
+      else if (result.get().equals("14"))
+        tribeSize = 14;
+      else if (result.get().equals("15"))
+        tribeSize = 15;
+      else if (result.get().equals("16"))
+        tribeSize = 16;
+      else
+        tribeSize = 16;
+    } catch (Exception e1)
+    {
+      System.out.println("Exception occured in ChoiceDialog box");
+      tribeSize = 16;
+    }
+
+  }
+
 
 
   /**
@@ -81,9 +189,16 @@ public class GameWindow implements GUI
   @Override
   public void init(Stage stage, EvolutionEngine engine)
   {
+    // Ask user for amount of tribes that they would like to use
+    askForTribes(stage);
+
+    // Error check to see if clicked the close button in the dialog box
+    if(hasUserSignaledQuit()) return;
 
     try
     {
+      System.out.println("Amount of Tribes: " + tribeSize);
+
       BorderPane root = new BorderPane();
       Scene scene = new Scene(root, sceneWidth, sceneHeight);
       stage.setWidth(sceneWidth);
@@ -93,9 +208,11 @@ public class GameWindow implements GUI
       canvasOriginal = new Canvas(canvasWidth, canvasHeight);
       canvasGenetic = new Canvas(canvasWidth, canvasHeight);
 
+      // Location of canvasOriginal
       canvasOriginal.setTranslateX(canvasStartX);
       canvasOriginal.setTranslateY(canvasStartY);
 
+      // Location of canvasGenetic
       canvasGenetic.setTranslateX(canvasStartX + canvasWidth + canvasMargin);
       canvasGenetic.setTranslateY(canvasStartY);
 
@@ -118,13 +235,15 @@ public class GameWindow implements GUI
       gcGenetic.fillText("Placeholder for Triangle Genomes", canvasWidth / 4, canvasHeight / 2);
 
       // Create the slider(s)
-      genomeListSlider = new Slider(1, 8, 1);
+      int tribeLabelWidth = 90;
+      Label tribeLabel = new Label("Showing Tribe:");
+      tribeLabel.setMinWidth(tribeLabelWidth);
+      genomeListSlider = new Slider(1, getTribes(), 1);
       genomeListSlider.setMajorTickUnit(1.0f);
       genomeListSlider.setMinorTickCount(0);
       genomeListSlider.setBlockIncrement(1.0f);
-      genomeListSlider.setMinWidth(200);
+      genomeListSlider.setMinWidth(canvasWidth * 2 + canvasMargin - tribeLabelWidth);
       genomeListSlider.snapToTicksProperty().set(true);
-
       genomeListSlider.setShowTickMarks(true);
       genomeListSlider.setShowTickLabels(true);
 
@@ -133,6 +252,11 @@ public class GameWindow implements GUI
       pauseButton.setMinWidth(70);
       pauseButton.setOnAction(new EventHandler<ActionEvent>()
       {
+        /**
+         * Toggles the pause/play button
+         *
+         * @param e Event from the pause button
+         */
         @Override
         public void handle(ActionEvent e)
         {
@@ -144,24 +268,39 @@ public class GameWindow implements GUI
 
 
       // Create containers to hold components
-      optionsContainer = new HBox(50);
+      topRowContainer = new HBox();
+      middleRowContainer = new HBox(10);
+      bottomRowContainer = new HBox(10);
 
-      allContainer = new VBox();
-      allContainer.getChildren().addAll(canvasOriginal, canvasGenetic);
+//      allContainer = new VBox();
+//      allContainer.getChildren().addAll(canvasOriginal, canvasGenetic);
 
-      // Add items to containers
-      optionsContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
-      optionsContainer.setLayoutX(canvasStartX);
-      optionsContainer.setLayoutY(canvasStartY + canvasHeight + canvasMargin);
-      optionsContainer.getChildren().addAll(genomeListSlider, pauseButton);
+      // Add items to top container - Slider
+      topRowContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
+      topRowContainer.setLayoutX(canvasStartX);
+      topRowContainer.setLayoutY(canvasStartY + canvasHeight + canvasMargin);
+      topRowContainer.getChildren().addAll(tribeLabel, genomeListSlider);
 
+      // Add items to middle container - Pause Button
+      middleRowContainer.setLayoutX(topRowContainer.getLayoutX());
+      middleRowContainer.setLayoutY(topRowContainer.getLayoutY() + canvasMargin);
+      middleRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
+      middleRowContainer.getChildren().addAll(pauseButton);
+
+      // Add items to bottom container - N/A
+      bottomRowContainer.setLayoutX(topRowContainer.getLayoutX());
+      bottomRowContainer.setLayoutY(middleRowContainer.getLayoutY() + canvasMargin / 2);
+      bottomRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
+      bottomRowContainer.getChildren().addAll();
+
+      // Initialize random triangles and call an update
       initTriangles();
       update(engine);
 
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-      root.getChildren().addAll(canvasOriginal, canvasGenetic, optionsContainer);
+      root.getChildren().addAll(canvasOriginal, canvasGenetic, topRowContainer, middleRowContainer, bottomRowContainer);
 
-      stage.setOnCloseRequest(this::windowClosed); // Just in case the GUI doesn't overwrite this
+      stage.setOnCloseRequest(this::windowClosed);
       stage.setTitle("Triangle Genome Project");
       stage.setScene(scene);
       stage.show();
@@ -213,7 +352,6 @@ public class GameWindow implements GUI
 
       vectorColorList[i] = new Vector4f(red, green, blue, alpha);
 
-      //vectorTestList[i] = new VectorPoints(x1, y1, x2, y2, x3, y3, red, green, blue, alpha);
     }
   }
 
@@ -296,5 +434,15 @@ public class GameWindow implements GUI
   public boolean isGenomePaused()
   {
     return genomePaused;
+  }
+
+  /**
+   * This allows the Engine to know how many tribes are being used
+   * @return tribeSize The amount of tribes
+   */
+  @Override
+  public int getTribes()
+  {
+    return tribeSize;
   }
 }
