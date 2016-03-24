@@ -34,4 +34,6 @@ public interface GUI
    * @return true if the user wants to quit and false if not
    */
   boolean hasUserSignaledQuit();
+
+  boolean isGenomePaused();
 }
