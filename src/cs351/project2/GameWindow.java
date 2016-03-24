@@ -2,6 +2,7 @@ package cs351.project2;
 
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.GUI;
+
 import java.util.Random;
 
 import cs351.utility.Vector2f;
@@ -36,8 +37,8 @@ public class GameWindow implements GUI
 
   private double canvasMargin = 40;
 
-  private double canvasStartX = sceneWidth/2 - canvasWidth - canvasMargin/2;
-  private double canvasStartY = sceneHeight/2 - canvasHeight/2 - canvasHeight/4;
+  private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
+  private double canvasStartY = sceneHeight / 2 - canvasHeight / 2 - canvasHeight / 4;
 
   private int genomeSize = 200;
   Vector2f[] vector1List = new Vector2f[genomeSize];
@@ -69,8 +70,6 @@ public class GameWindow implements GUI
   private Boolean userWantsToClose = false;
 
 
-
-
   /**
    * Initializes the GUI with the given JavaFX stage and the given engine.
    *
@@ -78,11 +77,13 @@ public class GameWindow implements GUI
    * @param engine evolution engine to use for callbacks during init
    */
   @Override
-  public void init(Stage stage, EvolutionEngine engine) {
+  public void init(Stage stage, EvolutionEngine engine)
+  {
 
-    try {
+    try
+    {
       BorderPane root = new BorderPane();
-      Scene scene = new Scene(root,sceneWidth,sceneHeight);
+      Scene scene = new Scene(root, sceneWidth, sceneHeight);
 
       // Two canvas' to hold the Mona Lisa and the triangles
       canvasOriginal = new Canvas(canvasWidth, canvasHeight);
@@ -101,7 +102,7 @@ public class GameWindow implements GUI
       gcOriginal.setFill(Color.BLACK);
       gcOriginal.setStroke(Color.BLACK);
       gcOriginal.strokeRect(0, 0, canvasWidth, canvasHeight);
-      gcOriginal.fillText("Placeholder for MonaLisa", canvasWidth/4, canvasHeight/2 );
+      gcOriginal.fillText("Placeholder for MonaLisa", canvasWidth / 4, canvasHeight / 2);
       Image monaLisa = new Image("file:images/MonaLisa.jpg");
       gcOriginal.drawImage(monaLisa, 0, 0, canvasWidth, canvasHeight);
 
@@ -109,7 +110,7 @@ public class GameWindow implements GUI
       gcGenetic.setFill(Color.BLACK);
       gcGenetic.setStroke(Color.BLACK);
       gcGenetic.strokeRect(0, 0, canvasWidth, canvasHeight);
-      gcGenetic.fillText("Placeholder for Triangle Genomes", canvasWidth/4, canvasHeight/2 );
+      gcGenetic.fillText("Placeholder for Triangle Genomes", canvasWidth / 4, canvasHeight / 2);
 
       // Create the slider(s)
       genomeListSlider = new Slider(1, 8, 1);
@@ -125,9 +126,12 @@ public class GameWindow implements GUI
       // Create the pause button
       pauseButton = new Button("Pause");
       pauseButton.setMinWidth(70);
-      pauseButton.setOnAction(new EventHandler<ActionEvent>() {
-        @Override public void handle(ActionEvent e) {
-          if(!genomePaused) pauseButton.setText("Resume");
+      pauseButton.setOnAction(new EventHandler<ActionEvent>()
+      {
+        @Override
+        public void handle(ActionEvent e)
+        {
+          if (!genomePaused) pauseButton.setText("Resume");
           else pauseButton.setText("Pause");
           genomePaused = !genomePaused;
         }
@@ -141,7 +145,7 @@ public class GameWindow implements GUI
       allContainer.getChildren().addAll(canvasOriginal, canvasGenetic);
 
       // Add items to containers
-      optionsContainer.setMaxSize(2*canvasWidth + canvasMargin, canvasHeight);
+      optionsContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
       optionsContainer.setLayoutX(canvasStartX);
       optionsContainer.setLayoutY(canvasStartY + canvasHeight + canvasMargin);
       optionsContainer.getChildren().addAll(genomeListSlider, pauseButton);
@@ -156,7 +160,8 @@ public class GameWindow implements GUI
       stage.setTitle("Triangle Genome Project");
       stage.setScene(scene);
       stage.show();
-    } catch(Exception e) {
+    } catch (Exception e)
+    {
       e.printStackTrace();
     }
 
@@ -168,13 +173,15 @@ public class GameWindow implements GUI
   * This method is to create a list of triangles that the gui would normally
   * use when updating itself
   */
-  private void initTriangles() {
+  private void initTriangles()
+  {
 
     int triangleSize = 80;
     int red, green, blue = 0;
     double x1, x2, x3, y1, y2, y3, alpha = 0;
 
-    for (int i = 0; i < vector1List.length; i++) {
+    for (int i = 0; i < vector1List.length; i++)
+    {
       // Generate random points
       x1 = (double) randNum.nextInt((int) canvasHeight);
       y1 = (double) randNum.nextInt((int) canvasHeight);
@@ -224,20 +231,20 @@ public class GameWindow implements GUI
   public void update(EvolutionEngine engine)
   {
     // If we are not debugging, then refresh the canvas at each update
-    if(!canvasDebugging) clearGeneticCanvas();
+    if (!canvasDebugging) clearGeneticCanvas();
 
     int rColor, gColor, bColor = 0;
     double alpha = 0;
     double x1, x2, x3, y1, y2, y3 = 0;
 
     // Loop through selected array and draw the triangles
-    for(int i = 0; i < genomeSize; i++)
+    for (int i = 0; i < genomeSize; i++)
     {
       // Select and set color
-      rColor = (int)vectorColorList[i].getW();
-      gColor = (int)vectorColorList[i].getX();
-      bColor = (int)vectorColorList[i].getY();
-      alpha = (int)vectorColorList[i].getZ();
+      rColor = (int) vectorColorList[i].getX();
+      gColor = (int) vectorColorList[i].getY();
+      bColor = (int) vectorColorList[i].getZ();
+      alpha = (int) vectorColorList[i].getW();
 
       gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
 
