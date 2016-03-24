@@ -81,6 +81,20 @@ public interface EvolutionEngine
   boolean isEngineShutdown();
 
   /**
+   * Checks to see if the engine is paused.
+   *
+   * @return true if paused, false if not
+   */
+  boolean isEnginePaused();
+
+  /**
+   * Toggles the pause state of the engine.
+   *
+   * @param value true if paused, false if not
+   */
+  void togglePause(boolean value);
+
+  /**
    * Gets the number of generations that have passed since the engine was initialized.
    *
    * @return number of generations

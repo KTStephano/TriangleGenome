@@ -32,6 +32,7 @@ public final class Engine implements EvolutionEngine
   private final AtomicBoolean IS_INITIALIZED;
   private final AtomicBoolean IS_PENDING_SHUTDOWN;
   private final AtomicBoolean IS_SHUTDOWN;
+  private final AtomicBoolean IS_PAUSED;
 
   // Engine benchmarking
   private long millisecondsSinceLastFrame;
@@ -66,6 +67,7 @@ public final class Engine implements EvolutionEngine
     IS_INITIALIZED = new AtomicBoolean(false);
     IS_PENDING_SHUTDOWN = new AtomicBoolean(false);
     IS_SHUTDOWN = new AtomicBoolean(false);
+    IS_PAUSED = new AtomicBoolean(false);
   }
 
   @Override
@@ -147,6 +149,28 @@ public final class Engine implements EvolutionEngine
     return IS_SHUTDOWN.get();
   }
 
+  /**
+   * Checks to see if the engine is paused.
+   *
+   * @return true if paused, false if not
+   */
+  @Override
+  public boolean isEnginePaused()
+  {
+    return IS_PAUSED.get();
+  }
+
+  /**
+   * Toggles the pause state of the engine.
+   *
+   * @param value true if paused, false if not
+   */
+  @Override
+  public void togglePause(boolean value)
+  {
+    IS_PAUSED.set(value);
+  }
+
   @Override
   public int getGenerationCount()
   {
@@ -172,34 +196,37 @@ public final class Engine implements EvolutionEngine
     // frame is done
     if (!isRunningConsoleMode) gui.update(this);
 
-    millisecondsSinceLastFrame = System.currentTimeMillis() - millisecondTimeStamp;
-    millisecondTimeStamp = System.currentTimeMillis(); // mark the time when this frame started
-    // Log the milliseconds since last frame for frame rate averaging
-    LAST_100_FRAME_TIMESTAMPS[currentTimestamp] = millisecondsSinceLastFrame;
-    currentTimestamp++;
-    // Write the average frame rate to the console
-    if (currentTimestamp >= LAST_100_FRAME_TIMESTAMPS.length)
+    if (!IS_PAUSED.get())
     {
-      currentTimestamp = 0; // reset
-      if (isRunningConsoleMode)
+      millisecondsSinceLastFrame = System.currentTimeMillis() - millisecondTimeStamp;
+      millisecondTimeStamp = System.currentTimeMillis(); // mark the time when this frame started
+      // Log the milliseconds since last frame for frame rate averaging
+      LAST_100_FRAME_TIMESTAMPS[currentTimestamp] = millisecondsSinceLastFrame;
+      currentTimestamp++;
+      // Write the average frame rate to the console
+      if (currentTimestamp >= LAST_100_FRAME_TIMESTAMPS.length)
       {
-        long totalMilliseconds = 0;
-        for (int i = 0; i < LAST_100_FRAME_TIMESTAMPS.length; i++) totalMilliseconds += LAST_100_FRAME_TIMESTAMPS[i];
-        double averageTime = totalMilliseconds / (double)LAST_100_FRAME_TIMESTAMPS.length;
-        double avgFPS = averageTime / 1000.0; // convert to seconds
-        enginePrint("Average time per generation: " + avgFPS + " seconds");
-        //System.out.println("Average time per generation: " + avgFPS);
+        currentTimestamp = 0; // reset
+        if (isRunningConsoleMode)
+        {
+          long totalMilliseconds = 0;
+          for (int i = 0; i < LAST_100_FRAME_TIMESTAMPS.length; i++) totalMilliseconds += LAST_100_FRAME_TIMESTAMPS[i];
+          double averageTime = totalMilliseconds / (double) LAST_100_FRAME_TIMESTAMPS.length;
+          double avgFPS = averageTime / 1000.0; // convert to seconds
+          enginePrint("Average time per generation: " + avgFPS + " seconds");
+          //System.out.println("Average time per generation: " + avgFPS);
+        }
       }
-    }
 
-    if (isRunningConsoleMode && GENERATIONS.get() % 100 == 0)
-    {
-      enginePrint(GENERATIONS.get() + " generations have passed");
-    }
+      if (isRunningConsoleMode && GENERATIONS.get() % 100 == 0)
+      {
+        enginePrint(GENERATIONS.get() + " generations have passed");
+      }
 
-    // TODO add rest of loop here
-    GENERATIONS.getAndIncrement();
-    MAIN_JOB_LIST.submitJobs(false);
+      // TODO add rest of loop here
+      GENERATIONS.getAndIncrement();
+      MAIN_JOB_LIST.submitJobs(false);
+    }
   }
 
   public int getVersionMinor()
