@@ -14,10 +14,12 @@ public class EvolutionLoop extends Application
 {
   private EvolutionEngine engine;
   private boolean jobSystemShutdown = false;
+  private Stage stage;
 
   @Override
   public void start(Stage stage)
   {
+    this.stage = stage;
     stage.setTitle("The Triangle Genome");
     stage.setWidth(350);
     stage.setHeight(350);
@@ -73,6 +75,8 @@ public class EvolutionLoop extends Application
     // Engine needs to keep updating to eventually close
     while (!engine.isEngineShutdown()) engine.generation();
     shutdownJobSystem();
+    // Make sure the stage is closed
+    if (stage.isShowing()) stage.close();
   }
 
   private void shutdownJobSystem()
