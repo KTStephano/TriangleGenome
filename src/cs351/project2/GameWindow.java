@@ -112,7 +112,6 @@ public class GameWindow implements GUI
       choices.add("16");
 
       ChoiceDialog<String> prompt = new ChoiceDialog<>("--", choices);
-      prompt.setOnCloseRequest(this::dialogClosed);
       prompt.setContentText("How many tribes would you like to use?");
       prompt.setHeaderText("Triangle Genome Project");
 //      prompt.setOnCloseRequest(new EventHandler<DialogEvent>()
@@ -410,17 +409,7 @@ public class GameWindow implements GUI
 
   private void windowClosed(WindowEvent event)
   {
-    setClosed(true);
-  }
-
-  private void dialogClosed(DialogEvent event)
-  {
-    setClosed(true);
-  }
-
-  private void setClosed(boolean value)
-  {
-    userWantsToClose = value;
+    userWantsToClose = true;
   }
 
   /**
