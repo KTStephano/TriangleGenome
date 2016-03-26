@@ -89,7 +89,7 @@ public class Log
     // If directory path already exists, stop here
     if (Files.exists(Paths.get(pathWithoutFile))) return;
     File directory = new File(pathWithoutFile);
-    if (!directory.mkdir()) throw new RuntimeException("Could not create directory " + pathWithoutFile);
+    if (!directory.mkdirs()) throw new RuntimeException("Could not create directory " + pathWithoutFile);
   }
 
   private String stripFile(String path)
