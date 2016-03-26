@@ -20,6 +20,15 @@ import javafx.stage.Stage;
 public interface EvolutionEngine
 {
   /**
+   * Returns a Statistics object reference which maintains a variety of data
+   * about both the engine and the parts of the program that it maintains (especially
+   * related to Genomes).
+   *
+   * @return engine statistics
+   */
+  Statistics getStatistics();
+
+  /**
    * Gets the population being used by the engine. The population manages
    * the main tribe.
    *
