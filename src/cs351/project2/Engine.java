@@ -1,9 +1,6 @@
 package cs351.project2;
 
-import cs351.core.Engine.EvolutionEngine;
-import cs351.core.Engine.GUI;
-import cs351.core.Engine.Globals;
-import cs351.core.Engine.Population;
+import cs351.core.Engine.*;
 import cs351.core.Genome;
 import cs351.core.Tribe;
 import cs351.utility.Job;
@@ -68,6 +65,12 @@ public final class Engine implements EvolutionEngine
     IS_PENDING_SHUTDOWN = new AtomicBoolean(false);
     IS_SHUTDOWN = new AtomicBoolean(false);
     IS_PAUSED = new AtomicBoolean(false);
+  }
+
+  @Override
+  public Statistics getStatistics()
+  {
+    return null;
   }
 
   @Override
