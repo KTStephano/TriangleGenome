@@ -224,7 +224,7 @@ public class GameWindow implements GUI
       gcOriginal.setStroke(Color.BLACK);
       gcOriginal.strokeRect(0, 0, canvasWidth, canvasHeight);
       gcOriginal.fillText("Placeholder for MonaLisa", canvasWidth / 4, canvasHeight / 2);
-      InputStream stream = GameWindow.class.getResourceAsStream("images/MonaLisa.jpg");
+      InputStream stream = GameWindow.class.getResourceAsStream("images/mona-lisa-cropted-512x413.png");
       Image monaLisa = new Image(stream);
       gcOriginal.drawImage(monaLisa, 0, 0, canvasWidth, canvasHeight);
 
