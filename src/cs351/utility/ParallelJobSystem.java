@@ -173,6 +173,16 @@ public final class ParallelJobSystem
     }
   }
 
+  /**
+   * Gets the number of worker threads.
+   *
+   * @return number of worker threads
+   */
+  public int getNumActiveThreads()
+  {
+    return NUM_WORKER_THREADS;
+  }
+
   private void dispatchJobs()
   {
     try

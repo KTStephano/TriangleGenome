@@ -2,6 +2,7 @@ package cs351.project2;
 
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.Globals;
+import cs351.core.Engine.Log;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -19,6 +20,7 @@ public class EvolutionLoop extends Application
   @Override
   public void start(Stage stage)
   {
+    new Log();
     this.stage = stage;
     stage.setTitle("The Triangle Genome");
     stage.setWidth(350);
