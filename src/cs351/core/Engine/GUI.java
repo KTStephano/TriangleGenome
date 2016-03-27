@@ -47,4 +47,14 @@ public interface GUI
    */
   int getTribes();
 
+  /**
+   * @return Width of the image being drawn
+   */
+  int getImageWidth();
+
+  /**
+   * @return Height of the image being drawn
+   */
+  int getImageHeight();
+
 }

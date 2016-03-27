@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import cs351.core.Gene;
+import cs351.core.GeneTypes;
+import cs351.core.Genome;
+import cs351.core.Triangle;
 import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
 import javafx.application.Application;
@@ -45,6 +49,8 @@ public class GameWindow implements GUI
 
   private int tribeSize = 8;
   private int genomeSize = 200;
+  private double[] xVals = new double [3];
+  private double[] yVals = new double [3];
   Vector2f[] vector1List = new Vector2f[genomeSize];
   Vector2f[] vector2List = new Vector2f[genomeSize];
   Vector2f[] vector3List = new Vector2f[genomeSize];
@@ -71,6 +77,9 @@ public class GameWindow implements GUI
   private Button pauseButton;
   private boolean genomePaused = false;
   private Boolean userWantsToClose = false;
+
+  private Genome currentGenome;
+  private Triangle currentTriangle;
 
 
   /**
@@ -294,8 +303,8 @@ public class GameWindow implements GUI
       bottomRowContainer.getChildren().addAll();
 
       // Initialize random triangles and call an update
-      initTriangles();
-      update(engine);
+      //initTriangles();
+      //update(engine);
 
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
       root.getChildren().addAll(canvasOriginal, canvasGenetic, topRowContainer, middleRowContainer, bottomRowContainer);
@@ -373,38 +382,84 @@ public class GameWindow implements GUI
   @Override
   public void update(EvolutionEngine engine)
   {
+    int rColor, gColor, bColor = 0;
+    double alpha = 0;
+//    double x1 = 0;
+//    double x2 = 0;
+//    double x3 = 0;
+//
+//    double y1 = 0;
+//    double y2 = 0;
+//    double y3 = 0;
+//    double tempX, tempY;
+    int vertexCounter = 0;
+
     // If we are not debugging, then refresh the canvas at each update
     if (!canvasDebugging) clearGeneticCanvas();
 
-    int rColor, gColor, bColor = 0;
-    double alpha = 0;
-    double x1, x2, x3, y1, y2, y3 = 0;
+    // For time being, select very first genome
+    currentGenome = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next();
 
-    // Loop through selected array and draw the triangles
-    for (int i = 0; i < genomeSize; i++)
+    // Loop through each triangle of genome
+    for(Triangle currentTriangle: currentGenome.getTriangles())
     {
-      // Select and set color
-      rColor = (int) vectorColorList[i].getX();
-      gColor = (int) vectorColorList[i].getY();
-      bColor = (int) vectorColorList[i].getZ();
-      alpha = vectorColorList[i].getW();
+      vertexCounter = 0;
 
-      gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
-//      gcGenetic.setFill(Color.BLACK);
-
-      // Get triangle points
-      x1 = vector1List[i].getX();
-      x2 = vector2List[i].getX();
-      x3 = vector3List[i].getX();
-
-      //System.out.printf("x1: %.1f  x2: %.1f  x3: %.1f\n", x1, x2, x3);
-
-      y1 = vector1List[i].getY();
-      y2 = vector2List[i].getY();
-      y3 = vector3List[i].getY();
-
-      gcGenetic.fillPolygon(new double[]{x1, x2, x3}, new double[]{y1, y2, y3}, 3);
+      // Get Color Values
+      rColor = (int)currentTriangle.getColor().getX();
+      gColor = (int)currentTriangle.getColor().getY();
+      bColor = (int)currentTriangle.getColor().getZ();
+      alpha = (int)currentTriangle.getColor().getW();
+      for(Gene currentGene: currentTriangle.getGenes())
+      {
+        if(currentGene.getType().equals(GeneTypes.TRIANGLE_VERTEX_X))
+        {
+          xVals[vertexCounter] = currentGene.getValue();
+        }
+        else if(currentGene.getType().equals(GeneTypes.TRIANGLE_VERTEX_X))
+        {
+          yVals[vertexCounter] = currentGene.getValue();
+          vertexCounter ++;
+        }
+        if(vertexCounter >= 3) break;
+      }
+      gcGenetic.fillPolygon(xVals, yVals, 3);
     }
+
+
+//    // Loop through selected array and draw the triangles
+//    for (int i = 0; i < genomeSize; i++)
+//    {
+//      // Select and set color
+//      rColor = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getX();
+//      gColor = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getY();
+//      bColor = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getZ();
+//      alpha = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getW();
+//
+//      gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
+//
+//
+//
+//
+//
+//      // Get triangle points
+//      while(engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().hasNext())
+//      {
+//       // tempX = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().next().getX();
+//       // tempY = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().next().getY();
+//        x1 = vector1List[i].getX();
+//        x2 = vector2List[i].getX();
+//        x3 = vector3List[i].getX();
+//
+//        y1 = vector1List[i].getY();
+//        y2 = vector2List[i].getY();
+//        y3 = vector3List[i].getY();
+//      }
+//
+//      //x1 = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().next().getX();
+//
+//      gcGenetic.fillPolygon(xVals, yVals, 3);
+//    }
   }
 
   private void windowClosed(WindowEvent event)
@@ -444,5 +499,23 @@ public class GameWindow implements GUI
   public int getTribes()
   {
     return tribeSize;
+  }
+
+  /**
+   * TODO: Change return value to match actual selected image width
+   * @return Width of the image being drawn
+   */
+  public int getImageWidth()
+  {
+    return (int)canvasWidth;
+  }
+
+  /**
+   * TODO: Change return value to match actual selected image height
+   * @return Height of the image being drawn
+   */
+  public int getImageHeight()
+  {
+    return (int)canvasHeight;
   }
 }

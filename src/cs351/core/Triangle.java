@@ -1,8 +1,10 @@
 package cs351.core;
 
+import cs351.core.Engine.GUI;
 import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
 import java.util.Collection;
+import java.util.Random;
 
 public interface Triangle
 {
@@ -31,4 +33,30 @@ public interface Triangle
    * @return ordered list of genes
    */
   Collection<Gene> getGenes();
+
+  /**
+   * @return maximum distance between any vertex of the triangle
+   */
+  int getMaxSize();
+
+  /**
+   * @return minimum distance between any vertex of the triangle
+   */
+  int getMinSize();
+
+  /**
+   * set the maximum distance between any vertex of the triangle
+   */
+  void setMaxSize(int maxSize);
+
+  /**
+   * set the maximum distance between any vertex of the triangle
+   */
+  void setMinSize(int minSize);
+
+  /**
+   * Randomly generates 10 genes for this triangle. Uses passed generator for any randomization
+   */
+  void init(Random numGenerator, GUI mainGUI);
+
 }

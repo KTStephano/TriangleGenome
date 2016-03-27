@@ -6,8 +6,8 @@ package cs351.core;
  */
 public class Gene
 {
-  private int value;
-  private final int MIN_VALUE, MAX_VALUE;
+  private double value;
+  private final double MIN_VALUE, MAX_VALUE;
   private GeneTypes type;
 
   /**
@@ -18,7 +18,7 @@ public class Gene
    * @param maxValue the maximum value that this gene can take on
    * @param type GeneTypes object
    */
-  public Gene(int value, int minValue, int maxValue, GeneTypes type)
+  public Gene(double value, double minValue, double maxValue, GeneTypes type)
   {
     this.value = value;
     MIN_VALUE = minValue;
@@ -31,7 +31,7 @@ public class Gene
    *
    * @return current value
    */
-  public int getValue()
+  public double getValue()
   {
     return value;
   }
@@ -41,7 +41,7 @@ public class Gene
    *
    * @return min value
    */
-  public int getMinValue()
+  public double getMinValue()
   {
     return MIN_VALUE;
   }
@@ -51,7 +51,7 @@ public class Gene
    *
    * @return max value
    */
-  public int getMaxValue()
+  public double getMaxValue()
   {
     return MAX_VALUE;
   }
@@ -72,7 +72,7 @@ public class Gene
    *
    * @param newVal new value for the gene
    */
-  public void mutate(int newVal)
+  public void mutate(double newVal)
   {
     // Basic bounds checking
     if (newVal < MIN_VALUE) newVal = MIN_VALUE;

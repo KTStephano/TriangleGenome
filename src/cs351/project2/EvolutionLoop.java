@@ -1,8 +1,6 @@
 package cs351.project2;
 
-import cs351.core.Engine.EvolutionEngine;
-import cs351.core.Engine.Globals;
-import cs351.core.Engine.Log;
+import cs351.core.Engine.*;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -14,6 +12,7 @@ import javafx.stage.WindowEvent;
 public class EvolutionLoop extends Application
 {
   private EvolutionEngine engine;
+  private GUI game;
   private boolean jobSystemShutdown = false;
   private Stage stage;
 
@@ -27,8 +26,9 @@ public class EvolutionLoop extends Application
     stage.setHeight(350);
     stage.setOnCloseRequest(this::windowClosed); // Just in case the GUI doesn't overwrite this
     engine = new Engine();
+
     // null for population and gui for now until those classes are up and running
-    engine.init(stage, "images/MonaLisa.jpg", null, new GameWindow());
+    engine.init(stage, "images/MonaLisa.jpg", new GamePopulation(), new GameWindow());
     if (!stage.isShowing()) stage.show();
     loop();
   }
