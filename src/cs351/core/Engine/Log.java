@@ -1,8 +1,6 @@
 package cs351.core.Engine;
 
-import javafx.geometry.Point3D;
-
-import java.io.File;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,14 +9,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Formatter;
-import java.util.LinkedList;
 import java.util.Locale;
 
 /**
  * A Log provides a way to write structured debug output to the given file.
  *
  * Files that do not exist will be created and files that do exist will
- * be overwritten.
+ * be appended to.
  *
  * By default, even when a filename is provided, the Log class will create
  * a new directory within the project called debug, and within that it
@@ -31,6 +28,8 @@ import java.util.Locale;
 public class Log
 {
   private final Path FILE_PATH;
+  private BufferedWriter fileWriter;
+  private boolean readyForFileWriting = true;
 
   /**
    * Default constructor. All requests will be pushed to the created
@@ -49,6 +48,16 @@ public class Log
     //System.out.println(path);
     FILE_PATH = Paths.get(path);
     createDirectoryFromPath(path);
+    try
+    {
+      if (!Files.exists(FILE_PATH)) Files.createFile(FILE_PATH);
+      FileOutputStream stream = new FileOutputStream(new File(formatForFileOpen(FILE_PATH.toAbsolutePath().toString())));
+      fileWriter = new BufferedWriter(new OutputStreamWriter(stream));
+    }
+    catch (Exception e)
+    {
+      readyForFileWriting = false;
+    }
   }
 
   /**
@@ -67,19 +76,41 @@ public class Log
    */
   public void log(String logType, String format, Object ... args)
   {
+    if (!readyForFileWriting) return;
     StringBuilder str = new StringBuilder(format.length());
     Formatter formatter = new Formatter(str, Locale.US);
     String key = generateLogKey(logType);
     String result = formatter.format(format, args).toString();
+    //System.out.println(result);
     try
     {
-      LinkedList<String> list = new LinkedList<>();
-      list.add(key + " " + result);
-      Files.write(FILE_PATH, list, Charset.defaultCharset());
+      //LinkedList<String> list = new LinkedList<>();
+      String logData = key + " " + result;
+      fileWriter.write(logData);
+      fileWriter.flush();
+      //Files.write(FILE_PATH, list, Charset.defaultCharset());
     }
     catch (Exception e)
     {
       System.out.println("Error writing to log file " + FILE_PATH.toString());
+    }
+  }
+
+  /**
+   * Ensures that the resource(s) used by the Log object are freed.
+   */
+  public void destroy()
+  {
+    if (readyForFileWriting)
+    {
+      try
+      {
+        fileWriter.close();
+      }
+      catch (Exception e)
+      {
+        // Do nothing
+      }
     }
   }
 
@@ -107,5 +138,16 @@ public class Log
   private String generateLogKey(String logKey)
   {
     return "(" + logKey.toUpperCase() + ")";
+  }
+
+  private String formatForFileOpen(String filename)
+  {
+    StringBuilder str = new StringBuilder(filename.length());
+    for (int i = 0; i < filename.length(); i++)
+    {
+      if (filename.charAt(i) == '\\') str.append('/');
+      else str.append(filename.charAt(i));
+    }
+    return str.toString();
   }
 }

@@ -29,6 +29,14 @@ public interface EvolutionEngine
   Statistics getStatistics();
 
   /**
+   * Returns a reference to the active Log that the engine is using. This can be used
+   * to write data to the current log file.
+   *
+   * @return log system
+   */
+  Log getLog();
+
+  /**
    * Gets the population being used by the engine. The population manages
    * the main tribe.
    *

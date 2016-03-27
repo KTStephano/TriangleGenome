@@ -20,6 +20,8 @@ public final class Engine implements EvolutionEngine
   private Population population;
   private GUI gui;
   private Genome target;
+  private Log log;
+  private Statistics statistics;
   private boolean isRunningConsoleMode;
   private final JobList MAIN_JOB_LIST;
 
@@ -70,7 +72,13 @@ public final class Engine implements EvolutionEngine
   @Override
   public Statistics getStatistics()
   {
-    return null;
+    return statistics;
+  }
+
+  @Override
+  public Log getLog()
+  {
+    return log;
   }
 
   @Override
@@ -108,6 +116,13 @@ public final class Engine implements EvolutionEngine
 
     this.population = population;
     gui = mainGUI;
+
+    // Create the log
+    log = new Log("GeneticLog" + "-RuntimeCode_" + System.currentTimeMillis() + ".txt");
+    printLogHeader(imageFile);
+
+    // Initialize the statistics system
+    initStats();
 
     // Init the population and main GUI if they are not null
     if (mainGUI == null) isRunningConsoleMode = true;
@@ -190,6 +205,7 @@ public final class Engine implements EvolutionEngine
       IS_PENDING_SHUTDOWN.set(false);
       IS_INITIALIZED.set(false);
       IS_SHUTDOWN.set(true);
+      log.destroy(); // Let the log free its resource(s)
       System.out.println("--- Engine Shutdown Successfully ---");
       return; // finish here
     }
@@ -212,11 +228,8 @@ public final class Engine implements EvolutionEngine
         currentTimestamp = 0; // reset
         if (isRunningConsoleMode)
         {
-          long totalMilliseconds = 0;
-          for (int i = 0; i < LAST_100_FRAME_TIMESTAMPS.length; i++) totalMilliseconds += LAST_100_FRAME_TIMESTAMPS[i];
-          double averageTime = totalMilliseconds / (double) LAST_100_FRAME_TIMESTAMPS.length;
-          double avgFPS = averageTime / 1000.0; // convert to seconds
-          enginePrint("Average time per generation: " + avgFPS + " seconds");
+          double avgGPS = getAverageGenerationsPerSecond();
+          enginePrint("Average time per generation: " + avgGPS + " seconds");
           //System.out.println("Average time per generation: " + avgFPS);
         }
       }
@@ -230,6 +243,14 @@ public final class Engine implements EvolutionEngine
       GENERATIONS.getAndIncrement();
       MAIN_JOB_LIST.submitJobs(false);
     }
+  }
+
+  public double getAverageGenerationsPerSecond()
+  {
+    long totalMilliseconds = 0;
+    for (int i = 0; i < LAST_100_FRAME_TIMESTAMPS.length; i++) totalMilliseconds += LAST_100_FRAME_TIMESTAMPS[i];
+    double averageTime = totalMilliseconds / (double) LAST_100_FRAME_TIMESTAMPS.length;
+    return averageTime / 1000.0; // convert to seconds
   }
 
   public int getVersionMinor()
@@ -250,5 +271,20 @@ public final class Engine implements EvolutionEngine
   private void enginePrint(String message)
   {
     System.out.println("(ENGINE) " + message);
+  }
+
+  private void initStats()
+  {
+    statistics = new Statistics(log);
+  }
+
+  private void printLogHeader(String imageFile)
+  {
+    String engineTag = "engine";
+    log.log(engineTag, "Engine Version: %s\n", getFullVersion());
+    log.log(engineTag, "Available Memory (JVM): %s bytes\n", Runtime.getRuntime().totalMemory());
+    log.log(engineTag, "Target Image: %s\n", imageFile);
+    log.log(engineTag, "Valid Population: %b\n", (population != null));
+    log.log(engineTag, "Console Mode: %b\n", (gui == null));
   }
 }
