@@ -184,6 +184,7 @@ public final class Engine implements EvolutionEngine
     int numTribes = mainGUI == null ? 1 : mainGUI.getTribes();
     jobSystem = new ParallelJobSystem(numTribes);
     jobSystem.init();
+    mainJobList = new JobList(jobSystem);
     if (population != null)
     {
       population.generateStartingState(this, numTribes);
