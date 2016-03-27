@@ -6,14 +6,15 @@ import java.util.LinkedList;
 public class Genome
 {
   private final static int ZERO_HASH = 341940517;
-  protected double fitness = 0.0;
+  protected Double fitness = 0.0;
   protected final LinkedList<Triangle> TRIANGLES = new LinkedList<>();
   protected final LinkedList<Gene> GENES = new LinkedList<>();
 
   @Override
   public int hashCode()
   {
-    return TRIANGLES.hashCode() * GENES.hashCode() * fitness > 0.0 || fitness < 0.0 ? (int)fitness * 100 : ZERO_HASH;
+    //return TRIANGLES.hashCode() * GENES.hashCode() * fitness > 0.0 || fitness < 0.0 ? (int)fitness * 100 : ZERO_HASH;
+    return TRIANGLES.hashCode() + GENES.hashCode() + fitness.hashCode();
   }
 
   @Override
