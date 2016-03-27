@@ -58,6 +58,47 @@ public final class Engine implements EvolutionEngine
     }
   }
 
+  /**
+   * Generations per second data field.
+   */
+  private final class GenerationsPerSecond extends DataField<Double>
+  {
+    private final String LOG_TAG;
+
+    public GenerationsPerSecond(String dataTag, String logTag)
+    {
+      super(dataTag);
+      LOG_TAG = logTag;
+      data = 0.0;
+    }
+
+    @Override
+    public void update(Log log)
+    {
+      data = getAverageGenerationsPerSecond();
+      if (log != null) log.log(LOG_TAG, getDataTag() + ": %f seconds\n", getData());
+    }
+  }
+
+  private final class TotalGenerations extends DataField<Integer>
+  {
+    private final String LOG_TAG;
+
+    public TotalGenerations(String dataTag, String logTag)
+    {
+      super(dataTag);
+      LOG_TAG = logTag;
+      data = 0;
+    }
+
+    @Override
+    public void update(Log log)
+    {
+      data = getGenerationCount();
+      if (log != null) log.log(LOG_TAG, getDataTag() + ": %d generations\n", getData());
+    }
+  }
+
   // Initialize atomic objects
   {
     MAIN_JOB_LIST = new JobList(Globals.JOB_SYSTEM);
@@ -232,6 +273,8 @@ public final class Engine implements EvolutionEngine
           enginePrint("Average time per generation: " + avgGPS + " seconds");
           //System.out.println("Average time per generation: " + avgFPS);
         }
+        // Tell the statistics system to update
+        statistics.update(null);
       }
 
       if (isRunningConsoleMode && GENERATIONS.get() % 100 == 0)
@@ -276,6 +319,8 @@ public final class Engine implements EvolutionEngine
   private void initStats()
   {
     statistics = new Statistics(log);
+    statistics.add(new GenerationsPerSecond("Average Generations Per Second", "engine"));
+    statistics.add(new TotalGenerations("Total Generations", "engine"));
   }
 
   private void printLogHeader(String imageFile)

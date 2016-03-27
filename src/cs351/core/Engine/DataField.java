@@ -60,6 +60,11 @@ public abstract class DataField<E>
   /**
    * This is meant to be called at regular intervals by the Statistics class so that
    * the data field can update its data if it needs to.
+   *
+   * If a Log object is supplied, the DataField should log its latest data.
+   *
+   * @param log log object reference - check for null since it might be if no logging
+   *            is required
    */
-  public abstract void update();
+  public abstract void update(Log log);
 }
