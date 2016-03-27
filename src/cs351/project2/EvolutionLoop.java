@@ -54,7 +54,6 @@ public class EvolutionLoop extends Application
 
         if (engine.isEngineShutdown())
         {
-          shutdownJobSystem();
           this.stop();
           return;
         }
@@ -76,15 +75,8 @@ public class EvolutionLoop extends Application
     engine.beginShutdown();
     // Engine needs to keep updating to eventually close
     while (!engine.isEngineShutdown()) engine.generation();
-    shutdownJobSystem();
     // Make sure the stage is closed
     if (stage.isShowing()) stage.close();
-  }
-
-  private void shutdownJobSystem()
-  {
-    if (!jobSystemShutdown) Globals.JOB_SYSTEM.destroy();
-    jobSystemShutdown = true;
   }
 
   public static void main(String[] args)

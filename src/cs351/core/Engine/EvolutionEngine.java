@@ -2,6 +2,7 @@ package cs351.core.Engine;
 
 import cs351.core.Genome;
 import cs351.utility.Job;
+import cs351.utility.ParallelJobSystem;
 import javafx.stage.Stage;
 
 /**
@@ -35,6 +36,14 @@ public interface EvolutionEngine
    * @return log system
    */
   Log getLog();
+
+  /**
+   * Returns the parallel job system that is being used by the engine. So long as engine.init()
+   * has already been called, this should not be null/invalid.
+   *
+   * @return parallel job system
+   */
+  ParallelJobSystem getParallelJobSystem();
 
   /**
    * Gets the population being used by the engine. The population manages

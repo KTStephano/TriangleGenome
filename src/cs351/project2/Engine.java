@@ -5,6 +5,7 @@ import cs351.core.Genome;
 import cs351.core.Tribe;
 import cs351.utility.Job;
 import cs351.utility.JobList;
+import cs351.utility.ParallelJobSystem;
 import javafx.stage.Stage;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -21,9 +22,10 @@ public final class Engine implements EvolutionEngine
   private GUI gui;
   private Genome target;
   private Log log;
+  private ParallelJobSystem jobSystem;
   private Statistics statistics;
   private boolean isRunningConsoleMode;
-  private final JobList MAIN_JOB_LIST;
+  private JobList mainJobList;
 
   // Atomic objects - these are the values that need to be thread safe
   private final AtomicInteger GENERATIONS;
@@ -101,7 +103,7 @@ public final class Engine implements EvolutionEngine
 
   // Initialize atomic objects
   {
-    MAIN_JOB_LIST = new JobList(Globals.JOB_SYSTEM);
+    //mainJobList = new JobList(Globals.JOB_SYSTEM);
     GENERATIONS = new AtomicInteger(1);
     NUM_WORKING_JOBS = new AtomicInteger(0);
     IS_INITIALIZED = new AtomicBoolean(false);
@@ -120,6 +122,12 @@ public final class Engine implements EvolutionEngine
   public Log getLog()
   {
     return log;
+  }
+
+  @Override
+  public ParallelJobSystem getParallelJobSystem()
+  {
+    return jobSystem;
   }
 
   @Override
@@ -176,14 +184,16 @@ public final class Engine implements EvolutionEngine
     if (population != null)
     {
       int numTribes = mainGUI == null ? 1 : mainGUI.getTribes();
+      jobSystem = new ParallelJobSystem(numTribes);
+      jobSystem.init();
       population.generateStartingState(this, numTribes);
       //Tribe tribe = population.getTribe();
       // Initialize the mutator jobs
-      //for (int i = 0; i < tribe.size(); i++) MAIN_JOB_LIST.add(new MutatorJob(population, tribe.get(i)), 1);
+      //for (int i = 0; i < tribe.size(); i++) mainJobList.add(new MutatorJob(population, tribe.get(i)), 1);
       // TODO destroy this
       for (Tribe tribe : population.getTribes())
       {
-        for(Genome genome : tribe.getGenomes()) MAIN_JOB_LIST.add(new MutatorJob(population, genome), 1);
+        for(Genome genome : tribe.getGenomes()) mainJobList.add(new MutatorJob(population, genome), 1);
       }
     }
 
@@ -243,16 +253,17 @@ public final class Engine implements EvolutionEngine
     if (!IS_INITIALIZED.get()) throw new RuntimeException("Engine was not initialized before generation() call");
     if (IS_PENDING_SHUTDOWN.get())
     {
-      MAIN_JOB_LIST.waitForCompletion();
+      mainJobList.waitForCompletion();
       IS_PENDING_SHUTDOWN.set(false);
       IS_INITIALIZED.set(false);
       IS_SHUTDOWN.set(true);
       log.destroy(); // Let the log free its resource(s)
+      jobSystem.destroy(); // destroy the job system
       System.out.println("--- Engine Shutdown Successfully ---");
       return; // finish here
     }
     // Check the status of the last queued frame
-    if (MAIN_JOB_LIST.containsActiveJobs()) MAIN_JOB_LIST.waitForCompletion();
+    if (mainJobList.containsActiveJobs()) mainJobList.waitForCompletion();
     // Tell the GUI it's a good time to do a rendering update since the previous
     // frame is done
     if (!isRunningConsoleMode) gui.update(this);
@@ -285,7 +296,7 @@ public final class Engine implements EvolutionEngine
 
       // TODO add rest of loop here
       GENERATIONS.getAndIncrement();
-      MAIN_JOB_LIST.submitJobs(false);
+      mainJobList.submitJobs(false);
     }
   }
 
