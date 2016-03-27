@@ -57,7 +57,8 @@ public class GenomeTree implements Tribe
   @Override
   public boolean contains(Genome genome)
   {
-    return UNSORTED_GENOMES.contains(genome);
+    return GENOME_TREE.contains(genome);
+    //return UNSORTED_GENOMES.contains(genome);
   }
 
   @Override

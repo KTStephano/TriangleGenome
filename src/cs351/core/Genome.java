@@ -6,23 +6,33 @@ import java.util.LinkedList;
 public class Genome
 {
   private final static int ZERO_HASH = 341940517;
+  private static int ID = 0;
+  private int id;
   protected Double fitness = 0.0;
   protected final LinkedList<Triangle> TRIANGLES = new LinkedList<>();
   protected final LinkedList<Gene> GENES = new LinkedList<>();
+
+  {
+    id = ++ID;
+  }
 
   @Override
   public int hashCode()
   {
     //return TRIANGLES.hashCode() * GENES.hashCode() * fitness > 0.0 || fitness < 0.0 ? (int)fitness * 100 : ZERO_HASH;
-    return TRIANGLES.hashCode() + GENES.hashCode() + fitness.hashCode();
+    //return TRIANGLES.hashCode() + GENES.hashCode() + fitness.hashCode();
+    return id;
   }
 
   @Override
   public boolean equals(Object other)
   {
+    /*
     return this == other || (other instanceof Genome &&
             ((Genome)other).TRIANGLES.equals(TRIANGLES) &&
             ((Genome)other).GENES.equals(GENES));
+            */
+    return this == other;
   }
 
   /**
