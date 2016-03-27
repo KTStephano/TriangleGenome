@@ -111,6 +111,7 @@ public class GamePopulation implements Population
         tribe.add(genome);
       }
 
+      System.out.println(tribe.size());
       // Once current tribe has had all of its genomes added, organize them by fitness
       tribe.recalculate();
 

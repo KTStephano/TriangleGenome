@@ -6,6 +6,7 @@ import cs351.core.Tribe;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.TreeSet;
 
 /**
@@ -13,7 +14,7 @@ import java.util.TreeSet;
  */
 public class GenomeTree implements Tribe
 {
-  private final HashSet<Genome> UNSORTED_GENOMES = new HashSet<>(2000);
+  private final LinkedList<Genome> UNSORTED_GENOMES = new LinkedList<>();
   private final TreeSet<Genome> GENOME_TREE;
 
   {
@@ -29,12 +30,14 @@ public class GenomeTree implements Tribe
   @Override
   public void add(Genome genome)
   {
-    if (!contains(genome))
-    {
-      UNSORTED_GENOMES.add(genome);
-      GENOME_TREE.add(genome);
+    UNSORTED_GENOMES.add(genome);
+    GENOME_TREE.add(genome);
+    //if (!contains(genome))
+    //{
+      //UNSORTED_GENOMES.add(genome);
+      //GENOME_TREE.add(genome);
       //System.out.println(GENOME_TREE.first().getFitness());
-    }
+    //}
   }
 
   @Override
@@ -57,14 +60,14 @@ public class GenomeTree implements Tribe
   @Override
   public boolean contains(Genome genome)
   {
-    return GENOME_TREE.contains(genome);
-    //return UNSORTED_GENOMES.contains(genome);
+    //return GENOME_TREE.contains(genome);
+    return UNSORTED_GENOMES.contains(genome);
   }
 
   @Override
   public int size()
   {
-    return UNSORTED_GENOMES.size();
+    return GENOME_TREE.size();
   }
 
   @Override
