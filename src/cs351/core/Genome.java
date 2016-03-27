@@ -3,7 +3,7 @@ package cs351.core;
 import java.util.Collection;
 import java.util.LinkedList;
 
-public class Genome
+public final class Genome
 {
   private final static int ZERO_HASH = 341940517;
   private static int ID = 0;
@@ -19,20 +19,21 @@ public class Genome
   @Override
   public int hashCode()
   {
-    //return TRIANGLES.hashCode() * GENES.hashCode() * fitness > 0.0 || fitness < 0.0 ? (int)fitness * 100 : ZERO_HASH;
+    return (int)(TRIANGLES.hashCode() *
+                 GENES.hashCode() *
+                 (fitness > 0.0 || fitness < 0.0 ? fitness * 100 : ZERO_HASH));
     //return TRIANGLES.hashCode() + GENES.hashCode() + fitness.hashCode();
-    return id;
   }
 
   @Override
   public boolean equals(Object other)
   {
-    /*
-    return this == other || (other instanceof Genome &&
-            ((Genome)other).TRIANGLES.equals(TRIANGLES) &&
-            ((Genome)other).GENES.equals(GENES));
-            */
-    return this == other;
+    if (this == other) return true;
+    else if (!(other instanceof Genome)) return false;
+    Genome genome = (Genome)other;
+    return this.TRIANGLES.equals(genome.TRIANGLES) &&
+            this.GENES.equals(genome.GENES) &&
+            this.fitness.equals(genome.fitness);
   }
 
   /**
