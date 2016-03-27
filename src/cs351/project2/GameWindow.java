@@ -425,7 +425,7 @@ public class GameWindow implements GUI
         }
         if(vertexCounter >= 3) break;
       }
-      engine.getLog().log("window", "\n");
+      //engine.getLog().log("window", "\n");
       gcGenetic.fillPolygon(xVals, yVals, 3);
     }
 
