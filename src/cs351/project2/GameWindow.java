@@ -1,5 +1,6 @@
 package cs351.project2;
 
+import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.GUI;
 
@@ -9,10 +10,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import cs351.core.Gene;
-import cs351.core.GeneTypes;
-import cs351.core.Genome;
-import cs351.core.Triangle;
 import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
 import javafx.application.Application;
@@ -398,7 +395,9 @@ public class GameWindow implements GUI
     if (!canvasDebugging) clearGeneticCanvas();
 
     // For time being, select very first genome
-    currentGenome = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next();
+    ArrayList<Tribe> tribes = new ArrayList<>();
+    tribes.addAll(engine.getPopulation().getTribes());
+    currentGenome = tribes.get(0).getGenomes().iterator().next();
 
     // Loop through each triangle of genome
     for(Triangle currentTriangle: currentGenome.getTriangles())
