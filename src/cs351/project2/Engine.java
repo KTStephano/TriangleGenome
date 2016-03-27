@@ -181,11 +181,11 @@ public final class Engine implements EvolutionEngine
       gui.init(stage, this);
     }
 
+    int numTribes = mainGUI == null ? 1 : mainGUI.getTribes();
+    jobSystem = new ParallelJobSystem(numTribes);
+    jobSystem.init();
     if (population != null)
     {
-      int numTribes = mainGUI == null ? 1 : mainGUI.getTribes();
-      jobSystem = new ParallelJobSystem(numTribes);
-      jobSystem.init();
       population.generateStartingState(this, numTribes);
       //Tribe tribe = population.getTribe();
       // Initialize the mutator jobs
