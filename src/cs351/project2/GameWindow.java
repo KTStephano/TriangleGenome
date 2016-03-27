@@ -408,20 +408,24 @@ public class GameWindow implements GUI
       rColor = (int)currentTriangle.getColor().getX();
       gColor = (int)currentTriangle.getColor().getY();
       bColor = (int)currentTriangle.getColor().getZ();
-      alpha = (int)currentTriangle.getColor().getW();
+      alpha = currentTriangle.getColor().getW();
+      gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
+
       for(Gene currentGene: currentTriangle.getGenes())
       {
         if(currentGene.getType().equals(GeneTypes.TRIANGLE_VERTEX_X))
         {
           xVals[vertexCounter] = currentGene.getValue();
         }
-        else if(currentGene.getType().equals(GeneTypes.TRIANGLE_VERTEX_X))
+        else if(currentGene.getType().equals(GeneTypes.TRIANGLE_VERTEX_Y))
         {
           yVals[vertexCounter] = currentGene.getValue();
+          //engine.getLog().log("window", "x[%d]: %f \t y[%d]: %f\n", vertexCounter, xVals[vertexCounter], vertexCounter, yVals[vertexCounter]);
           vertexCounter ++;
         }
         if(vertexCounter >= 3) break;
       }
+      engine.getLog().log("window", "\n");
       gcGenetic.fillPolygon(xVals, yVals, 3);
     }
 
