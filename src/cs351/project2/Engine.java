@@ -175,7 +175,8 @@ public final class Engine implements EvolutionEngine
 
     if (population != null)
     {
-      population.generateStartingState(this, 1);
+      int numTribes = mainGUI == null ? 1 : mainGUI.getTribes();
+      population.generateStartingState(this, numTribes);
       //Tribe tribe = population.getTribe();
       // Initialize the mutator jobs
       //for (int i = 0; i < tribe.size(); i++) MAIN_JOB_LIST.add(new MutatorJob(population, tribe.get(i)), 1);
