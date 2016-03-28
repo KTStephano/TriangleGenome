@@ -258,6 +258,7 @@ public class GameWindow implements GUI
 
       // Create the slider(s)
       int tribeLabelWidth = 90;
+      double sliderNumBuffer = 0.1;
       Label tribeLabel = new Label("Showing Tribe:");
       tribeLabel.setMinWidth(tribeLabelWidth);
       setSelectedTribe(0);
@@ -272,7 +273,9 @@ public class GameWindow implements GUI
       genomeListSlider.valueProperty().addListener(new ChangeListener<Number>() {
         public void changed(ObservableValue<? extends Number> ov,
                             Number old_val, Number new_val) {
-          setSelectedTribe(new_val.intValue()-1);
+          System.out.println("new_val: " + new_val);
+          if(new_val.doubleValue() % new_val.intValue() <= sliderNumBuffer) setSelectedTribe(new_val.intValue()-1);
+
         }
       });
       // Create the pause button
