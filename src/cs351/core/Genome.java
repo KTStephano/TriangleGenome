@@ -10,7 +10,7 @@ public final class Genome
   private int id;
   protected Double fitness = 0.0;
   protected final LinkedList<Triangle> TRIANGLES = new LinkedList<>();
-  protected final LinkedList<Gene> GENES = new LinkedList<>();
+  //protected final LinkedList<Integer> GENES = new LinkedList<>();
 
   {
     id = ++ID;
@@ -20,7 +20,6 @@ public final class Genome
   public int hashCode()
   {
     return (int)(TRIANGLES.hashCode() *
-                 GENES.hashCode() *
                  (fitness > 0.0 || fitness < 0.0 ? fitness * 100 : ZERO_HASH));
     //return TRIANGLES.hashCode() + GENES.hashCode() + fitness.hashCode();
   }
@@ -32,7 +31,6 @@ public final class Genome
     else if (!(other instanceof Genome)) return false;
     Genome genome = (Genome)other;
     return this.TRIANGLES.equals(genome.TRIANGLES) &&
-            this.GENES.equals(genome.GENES) &&
             this.fitness.equals(genome.fitness);
   }
 
@@ -43,7 +41,6 @@ public final class Genome
   public void add(Triangle triangle)
   {
     TRIANGLES.add(triangle);
-    GENES.addAll(triangle.getGenes());
   }
 
   /**
@@ -56,11 +53,7 @@ public final class Genome
    */
   public void remove(Triangle triangle)
   {
-    if (TRIANGLES.contains(triangle))
-    {
-      TRIANGLES.remove(triangle);
-      GENES.removeAll(triangle.getGenes());
-    }
+    if (TRIANGLES.contains(triangle)) TRIANGLES.remove(triangle);
   }
 
   /**
@@ -87,25 +80,14 @@ public final class Genome
   /**
    * This should return an ordered list of TRIANGLES.
    *
+   * For each float array that is returned, that represents a complete triangle. The
+   * order of the genes within the float array is the same as the order that they were
+   * when the float array was added to the genome.
+   *
    * @return ordered list of TRIANGLES
    */
   public Collection<Triangle> getTriangles()
   {
     return TRIANGLES;
-  }
-
-  /**
-   * The output from this should be the same as calling getTriangles()
-   * and then getGenes() on each triangle in order.
-   *
-   * Example output: {triangle 1's genes}, {triangle 2's genes}, etc.
-   *
-   * The size of this list should be equal to the number of TRIANGLES * number of genes per triangle.
-   *
-   * @return ordered list of genes
-   */
-  public Collection<Gene> getGenes()
-  {
-    return GENES;
   }
 }

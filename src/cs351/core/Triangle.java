@@ -13,9 +13,18 @@ public interface Triangle
    * this is called, it should always return a list ordered in the form
    * of { vertex 1, vertex 2, vertex 3 }.
    *
-   * @return ordered list of vertices
+   * @return ordered list of x-vertices
    */
-  Collection<Vector2f> getVertices();
+  float[] getXVertices();
+
+  /**
+   * Returns an ordered list of vertices. No matter how many times
+   * this is called, it should always return a list ordered in the form
+   * of { vertex 1, vertex 2, vertex 3 }.
+   *
+   * @return ordered list of x-vertices
+   */
+  float[] getYVertices();
 
   /**
    * Returns a Vector4 representing the color of this triangle. The x value
@@ -24,7 +33,7 @@ public interface Triangle
    *
    * @return color of the triangle
    */
-  Vector4f getColor();
+  float[] getColor();
 
   /**
    * An ordered list of genes for this Triangle. See slide 25 for the order
@@ -32,7 +41,7 @@ public interface Triangle
    *
    * @return ordered list of genes
    */
-  Collection<Gene> getGenes();
+  float[] getGenes();
 
   /**
    * @return maximum distance between any vertex of the triangle
@@ -56,6 +65,8 @@ public interface Triangle
 
   /**
    * Randomly generates 10 genes for this triangle. Uses passed generator for any randomization
+   *
+   * @return a float array representing
    */
   void init(Random numGenerator, GUI mainGUI);
 

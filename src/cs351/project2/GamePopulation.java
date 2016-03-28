@@ -4,6 +4,8 @@ import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.GUI;
 import cs351.core.Engine.Population;
+import cs351.utility.Job;
+import cs351.utility.JobList;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,39 +87,52 @@ public class GamePopulation implements Population
     tribesCollection = new ArrayList<>();
     numGenerator = new Random();
 
+    JobList list = new JobList(engine.getParallelJobSystem());
 
     // Initialize tribes, and then add it to the tribe collection
     for(int i = 0; i < numTribes; i++)
     {
-      Tribe tribe = new GenomeTree();
-      System.out.println(">>>>>>>>>>>>> Tribe: " + i);
-
-      // For each tribe, initialize and add specified number of genomes to that tribe
-      for(int j = 0; j < numGenomes; j++)
+      final Tribe TRIBE = new GenomeTree();
+      final int TRIBE_NUM = i;
+      
+      // add a new job to the list with the given tribe
+      list.add(new Job()
       {
-        // Initialize genome, and give it a specified amount of new triangles. Remember that a triangle is a part of a genome.
-        // A genome will also have a fitness level, however that will be calculated within the recalulate method
-        // within tribe.
-        Genome genome = new Genome();
-        for(int k = 0; k < numTriangles; k++)
+        @Override
+        public void start(int threadID)
         {
-          Triangle triangle = new GameTriangle();
-          triangle.init(numGenerator, engine.getGUI());
-          genome.add(triangle);
+          System.out.println(">>>>>>>>>>>>> Tribe " + TRIBE_NUM + " started on thread: " + threadID);
+
+          // For each tribe, initialize and add specified number of genomes to that tribe
+          for(int j = 0; j < numGenomes; j++)
+          {
+            // Initialize genome, and give it a specified amount of new triangles. Remember that a triangle is a part of a genome.
+            // A genome will also have a fitness level, however that will be calculated within the recalulate method
+            // within tribe.
+            Genome genome = new Genome();
+            for(int k = 0; k < numTriangles; k++)
+            {
+              Triangle triangle = new GameTriangle();
+              triangle.init(numGenerator, engine.getGUI());
+              genome.add(triangle);
+            }
+
+            // Add completed genome to tribe
+            TRIBE.add(genome);
+            // Once current tribe has had all of its genomes added, organize them by fitness
+            TRIBE.recalculate();
+          }
         }
-
-
-        // Add completed genome to tribe
-        tribe.add(genome);
-      }
-
-      System.out.println(tribe.size());
-      // Once current tribe has had all of its genomes added, organize them by fitness
-      tribe.recalculate();
+      }, 1);
 
       // Tribe is good to go, and now should be added to the tribe collection
-      tribesCollection.add(tribe);
+      tribesCollection.add(TRIBE);
     }
+
+    // Submit the jobs we just created above to the job system to be executed
+    // and then wait for them to finish
+    list.submitJobs(true);
+    list.waitForCompletion();
   }
 
   /**

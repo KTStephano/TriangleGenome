@@ -14,7 +14,7 @@ import java.util.TreeSet;
  */
 public class GenomeTree implements Tribe
 {
-  private final LinkedList<Genome> UNSORTED_GENOMES = new LinkedList<>();
+  private final HashSet<Genome> UNSORTED_GENOMES = new HashSet<>();
   private final TreeSet<Genome> GENOME_TREE;
 
   {

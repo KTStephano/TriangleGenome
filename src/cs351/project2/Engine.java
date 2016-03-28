@@ -191,11 +191,6 @@ public final class Engine implements EvolutionEngine
       //Tribe tribe = population.getTribe();
       // Initialize the mutator jobs
       //for (int i = 0; i < tribe.size(); i++) mainJobList.add(new MutatorJob(population, tribe.get(i)), 1);
-      // TODO destroy this
-      for (Tribe tribe : population.getTribes())
-      {
-        for(Genome genome : tribe.getGenomes()) mainJobList.add(new MutatorJob(population, genome), 1);
-      }
     }
 
     IS_INITIALIZED.set(true);
