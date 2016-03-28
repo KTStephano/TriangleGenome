@@ -381,14 +381,6 @@ public class GameWindow implements GUI
   {
     int rColor, gColor, bColor = 0;
     double alpha = 0;
-//    double x1 = 0;
-//    double x2 = 0;
-//    double x3 = 0;
-//
-//    double y1 = 0;
-//    double y2 = 0;
-//    double y3 = 0;
-//    double tempX, tempY;
     int vertexCounter = 0;
 
     // If we are not debugging, then refresh the canvas at each update
@@ -418,58 +410,10 @@ public class GameWindow implements GUI
       {
         xVals[i] = xVertices[i];
         yVals[i] = yVertices[i];
-        /**
-        if(currentGene.getType().equals(GeneTypes.TRIANGLE_VERTEX_X))
-        {
-          xVals[vertexCounter] = currentGene.getValue();
-        }
-        else if(currentGene.getType().equals(GeneTypes.TRIANGLE_VERTEX_Y))
-        {
-          yVals[vertexCounter] = currentGene.getValue();
-          //engine.getLog().log("window", "x[%d]: %f \t y[%d]: %f\n", vertexCounter, xVals[vertexCounter], vertexCounter, yVals[vertexCounter]);
-          vertexCounter ++;
-        }
-        if(vertexCounter >= 3) break;
-         */
       }
       //engine.getLog().log("window", "\n");
       gcGenetic.fillPolygon(xVals, yVals, 3);
     }
-
-
-//    // Loop through selected array and draw the triangles
-//    for (int i = 0; i < genomeSize; i++)
-//    {
-//      // Select and set color
-//      rColor = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getX();
-//      gColor = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getY();
-//      bColor = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getZ();
-//      alpha = (int) engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getColor().getW();
-//
-//      gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
-//
-//
-//
-//
-//
-//      // Get triangle points
-//      while(engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().hasNext())
-//      {
-//       // tempX = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().next().getX();
-//       // tempY = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().next().getY();
-//        x1 = vector1List[i].getX();
-//        x2 = vector2List[i].getX();
-//        x3 = vector3List[i].getX();
-//
-//        y1 = vector1List[i].getY();
-//        y2 = vector2List[i].getY();
-//        y3 = vector3List[i].getY();
-//      }
-//
-//      //x1 = engine.getPopulation().getTribes().iterator().next().getGenomes().iterator().next().getTriangles().iterator().next().getVertices().iterator().next().getX();
-//
-//      gcGenetic.fillPolygon(xVals, yVals, 3);
-//    }
   }
 
   private void windowClosed(WindowEvent event)
