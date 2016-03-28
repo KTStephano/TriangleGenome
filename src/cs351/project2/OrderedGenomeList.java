@@ -109,10 +109,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   @Override
   public boolean contains(Genome genome)
   {
-    for (Genome element: list)
-    {
-      if (element.equals(genome)) return true;
-    }
+    for (int i = 0; i < size; i++) if (list[i].equals(genome)) return true;
     return false;
   }
 
@@ -134,7 +131,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   {
     if (isDirty) recalculate();
     LinkedList<Genome> genomes = new LinkedList<>();
-    for (Genome genome : list) genomes.add(genome);
+    for (int i = 0; i < size; i++) genomes.add(list[i]);
     return genomes;
   }
 
@@ -153,10 +150,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
    */
   public int indexOf(Genome genome)
   {
-    for (int i = 0; i < size; i++)
-    {
-      if (list[i].equals(genome)) return i;
-    }
+    for (int i = 0; i < size; i++) if (list[i].equals(genome)) return i;
     return -1;
   }
 

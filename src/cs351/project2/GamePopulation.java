@@ -102,7 +102,7 @@ public class GamePopulation implements Population
         @Override
         public void start(int threadID)
         {
-          System.out.println(">>>>>>>>>>>>> Tribe " + TRIBE_NUM + " started on thread: " + threadID);
+          System.out.println(">>>>>>>>>>>>> Tribe " + TRIBE_NUM + " started on thread " + threadID);
 
           // For each tribe, initialize and add specified number of genomes to that tribe
           for(int j = 0; j < numGenomes; j++)

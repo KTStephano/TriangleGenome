@@ -146,7 +146,7 @@ public final class ParallelJobSystem
   public void signalWork(int threadID) throws RuntimeException
   {
     if (threadID < 0 || threadID >= NUM_WORKER_THREADS) throw new RuntimeException("Invalid thread id");
-    dispatchJobs(); // see if the back buffer has anything new
+    if (JOB_FRONT_BUFFER.size() == 0) dispatchJobs(); // see if the back buffer has anything new
     // TODO I don't think this needs a lock since every thread signals constantly, but double check at some point
     ParallelJobGroup group = JOB_FRONT_BUFFER.poll();
     if (group == null) return;
