@@ -123,24 +123,4 @@ public class GameTribe implements Tribe
   {
 
   }
-
-  /**
-   * Initialize function for the Tribe class. This method will generate a specified number of genomes
-   * for this instance of the tribe.
-   *
-   * This function will call recalculate in order to exit the method with an already organized list of genomes.
-   */
-  @Override
-  public void init()
-  {
-    System.out.println(">>> Inside GameTribe init");
-    genomeCollection = new ArrayList<>();
-    for(int i = 0; i < numGenomes; i++)
-    {
-      add(new Genome());
-    }
-
-    // TODO: Write method "recalculate"
-    recalculate();
-  }
 }

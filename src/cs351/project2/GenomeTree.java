@@ -88,16 +88,4 @@ public class GenomeTree implements Tribe
     GENOME_TREE.clear();
     GENOME_TREE.addAll(UNSORTED_GENOMES);
   }
-
-  /**
-   * Initialize function for the Tribe class. This method will generate a specified number of genomes
-   * for this instance of the tribe.
-   * <p>
-   * This function will call recalculate in order to exit the method with an already organized list of genomes.
-   */
-  @Override
-  public void init()
-  {
-
-  }
 }

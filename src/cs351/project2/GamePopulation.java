@@ -92,7 +92,8 @@ public class GamePopulation implements Population
     // Initialize tribes, and then add it to the tribe collection
     for(int i = 0; i < numTribes; i++)
     {
-      final Tribe TRIBE = new GenomeTree();
+      //final Tribe TRIBE = new GenomeTree();
+      final Tribe TRIBE = new OrderedGenomeList(numGenomes);
       final int TRIBE_NUM = i;
       
       // add a new job to the list with the given tribe

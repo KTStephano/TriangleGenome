@@ -83,12 +83,4 @@ public interface Tribe
    * the tribe won't know about these mutations.
    */
   void recalculate();
-
-  /**
-   * Initialize function for the Tribe class. This method will generate a specified number of genomes
-   * for this instance of the tribe.
-   *
-   * This function will call recalculate in order to exit the method with an already organized list of genomes.
-   */
-  void init();
 }
