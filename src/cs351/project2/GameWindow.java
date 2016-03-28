@@ -13,6 +13,8 @@ import java.util.Random;
 import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -65,6 +67,7 @@ public class GameWindow implements GUI
   private boolean canvasDebugging = false;
 
   private Slider genomeListSlider;
+  private int selectedTribe;
 
   private HBox topRowContainer;
   private HBox middleRowContainer;
@@ -78,6 +81,19 @@ public class GameWindow implements GUI
   private Genome currentGenome;
   private Triangle currentTriangle;
 
+  /**
+   * This is called by the GUI when deciding which tribe it should draw onto the screen.
+   * @return tribe number that the slider has selected
+   */
+  private int getSelectedTribe()
+  {
+    return selectedTribe;
+  }
+
+  private void setSelectedTribe(int num)
+  {
+    selectedTribe = num;
+  }
 
   /**
    * This method is called from the popup dialog box when the user has clicked on the "close" button
@@ -244,6 +260,7 @@ public class GameWindow implements GUI
       int tribeLabelWidth = 90;
       Label tribeLabel = new Label("Showing Tribe:");
       tribeLabel.setMinWidth(tribeLabelWidth);
+      setSelectedTribe(0);
       genomeListSlider = new Slider(1, getTribes(), 1);
       genomeListSlider.setMajorTickUnit(1.0f);
       genomeListSlider.setMinorTickCount(0);
@@ -252,7 +269,12 @@ public class GameWindow implements GUI
       genomeListSlider.snapToTicksProperty().set(true);
       genomeListSlider.setShowTickMarks(true);
       genomeListSlider.setShowTickLabels(true);
-
+      genomeListSlider.valueProperty().addListener(new ChangeListener<Number>() {
+        public void changed(ObservableValue<? extends Number> ov,
+                            Number old_val, Number new_val) {
+          setSelectedTribe(new_val.intValue()-1);
+        }
+      });
       // Create the pause button
       pauseButton = new Button("Pause");
       pauseButton.setMinWidth(70);
@@ -379,6 +401,7 @@ public class GameWindow implements GUI
   @Override
   public void update(EvolutionEngine engine)
   {
+    int selectedTribe = getSelectedTribe();
     int rColor, gColor, bColor = 0;
     double alpha = 0;
     int vertexCounter = 0;
@@ -389,7 +412,7 @@ public class GameWindow implements GUI
     // For time being, select very first genome
     ArrayList<Tribe> tribes = new ArrayList<>();
     tribes.addAll(engine.getPopulation().getTribes());
-    currentGenome = tribes.get(0).getGenomes().iterator().next();
+    currentGenome = tribes.get(selectedTribe).getGenomes().iterator().next();
 
     // Loop through each triangle of genome
     for(Triangle currentTriangle: currentGenome.getTriangles())
