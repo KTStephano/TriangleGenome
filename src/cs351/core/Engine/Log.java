@@ -111,7 +111,7 @@ public class Log
     StackTraceElement[] elements = exception.getStackTrace();
     for (StackTraceElement element : elements)
     {
-      str.append("--> ");
+      str.append("\t\t--> ");
       str.append(element.toString());
       str.append("\n");
     }
