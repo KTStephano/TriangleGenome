@@ -36,10 +36,10 @@ import javafx.stage.WindowEvent;
  */
 public class GameWindow implements GUI
 {
-  private int sceneWidth = 800;
-  private int sceneHeight = 500;
+  private int sceneWidth = 900;
+  private int sceneHeight = 600;
 
-  private double canvasWidth = 300;
+  private double canvasWidth = 400;
   private double canvasHeight = 300;
 
   private double canvasMargin = 40;
@@ -54,7 +54,6 @@ public class GameWindow implements GUI
   Vector2f[] vector2List = new Vector2f[genomeSize];
   Vector2f[] vector3List = new Vector2f[genomeSize];
   Vector4f[] vectorColorList = new Vector4f[genomeSize];
-  //   VectorPoints[] vectorTestList = new VectorPoints[genomeSize];
 
   private Random randNum = new Random();
 
@@ -66,13 +65,23 @@ public class GameWindow implements GUI
 
   private boolean canvasDebugging = false;
 
-  private Slider genomeListSlider;
+  private Slider triangleListSlider; // Slider for triangle selection
+  private Slider genomeListSlider; // Slider for genome selection
+  private Slider tribeListSlider;  // Slider for tribe selection
+
+  private int selectedTriangle;
+  private int selectedGenome;
   private int selectedTribe;
 
-  private HBox topRowContainer;
-  private HBox middleRowContainer;
-  private HBox bottomRowContainer;
-  private VBox allContainer;
+  private HBox canvasSubMenus;        // holds dialog and slider containers
+  private VBox canvasDialogContainer; // container underneath canvas level
+  private VBox canvasSliderContainer; // container underneath canvas level
+  private HBox topRowContainer;       // below canvas dialog and slider containers
+  private HBox middleRowContainer;    // below top row container
+  private HBox bottomRowContainer;    // most bottom row container
+  private HBox triangleSliderContainer; // inside canvas slider container
+  private HBox genomeSliderContainer;   // inside canvas sldier container
+
 
   private Button pauseButton;
   private boolean genomePaused = false;
@@ -80,6 +89,42 @@ public class GameWindow implements GUI
 
   private Genome currentGenome;
   private Triangle currentTriangle;
+
+  /**
+   * This is called by the GUI when deciding how many triangles to draw on the screen
+   * @return which genome to show on the screen
+   */
+  private int getSelectedGenome()
+  {
+    return selectedGenome;
+  }
+
+  /**
+   *
+   * @param num Index of the genome selected
+   */
+  private void setSelectedGenome(int num)
+  {
+    selectedGenome= num;
+  }
+
+  /**
+   * This is called by the GUI when deciding how many triangles to draw on the screen
+   * @return amount of triangles to show on the screen
+   */
+  private int getSelectedTriangle()
+  {
+    return selectedTriangle;
+  }
+
+  /**
+   *
+   * @param num Amount of triangles to show
+   */
+  private void setSelectedTriangle(int num)
+  {
+    selectedTriangle = num;
+  }
 
   /**
    * This is called by the GUI when deciding which tribe it should draw onto the screen.
@@ -90,6 +135,10 @@ public class GameWindow implements GUI
     return selectedTribe;
   }
 
+  /**
+   *
+   * @param num Label of the selected tribe
+   */
   private void setSelectedTribe(int num)
   {
     selectedTribe = num;
@@ -191,11 +240,11 @@ public class GameWindow implements GUI
       else if (result.get().equals("16"))
         tribeSize = 16;
       else
-        tribeSize = 16;
+        tribeSize = 4;
     } catch (Exception e1)
     {
       System.out.println("Exception occured in ChoiceDialog box");
-      tribeSize = 16;
+      tribeSize = 4;
     }
 
   }
@@ -256,28 +305,78 @@ public class GameWindow implements GUI
       gcGenetic.strokeRect(0, 0, canvasWidth, canvasHeight);
       gcGenetic.fillText("Placeholder for Triangle Genomes", canvasWidth / 4, canvasHeight / 2);
 
-      // Create the slider(s)
+      // Create slider - triangle list
+      int triangleLabelWidth = 50;
+      Label triangleLabel = new Label("Triangle");
+      triangleLabel.setMinWidth(triangleLabelWidth);
+      triangleListSlider = new Slider(1, 200, 200);
+      triangleListSlider.setMinWidth(canvasWidth - triangleLabelWidth);
+      triangleListSlider.setMajorTickUnit(1);
+      triangleListSlider.setMinorTickCount(0);
+      triangleListSlider.setBlockIncrement(1);
+      triangleListSlider.snapToTicksProperty().set(true);
+      triangleListSlider.setShowTickMarks(false);
+      triangleListSlider.setShowTickLabels(false);
+      triangleListSlider.valueProperty().addListener(new ChangeListener<Number>()
+      {
+        public void changed(ObservableValue<? extends Number> ov,
+                            Number old_val, Number new_val)
+        {
+          setSelectedTriangle(new_val.intValue());
+        }
+      });
+
+
+      // Create slider - genome list
+      int genomeLabelWidth = 50;
+      Label genomeLabel = new Label("Genome");
+      genomeLabel.setMinWidth(genomeLabelWidth );
+      genomeListSlider = new Slider(1, 2000, 0);
+      genomeListSlider.setMinWidth(canvasWidth - genomeLabelWidth);
+      genomeListSlider.setMajorTickUnit(1);
+      genomeListSlider.setMinorTickCount(0);
+      genomeListSlider.setBlockIncrement(1);
+      genomeListSlider.snapToTicksProperty().set(true);
+      genomeListSlider.setShowTickMarks(false);
+      genomeListSlider.setShowTickLabels(false);
+      genomeListSlider.valueProperty().addListener(new ChangeListener<Number>()
+      {
+        public void changed(ObservableValue<? extends Number> ov,
+                            Number old_val, Number new_val)
+        {
+          setSelectedGenome(new_val.intValue() - 1);
+        }
+      });
+
+      // Create slider - tribe list
       int tribeLabelWidth = 90;
-      double sliderNumBuffer = 0.1;
+      double sliderNumBuffer = 0.1;  // how close the track has to be before switching
       Label tribeLabel = new Label("Showing Tribe:");
       tribeLabel.setMinWidth(tribeLabelWidth);
       setSelectedTribe(0);
-      genomeListSlider = new Slider(1, getTribes(), 1);
-      genomeListSlider.setMajorTickUnit(1.0f);
-      genomeListSlider.setMinorTickCount(0);
-      genomeListSlider.setBlockIncrement(1.0f);
-      genomeListSlider.setMinWidth(canvasWidth * 2 + canvasMargin - tribeLabelWidth);
-      genomeListSlider.snapToTicksProperty().set(true);
-      genomeListSlider.setShowTickMarks(true);
-      genomeListSlider.setShowTickLabels(true);
-      genomeListSlider.valueProperty().addListener(new ChangeListener<Number>() {
+      tribeListSlider = new Slider(1, getTribes(), 1);
+      tribeListSlider.setMajorTickUnit(1d);
+      tribeListSlider.setMinorTickCount(0);
+      tribeListSlider.setBlockIncrement(1d);
+      tribeListSlider.setMinWidth(canvasWidth * 2 + canvasMargin - tribeLabelWidth);
+      tribeListSlider.snapToTicksProperty().set(true);
+      tribeListSlider.setShowTickMarks(true);
+      tribeListSlider.setShowTickLabels(true);
+      tribeListSlider.valueProperty().addListener(new ChangeListener<Number>()
+      {
         public void changed(ObservableValue<? extends Number> ov,
-                            Number old_val, Number new_val) {
-          System.out.println("new_val: " + new_val);
-          if(new_val.doubleValue() % new_val.intValue() <= sliderNumBuffer) setSelectedTribe(new_val.intValue()-1);
-
+                            Number old_val, Number new_val)
+        {
+          if (new_val.doubleValue() % new_val.intValue() <= sliderNumBuffer) setSelectedTribe(new_val.intValue() - 1);
         }
       });
+      // If only 1 tribe is selected, do not show the tick marks
+      if(getTribes() == 1)
+      {
+        tribeListSlider.setShowTickMarks(false);
+        tribeListSlider.setShowTickLabels(false);
+      }
+
       // Create the pause button
       pauseButton = new Button("Pause");
       pauseButton.setMinWidth(70);
@@ -299,18 +398,46 @@ public class GameWindow implements GUI
 
 
       // Create containers to hold components
-      topRowContainer = new HBox();
-      middleRowContainer = new HBox(10);
-      bottomRowContainer = new HBox(10);
+      canvasSubMenus = new HBox(canvasMargin);              // holds dialog and slider containers
+      canvasSliderContainer = new VBox(0);     // holds triangle and genome containers
+      triangleSliderContainer = new HBox();     // holds triangle label and triangle slider
+      genomeSliderContainer = new HBox();       // holds genome label and genome slider
+      canvasDialogContainer = new VBox(10);     // holds drop down menu and file chooser
+      topRowContainer = new HBox();             // holds tribe label and tribe slider
+      middleRowContainer = new HBox(10);        // holds pause button
+      bottomRowContainer = new HBox(10);        // holds ________
 
-//      allContainer = new VBox();
-//      allContainer.getChildren().addAll(canvasOriginal, canvasGenetic);
+      // set up sub menu container
+      canvasSubMenus.setMaxWidth(2 * canvasWidth + canvasMargin);
+      canvasSubMenus.setMaxHeight(canvasHeight);
+      canvasSubMenus.setLayoutX(canvasStartX);
+      canvasSubMenus.setLayoutY(canvasStartY + canvasHeight + canvasMargin/3);
+      canvasSubMenus.getChildren().addAll(canvasDialogContainer, canvasSliderContainer);
+
+      // set up dialog container (VBox)
+      canvasDialogContainer.setMinWidth(canvasWidth);
+      canvasDialogContainer.setMaxWidth(canvasWidth);
+      canvasDialogContainer.setMaxHeight(canvasHeight);
+
+      // set up slider container (VBox)
+      canvasSliderContainer.setMinWidth(canvasWidth);
+      canvasSliderContainer.setMaxHeight(canvasHeight);
+      //canvasSliderContainer.setLayoutX(canvasStartX + canvasWidth + canvasMargin-10);
+      canvasSliderContainer.getChildren().addAll(triangleSliderContainer, genomeSliderContainer);
+
+      // set up triangle container (HBox)
+      triangleSliderContainer.setMaxWidth(canvasWidth);
+      triangleSliderContainer.getChildren().addAll(triangleLabel, triangleListSlider);
+
+      // set up triangle container (HBox)
+      genomeSliderContainer.setMaxWidth(canvasWidth);
+      genomeSliderContainer.getChildren().addAll(genomeLabel, genomeListSlider);
 
       // Add items to top container - Slider
       topRowContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
       topRowContainer.setLayoutX(canvasStartX);
-      topRowContainer.setLayoutY(canvasStartY + canvasHeight + canvasMargin);
-      topRowContainer.getChildren().addAll(tribeLabel, genomeListSlider);
+      topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + canvasSubMenus.getHeight() + canvasMargin);
+      topRowContainer.getChildren().addAll(tribeLabel, tribeListSlider);
 
       // Add items to middle container - Pause Button
       middleRowContainer.setLayoutX(topRowContainer.getLayoutX());
@@ -324,12 +451,9 @@ public class GameWindow implements GUI
       bottomRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
       bottomRowContainer.getChildren().addAll();
 
-      // Initialize random triangles and call an update
-      //initTriangles();
-      //update(engine);
-
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-      root.getChildren().addAll(canvasOriginal, canvasGenetic, topRowContainer, middleRowContainer, bottomRowContainer);
+      root.getChildren().addAll(canvasOriginal, canvasGenetic, canvasSubMenus,
+        topRowContainer, middleRowContainer, bottomRowContainer);
 
       stage.setOnCloseRequest(this::windowClosed);
       stage.setTitle("Triangle Genome Project");
@@ -340,50 +464,6 @@ public class GameWindow implements GUI
       e.printStackTrace();
     }
 
-  }
-
-  /*
-  * PLACEHOLDER METHOD
-  *
-  * This method is to create a list of triangles that the gui would normally
-  * use when updating itself
-  */
-  private void initTriangles()
-  {
-
-    int triangleSize = 80;
-    int red, green, blue = 0;
-    double x1, x2, x3, y1, y2, y3, alpha = 0;
-
-    for (int i = 0; i < vector1List.length; i++)
-    {
-      // Generate random points
-      x1 = (double) randNum.nextInt((int) canvasHeight);
-      y1 = (double) randNum.nextInt((int) canvasHeight);
-
-      x2 = x1 + (double) randNum.nextInt(triangleSize);
-      y2 = y1 + (double) randNum.nextInt(triangleSize);
-
-      x3 = x1 + (double) randNum.nextInt(triangleSize);
-      y3 = y1 + (double) randNum.nextInt(triangleSize);
-
-      // Generate RGB values
-      red = randNum.nextInt(255);
-      green = randNum.nextInt(255);
-      blue = randNum.nextInt(255);
-
-      System.out.printf("red: %d \t green: %d \t blue: %d\n", red, green, blue);
-
-      // Generate Transparency Value
-      alpha = randNum.nextDouble();
-
-      vector1List[i] = new Vector2f(x1, y1);
-      vector2List[i] = new Vector2f(x2, y2);
-      vector3List[i] = new Vector2f(x3, y3);
-
-      vectorColorList[i] = new Vector4f(red, green, blue, alpha);
-
-    }
   }
 
   /*
@@ -419,6 +499,7 @@ public class GameWindow implements GUI
 
     // Loop through each triangle of genome
     TriangleManager manager = new TriangleManager(); // need this to interpret the triangle data
+
     for(float[] currentTriangle: currentGenome.getTriangles())
     {
       vertexCounter = 0;
