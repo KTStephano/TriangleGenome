@@ -44,7 +44,8 @@ public class GameWindow implements GUI
 
   private double canvasMargin = 40;
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
-  private double canvasStartY = sceneHeight / 2 - canvasHeight / 2 - canvasHeight / 4;
+  private double canvasStartY = canvasMargin;
+  //private double canvasStartY = sceneHeight / 2 - canvasHeight / 2 - canvasHeight / 4;
 
   private int tribeSize = 8;
   private int genomeSize = 200;
@@ -80,7 +81,8 @@ public class GameWindow implements GUI
   private HBox middleRowContainer;    // below top row container
   private HBox bottomRowContainer;    // most bottom row container
   private HBox triangleSliderContainer; // inside canvas slider container
-  private HBox genomeSliderContainer;   // inside canvas sldier container
+  private HBox genomeSliderContainer;   // inside canvas slider container
+  private HBox tribeSliderContainer;    // inside canvas slider container
 
 
   private Button pauseButton;
@@ -307,8 +309,8 @@ public class GameWindow implements GUI
       gcGenetic.fillText("Placeholder for Triangle Genomes", canvasWidth / 4, canvasHeight / 2);
 
       // Create slider - triangle list
-      int triangleLabelWidth = 50;
-      Label triangleLabel = new Label("Triangle");
+      int triangleLabelWidth = 55;
+      Label triangleLabel = new Label("Triangle:");
       triangleLabel.setMinWidth(triangleLabelWidth);
       triangleListSlider = new Slider(1, 200, 200);
       triangleListSlider.setMinWidth(canvasWidth - triangleLabelWidth);
@@ -329,8 +331,8 @@ public class GameWindow implements GUI
 
 
       // Create slider - genome list
-      int genomeLabelWidth = 50;
-      Label genomeLabel = new Label("Genome");
+      int genomeLabelWidth = 55;
+      Label genomeLabel = new Label("Genome:");
       genomeLabel.setMinWidth(genomeLabelWidth );
       genomeListSlider = new Slider(1, 2000, 0);
       genomeListSlider.setMinWidth(canvasWidth - genomeLabelWidth);
@@ -350,16 +352,16 @@ public class GameWindow implements GUI
       });
 
       // Create slider - tribe list
-      int tribeLabelWidth = 90;
+      int tribeLabelWidth = 55;
       double sliderNumBuffer = 0.1;  // how close the track has to be before switching
-      Label tribeLabel = new Label("Showing Tribe:");
+      Label tribeLabel = new Label("Tribe:");
       tribeLabel.setMinWidth(tribeLabelWidth);
       setSelectedTribe(0);
       tribeListSlider = new Slider(1, getTribes(), 1);
       tribeListSlider.setMajorTickUnit(1d);
       tribeListSlider.setMinorTickCount(0);
       tribeListSlider.setBlockIncrement(1d);
-      tribeListSlider.setMinWidth(canvasWidth * 2 + canvasMargin - tribeLabelWidth);
+      tribeListSlider.setMinWidth(canvasWidth - tribeLabelWidth);
       tribeListSlider.snapToTicksProperty().set(true);
       tribeListSlider.setShowTickMarks(true);
       tribeListSlider.setShowTickLabels(true);
@@ -400,10 +402,14 @@ public class GameWindow implements GUI
 
       // Create containers to hold components
       canvasSubMenus = new HBox(canvasMargin);              // holds dialog and slider containers
+
       canvasSliderContainer = new VBox(0);     // holds triangle and genome containers
       triangleSliderContainer = new HBox();     // holds triangle label and triangle slider
       genomeSliderContainer = new HBox();       // holds genome label and genome slider
+      tribeSliderContainer = new HBox();        // holds tribe label and tribe slider
+
       canvasDialogContainer = new VBox(10);     // holds drop down menu and file chooser
+
       topRowContainer = new HBox();             // holds tribe label and tribe slider
       middleRowContainer = new HBox(10);        // holds pause button
       bottomRowContainer = new HBox(10);        // holds ________
@@ -412,7 +418,7 @@ public class GameWindow implements GUI
       canvasSubMenus.setMaxWidth(2 * canvasWidth + canvasMargin);
       canvasSubMenus.setMaxHeight(canvasHeight);
       canvasSubMenus.setLayoutX(canvasStartX);
-      canvasSubMenus.setLayoutY(canvasStartY + canvasHeight + canvasMargin/3);
+      canvasSubMenus.setLayoutY(canvasStartY + canvasHeight + canvasMargin / 3);
       canvasSubMenus.getChildren().addAll(canvasDialogContainer, canvasSliderContainer);
 
       // set up dialog container (VBox)
@@ -423,28 +429,32 @@ public class GameWindow implements GUI
       // set up slider container (VBox)
       canvasSliderContainer.setMinWidth(canvasWidth);
       canvasSliderContainer.setMaxHeight(canvasHeight);
-      //canvasSliderContainer.setLayoutX(canvasStartX + canvasWidth + canvasMargin-10);
-      canvasSliderContainer.getChildren().addAll(triangleSliderContainer, genomeSliderContainer);
+      canvasSliderContainer.getChildren().addAll(triangleSliderContainer, genomeSliderContainer, tribeSliderContainer);
 
       // set up triangle container (HBox)
       triangleSliderContainer.setMaxWidth(canvasWidth);
       triangleSliderContainer.getChildren().addAll(triangleLabel, triangleListSlider);
 
-      // set up triangle container (HBox)
+      // set up genome container (HBox)
       genomeSliderContainer.setMaxWidth(canvasWidth);
       genomeSliderContainer.getChildren().addAll(genomeLabel, genomeListSlider);
 
+      // set up tribe container (HBox)
+      tribeSliderContainer.setMaxWidth(canvasWidth);
+      tribeSliderContainer.getChildren().addAll(tribeLabel, tribeListSlider);
+
       // Add items to top container - Slider
-      topRowContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
+      //topRowContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
       topRowContainer.setLayoutX(canvasStartX);
-      topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + canvasSubMenus.getHeight() + canvasMargin);
-      topRowContainer.getChildren().addAll(tribeLabel, tribeListSlider);
+      topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + canvasSubMenus.getHeight() + canvasMargin + 5);
+      topRowContainer.setMinWidth(canvasWidth*2 + canvasMargin);
+      topRowContainer.getChildren().addAll(pauseButton);
 
       // Add items to middle container - Pause Button
       middleRowContainer.setLayoutX(topRowContainer.getLayoutX());
       middleRowContainer.setLayoutY(topRowContainer.getLayoutY() + canvasMargin);
       middleRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      middleRowContainer.getChildren().addAll(pauseButton);
+      middleRowContainer.getChildren().addAll();
 
       // Add items to bottom container - N/A
       bottomRowContainer.setLayoutX(topRowContainer.getLayoutX());
