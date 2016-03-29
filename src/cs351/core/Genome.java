@@ -57,6 +57,15 @@ public final class Genome
   }
 
   /**
+   * Gets the size in terms of number of triangles.
+   * @return number of triangles
+   */
+  public int size()
+  {
+    return TRIANGLES.size();
+  }
+
+  /**
    * Gets the normalized fitness that was assigned to this genome.
    *
    * @return normalzed fitness
