@@ -89,6 +89,7 @@ public class GameWindow implements GUI
 
   private Genome currentGenome;
   private Triangle currentTriangle;
+  private int triangleCounter;
 
   /**
    * This is called by the GUI when deciding how many triangles to draw on the screen
@@ -495,12 +496,16 @@ public class GameWindow implements GUI
     // For time being, select very first genome
     ArrayList<Tribe> tribes = new ArrayList<>();
     tribes.addAll(engine.getPopulation().getTribes());
-    currentGenome = tribes.get(selectedTribe).getGenomes().iterator().next();
+
+    ArrayList<Genome> genomes = new ArrayList<>();
+    genomes.addAll(tribes.get(selectedTribe).getGenomes());
+    Genome selectedGenome = genomes.get(getSelectedGenome());
 
     // Loop through each triangle of genome
     TriangleManager manager = new TriangleManager(); // need this to interpret the triangle data
 
-    for(float[] currentTriangle: currentGenome.getTriangles())
+    triangleCounter = 0;
+    for(float[] currentTriangle: selectedGenome.getTriangles())
     {
       vertexCounter = 0;
 
@@ -524,6 +529,10 @@ public class GameWindow implements GUI
       }
       //engine.getLog().log("window", "\n");
       gcGenetic.fillPolygon(xVals, yVals, 3);
+
+      // Draw only specified amount of triangles
+      triangleCounter ++;
+      if(triangleCounter == getSelectedTriangle()) break;
     }
   }
 
