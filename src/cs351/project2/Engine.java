@@ -262,14 +262,7 @@ public final class Engine implements EvolutionEngine
     if (mainJobList.containsActiveJobs()) mainJobList.waitForCompletion();
     // Tell the GUI it's a good time to do a rendering update since the previous
     // frame is done
-    try {
-      if (!isRunningConsoleMode) gui.update(this);
-    }
-    catch (Exception e)
-    {
-      e.printStackTrace();
-      log.logException("gui", e);
-    }
+    if (!isRunningConsoleMode) gui.update(this);
 
     if (!IS_PAUSED.get())
     {
