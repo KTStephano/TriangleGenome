@@ -85,7 +85,7 @@ public class Log
     try
     {
       //LinkedList<String> list = new LinkedList<>();
-      String logData = key + " " + result;
+      String logData = key + " " + result + "\n";
       fileWriter.write(logData);
       fileWriter.flush();
       //Files.write(FILE_PATH, list, Charset.defaultCharset());
@@ -94,6 +94,28 @@ public class Log
     {
       System.out.println("Error writing to log file " + FILE_PATH.toString());
     }
+  }
+
+  /**
+   * This formats an exception and logs it to the current working log file.
+   *
+   * @param logType Keyword representing the log type. Ex: "debug" - the log will
+   *                automatically convert it to uppercase and wrap it inside parenthesis.
+   * @param exception Exception to log
+   */
+  public void logException(String logType, Exception exception)
+  {
+    StringBuilder str = new StringBuilder(25);
+    str.append(exception.toString()); // Add the message data to the String
+    str.append("\n");
+    StackTraceElement[] elements = exception.getStackTrace();
+    for (StackTraceElement element : elements)
+    {
+      str.append("--> ");
+      str.append(element.toString());
+      str.append("\n");
+    }
+    log(logType, str.toString());
   }
 
   /**

@@ -78,7 +78,7 @@ public final class Engine implements EvolutionEngine
     public void update(Log log)
     {
       data = getAverageGenerationsPerSecond();
-      if (log != null) log.log(LOG_TAG, getDataTag() + ": %f seconds\n", getData());
+      if (log != null) log.log(LOG_TAG, getDataTag() + ": %f seconds", getData());
     }
   }
 
@@ -97,7 +97,7 @@ public final class Engine implements EvolutionEngine
     public void update(Log log)
     {
       data = getGenerationCount();
-      if (log != null) log.log(LOG_TAG, getDataTag() + ": %d generations\n", getData());
+      if (log != null) log.log(LOG_TAG, getDataTag() + ": %d generations", getData());
     }
   }
 
@@ -334,10 +334,10 @@ public final class Engine implements EvolutionEngine
   private void printLogHeader(String imageFile)
   {
     String engineTag = "engine";
-    log.log(engineTag, "Engine Version: %s\n", getFullVersion());
-    log.log(engineTag, "Available Memory (JVM): %s bytes\n", Runtime.getRuntime().totalMemory());
-    log.log(engineTag, "Target Image: %s\n", imageFile);
-    log.log(engineTag, "Valid Population: %b\n", (population != null));
-    log.log(engineTag, "Console Mode: %b\n", (gui == null));
+    log.log(engineTag, "Engine Version: %s", getFullVersion());
+    log.log(engineTag, "Available Memory (JVM): %s bytes", Runtime.getRuntime().totalMemory());
+    log.log(engineTag, "Target Image: %s", imageFile);
+    log.log(engineTag, "Valid Population: %b", (population != null));
+    log.log(engineTag, "Console Mode: %b", (gui == null));
   }
 }
