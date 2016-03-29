@@ -107,11 +107,11 @@ public class Log
   {
     StringBuilder str = new StringBuilder(25);
     str.append(exception.toString()); // Add the message data to the String
-    str.append("\n");
     StackTraceElement[] elements = exception.getStackTrace();
+    if (elements.length > 0) str.append("\n"); // only add when there are more messages to display
     for (StackTraceElement element : elements)
     {
-      str.append("\t\t--> ");
+      str.append("\t\t\t\t--> ");
       str.append(element.toString());
       str.append("\n");
     }
