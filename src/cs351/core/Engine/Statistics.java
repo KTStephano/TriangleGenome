@@ -61,9 +61,9 @@ public class Statistics implements Iterable<DataField>
   public void update(String message)
   {
     final String statTag = "stats";
-    LOGGING_SYSTEM.log(statTag, "----> Statistics Begin\n");
+    LOGGING_SYSTEM.log(statTag, "----> Statistics Begin");
     if (message != null) LOGGING_SYSTEM.log("external", message);
     for (DataField field : ORDERED_FIELDS) field.update(LOGGING_SYSTEM);
-    LOGGING_SYSTEM.log(statTag, "----> Statistics End\n\n");
+    LOGGING_SYSTEM.log(statTag, "----> Statistics End\n");
   }
 }
