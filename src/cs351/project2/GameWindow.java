@@ -125,7 +125,7 @@ public class GameWindow implements GUI
    */
   private void setSelectedGenome(int num)
   {
-    selectedGenome= num;
+    selectedGenome = num;
   }
 
   /**
@@ -308,8 +308,9 @@ public class GameWindow implements GUI
       // Create slider - triangle list
       int triangleLabelWidth = 55;
       Label triangleLabel = new Label("Triangle:");
+      setSelectedTriangle(199);
       triangleLabel.setMinWidth(triangleLabelWidth);
-      triangleListSlider = new Slider(1, 200, 200);
+      triangleListSlider = new Slider(0, 199, getSelectedTriangle());
       triangleListSlider.setMinWidth(canvasWidth - triangleLabelWidth);
       triangleListSlider.setMajorTickUnit(1);
       triangleListSlider.setMinorTickCount(0);
@@ -322,7 +323,7 @@ public class GameWindow implements GUI
         public void changed(ObservableValue<? extends Number> ov,
                             Number old_val, Number new_val)
         {
-          setSelectedTriangle(new_val.intValue()-1);
+          setSelectedTriangle(new_val.intValue());
         }
       });
 
@@ -331,7 +332,8 @@ public class GameWindow implements GUI
       int genomeLabelWidth = 55;
       Label genomeLabel = new Label("Genome:");
       genomeLabel.setMinWidth(genomeLabelWidth );
-      genomeListSlider = new Slider(1, 2000, 0);
+      setSelectedGenome(0);
+      genomeListSlider = new Slider(0, 1999, getSelectedGenome());
       genomeListSlider.setMinWidth(canvasWidth - genomeLabelWidth);
       genomeListSlider.setMajorTickUnit(1);
       genomeListSlider.setMinorTickCount(0);
@@ -344,7 +346,7 @@ public class GameWindow implements GUI
         public void changed(ObservableValue<? extends Number> ov,
                             Number old_val, Number new_val)
         {
-          setSelectedGenome(new_val.intValue() - 1);
+          setSelectedGenome(new_val.intValue());
         }
       });
 
@@ -552,7 +554,7 @@ public class GameWindow implements GUI
 
       // Draw only specified amount of triangles
       triangleCounter ++;
-      if(triangleCounter == getSelectedTriangle()) break;
+      if(triangleCounter > getSelectedTriangle()) break;
     }
   }
 
