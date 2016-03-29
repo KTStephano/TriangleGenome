@@ -114,9 +114,10 @@ public class GamePopulation implements Population
             genome.setFitness(j);
             for(int k = 0; k < numTriangles; k++)
             {
-              Triangle triangle = new GameTriangle();
-              triangle.init(numGenerator, engine.getGUI());
-              genome.add(triangle);
+              //Triangle triangle = new GameTriangle();
+              //triangle.init(numGenerator, engine.getGUI());
+              //genome.add(triangle);
+              genome.add(TriangleGenerator.createTriangle(numGenerator, engine));
             }
 
             // Add completed genome to tribe

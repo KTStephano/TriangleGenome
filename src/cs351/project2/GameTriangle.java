@@ -128,6 +128,7 @@ public class GameTriangle implements Triangle
     boolean reCalculate = true;
 
     // Create x values, check to make sure all values are valid
+    /*
     reCalculate = true;
     while(reCalculate == true)
     {
@@ -154,6 +155,7 @@ public class GameTriangle implements Triangle
 
     // Create alpha value
     alpha = numGenerator.nextFloat();
+    */
 
     /**
     // Create new genes with created values, add genes to geneCollection

@@ -9,7 +9,7 @@ public final class Genome
   private static int ID = 0;
   private int id;
   protected Double fitness = 0.0;
-  protected final LinkedList<Triangle> TRIANGLES = new LinkedList<>();
+  protected final LinkedList<float[]> TRIANGLES = new LinkedList<>();
   //protected final LinkedList<Integer> GENES = new LinkedList<>();
 
   {
@@ -38,7 +38,7 @@ public final class Genome
    * Adds a triangle to the genome. The order that TRIANGLES are added
    * should be maintained.
    */
-  public void add(Triangle triangle)
+  public void add(float[] triangle)
   {
     TRIANGLES.add(triangle);
   }
@@ -51,7 +51,7 @@ public final class Genome
    *
    * @param triangle triangle to remove
    */
-  public void remove(Triangle triangle)
+  public void remove(float[] triangle)
   {
     if (TRIANGLES.contains(triangle)) TRIANGLES.remove(triangle);
   }
@@ -86,7 +86,7 @@ public final class Genome
    *
    * @return ordered list of TRIANGLES
    */
-  public Collection<Triangle> getTriangles()
+  public Collection<float[]> getTriangles()
   {
     return TRIANGLES;
   }

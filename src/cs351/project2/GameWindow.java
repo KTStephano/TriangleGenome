@@ -418,21 +418,25 @@ public class GameWindow implements GUI
     currentGenome = tribes.get(selectedTribe).getGenomes().iterator().next();
 
     // Loop through each triangle of genome
-    for(Triangle currentTriangle: currentGenome.getTriangles())
+    TriangleManager manager = new TriangleManager(); // need this to interpret the triangle data
+    for(float[] currentTriangle: currentGenome.getTriangles())
     {
       vertexCounter = 0;
 
+      // Set the manager's triangle data
+      manager.setTriangleData(currentTriangle);
+
       // Get Color Values
-      float[] color = currentTriangle.getColor();
+      float[] color = manager.getColor();
       rColor = (int)color[0];
       gColor = (int)color[1];
       bColor = (int)color[2];
       alpha = color[3];
       gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
 
-      float[] xVertices = currentTriangle.getXVertices();
-      float[] yVertices = currentTriangle.getYVertices();
-      for(int i = 0; i < currentTriangle.getXVertices().length; i++)
+      float[] xVertices = manager.getXCoordinates();
+      float[] yVertices = manager.getYCoordinates();
+      for(int i = 0; i < xVertices.length; i++)
       {
         xVals[i] = xVertices[i];
         yVals[i] = yVertices[i];
