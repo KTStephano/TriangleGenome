@@ -86,12 +86,29 @@ public class GameWindow implements GUI
 
 
   private Button pauseButton;
+  private Button testButton;
   private boolean genomePaused = false;
   private Boolean userWantsToClose = false;
 
   private Genome currentGenome;
   private Triangle currentTriangle;
   private int triangleCounter;
+
+  /**
+   * Called to enable buttons when the game is paused
+   */
+  private void enableButtons()
+  {
+    testButton.setDisable(false);
+  }
+
+  /**
+   * Called to disable buttons when the game is paused
+   */
+  private void disableButtons()
+  {
+    testButton.setDisable(true);
+  }
 
   /**
    * This is called by the GUI when deciding how many triangles to draw on the screen
@@ -188,23 +205,6 @@ public class GameWindow implements GUI
       ChoiceDialog<String> prompt = new ChoiceDialog<>("--", choices);
       prompt.setContentText("How many tribes would you like to use?");
       prompt.setHeaderText("Triangle Genome Project");
-//      prompt.setOnCloseRequest(new EventHandler<DialogEvent>()
-//      {
-//        /**
-//         * Called when the user wants to quit from the choice dialog
-//         *
-//         * @param event the event which occurred
-//         */
-//        @Override
-//        public void handle(DialogEvent event)
-//        {
-//          if (event.getEventType().equals(DialogEvent.DIALOG_CLOSE_REQUEST))
-//          {
-//            System.out.println(">>>> HERE");
-//            dialogWindowClose();
-//          }
-//        }
-//      });
 
       // Makes everything wait until prompt is finished being used
       Optional<String> result = prompt.showAndWait();
@@ -246,13 +246,10 @@ public class GameWindow implements GUI
         tribeSize = 4;
     } catch (Exception e1)
     {
-      System.out.println("Exception occured in ChoiceDialog box");
-      tribeSize = 4;
+      System.exit(0);
     }
 
   }
-
-
 
   /**
    * Initializes the GUI with the given JavaFX stage and the given engine.
@@ -325,7 +322,7 @@ public class GameWindow implements GUI
         public void changed(ObservableValue<? extends Number> ov,
                             Number old_val, Number new_val)
         {
-          setSelectedTriangle(new_val.intValue());
+          setSelectedTriangle(new_val.intValue()-1);
         }
       });
 
@@ -393,11 +390,24 @@ public class GameWindow implements GUI
         @Override
         public void handle(ActionEvent e)
         {
-          if (!genomePaused) pauseButton.setText("Resume");
-          else pauseButton.setText("Pause");
+          if (!genomePaused)
+          {
+            pauseButton.setText("Resume");
+            enableButtons();
+          }
+          else
+          {
+            pauseButton.setText("Pause");
+            disableButtons();
+          }
           genomePaused = !genomePaused;
         }
       });
+
+      // Create test button
+      testButton = new Button("TEST");
+      testButton.setMinWidth(70);
+      testButton.setDisable(true);
 
 
       // Create containers to hold components
@@ -410,7 +420,7 @@ public class GameWindow implements GUI
 
       canvasDialogContainer = new VBox(10);     // holds drop down menu and file chooser
 
-      topRowContainer = new HBox();             // holds tribe label and tribe slider
+      topRowContainer = new HBox(15);             // holds tribe label and tribe slider
       middleRowContainer = new HBox(10);        // holds pause button
       bottomRowContainer = new HBox(10);        // holds ________
 
@@ -446,9 +456,9 @@ public class GameWindow implements GUI
       // Add items to top container - Slider
       //topRowContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
       topRowContainer.setLayoutX(canvasStartX);
-      topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + canvasSubMenus.getHeight() + canvasMargin + 5);
+      topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + 2*canvasMargin );
       topRowContainer.setMinWidth(canvasWidth*2 + canvasMargin);
-      topRowContainer.getChildren().addAll(pauseButton);
+      topRowContainer.getChildren().addAll(pauseButton, testButton);
 
       // Add items to middle container - Pause Button
       middleRowContainer.setLayoutX(topRowContainer.getLayoutX());
