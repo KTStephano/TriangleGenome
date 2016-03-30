@@ -533,7 +533,7 @@ public class GameWindow implements GUI
       vertexCounter = 0;
 
       // Set the manager's triangle data
-      manager.setTriangleData(currentTriangle);
+      manager.setTriangleData(this, currentTriangle);
 
       // Get Color Values
       float[] color = manager.getColor();

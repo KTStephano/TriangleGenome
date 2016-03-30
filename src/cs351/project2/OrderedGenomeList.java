@@ -16,6 +16,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   private int size = 0;
   private int internalCapacity;
   private Genome[] list;
+  private HashMap<Genome, Mutator> mutatorMap = new HashMap<>();
   private boolean isDirty = false; // true if the list needs reordering
 
   private final class GenomeIterator implements Iterator<Genome>
@@ -75,7 +76,13 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   @Override
   public Mutator getMutatorForGenome(Genome genome) throws RuntimeException
   {
-    throw new RuntimeException("Not yet implemented");
+    if (!mutatorMap.containsKey(genome))
+    {
+      AdaptiveMutator mutator = new AdaptiveMutator();
+      mutator.setGenome(genome);
+      mutatorMap.put(genome, mutator);
+    }
+    return mutatorMap.get(genome);
   }
 
   @Override

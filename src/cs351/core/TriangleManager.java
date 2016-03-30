@@ -1,5 +1,7 @@
 package cs351.core;
 
+import cs351.core.Engine.GUI;
+
 /**
  * The TriangleManager takes a float array from a TriangleGenerator and allows
  * you to extract data from it in a much more convenient way.
@@ -10,6 +12,10 @@ package cs351.core;
 public class TriangleManager
 {
   protected float[] data;
+  protected float maxColor = 255.0f;
+  protected float maxAlpha = 1.0f;
+  protected float maxXValue; // pulled from GUI
+  protected float maxYValue; // pulled from GUI
 
   public enum Coordinate
   {
@@ -31,12 +37,15 @@ public class TriangleManager
 
   /**
    * Sets the triangle data to interpret.
+   * @param gui gui to pull constraints from
    * @param data array of 10 elements
    */
-  public void setTriangleData(float[] data)
+  public void setTriangleData(GUI gui, float[] data)
   {
     if (data.length != 10) throw new IllegalArgumentException("Invalid triangle data");
     this.data = data;
+    maxXValue = gui.getImageWidth();
+    maxYValue = gui.getImageHeight();
   }
 
   /**
@@ -69,21 +78,35 @@ public class TriangleManager
   /**
    * Mutates one of the coordinates.
    * @param coordinate which coordinate to mutate (ex: Coordinate.X1)
-   * @param newVal new value for the coordinate
+   * @param offset mutation amount
    */
-  public void mutateCoordinate(Coordinate coordinate, float newVal)
+  public void mutateCoordinate(Coordinate coordinate, float offset)
   {
+    float newVal = data[coordinate.ordinal()] + offset;
+    if (coordinate.ordinal() % 2 == 0) newVal = constrain(newVal, 0.0f, maxXValue);
+    else newVal = constrain(newVal, 0.0f, maxYValue);
     data[coordinate.ordinal()] = newVal;
   }
 
   /**
    * Mutates one of the color values.
    * @param colorVal which coordinate to mutate (ex: ColorValue.RED);
-   * @param newVal new value for the coordinate
+   * @param offset mutation amount
    */
-  public void mutateColorValue(ColorValue colorVal, float newVal)
+  public void mutateColorValue(ColorValue colorVal, float offset)
   {
     int colorOffset = 6;
-    data[colorVal.ordinal() + colorOffset] = newVal;
+    float newVal = data[colorVal.ordinal() + colorOffset] + offset;
+    // 9 = alpha value
+    if (colorVal.ordinal() + colorOffset == 9) newVal = constrain(newVal, 0.0f, maxAlpha);
+    else newVal = constrain(newVal, 0.0f, maxColor);
+    data[colorVal.ordinal() + colorOffset] += offset;
+  }
+
+  private float constrain(float num, float min, float max)
+  {
+    if (num < min) num = min;
+    else if (num > max) num = max;
+    return num;
   }
 }

@@ -23,6 +23,7 @@ public class GamePopulation implements Population
 
   private Random numGenerator; // initialized once to be used when creating initial triangle vertices
   private Collection<Tribe> tribesCollection; // holds tribes that make up the population
+  private FitnessFunction function;
 
 
   /**
@@ -34,7 +35,7 @@ public class GamePopulation implements Population
   @Override
   public FitnessFunction getFitnessFunction()
   {
-    return null;
+    return function;
   }
 
   /**
@@ -86,6 +87,7 @@ public class GamePopulation implements Population
     this.numTribes = numTribes;
     tribesCollection = new ArrayList<>();
     numGenerator = new Random();
+    function = new NotTheRealFitnessFunction();
 
     JobList list = new JobList(engine.getParallelJobSystem());
 

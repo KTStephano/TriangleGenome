@@ -1,5 +1,7 @@
 package cs351.core;
 
+import cs351.core.Engine.EvolutionEngine;
+
 /**
  * See slide 19.
  *
@@ -19,16 +21,11 @@ public interface Mutator
   void setGenome(Genome genome);
 
   /**
-   * Sets the fitness function to be used by this genome
-   * to decide the fitness after mutations are made.
-   *
-   * @param function fitness function to use
-   */
-  void setFitnessFunction(FitnessFunction function);
-
-  /**
    * At this point the mutator should decide on a mutation(s) and
    * perform them.
+   *
+   * @param function fitness function to use
+   * @param engine reference to the current engine
    */
-  void mutate();
+  void mutate(FitnessFunction function, EvolutionEngine engine);
 }
