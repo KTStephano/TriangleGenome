@@ -250,7 +250,7 @@ public class GameWindow implements GUI
     }
 
   }
-  // Random comment because github won't let me upload
+  // Random comment because GitHub won't let me upload
   /**
    * Initializes the GUI with the given JavaFX stage and the given engine.
    *
