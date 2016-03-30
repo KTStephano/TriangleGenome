@@ -111,7 +111,7 @@ public class Log
     if (elements.length > 0) str.append("\n"); // only add when there are more messages to display
     for (StackTraceElement element : elements)
     {
-      str.append("\t\t\t\t--> ");
+      str.append("\t\t--> ");
       str.append(element.toString());
       str.append("\n");
     }
