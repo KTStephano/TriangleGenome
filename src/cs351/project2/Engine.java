@@ -44,19 +44,22 @@ public final class Engine implements EvolutionEngine
   private final class MutatorJob implements Job
   {
     private final Population POPULATION;
-    private final Genome GENOME;
+    private final Tribe TRIBE;
+    private final Engine ENGINE;
 
-    public MutatorJob(Population population, Genome genome)
+    public MutatorJob(Population population, Tribe tribe, Engine engine)
     {
       POPULATION = population;
-      GENOME = genome;
+      TRIBE = tribe;
+      ENGINE = engine;
     }
 
     @Override
     public void start(int threadID)
     {
-      //Mutator mutator = POPULATION.getMutatorForGenome(GENOME);
-      //mutator.mutate();
+      Genome best = TRIBE.getBest();
+      TRIBE.getMutatorForGenome(best).mutate(POPULATION.getFitnessFunction(), ENGINE);
+      TRIBE.recalculate();
     }
   }
 
@@ -185,9 +188,11 @@ public final class Engine implements EvolutionEngine
     jobSystem = new ParallelJobSystem(numTribes);
     jobSystem.init();
     mainJobList = new JobList(jobSystem);
+    GENERATIONS.set(0);
     if (population != null)
     {
       population.generateStartingState(this, numTribes);
+      for (Tribe tribe : population.getTribes()) mainJobList.add(new MutatorJob(population, tribe, this), 1);
       //Tribe tribe = population.getTribe();
       // Initialize the mutator jobs
       //for (int i = 0; i < tribe.size(); i++) mainJobList.add(new MutatorJob(population, tribe.get(i)), 1);
@@ -317,6 +322,11 @@ public final class Engine implements EvolutionEngine
   public String getFullVersion()
   {
     return Integer.toString(getVersionMajor()) + "." + Integer.toString(getVersionMinor());
+  }
+
+  public void incrementGenerationCount()
+  {
+    GENERATIONS.getAndIncrement();
   }
 
   private void enginePrint(String message)

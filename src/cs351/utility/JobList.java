@@ -89,7 +89,7 @@ public class JobList
     {
       // 'true' tells the job system to clear the list it is being given after it
       // is finished using it
-      ACTIVE_COUNTERS.add(JOB_SYSTEM.submit(entry.getValue(), entry.getKey(), true));
+      ACTIVE_COUNTERS.add(JOB_SYSTEM.submit(entry.getValue(), entry.getKey(), clearExistingData));
     }
     // Reset the size
     size = 0;

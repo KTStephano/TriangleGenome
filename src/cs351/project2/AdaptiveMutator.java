@@ -24,12 +24,12 @@ public final class AdaptiveMutator implements Mutator
                              TriangleManager.ColorValue.BLUE, TriangleManager.ColorValue.ALPHA
                            };
   private static final int MULTIPLIER = 5;
-  private static final float WEIGHT_OFFSET = 0.05f; // increase/decrease amount on success
+  private static final float WEIGHT_OFFSET = MULTIPLIER / 100.0f; // increase/decrease amount on success
   private static final float MAX_WEIGHT = 1.0f;
   private static final float MIN_WEIGHT = MAX_WEIGHT * (MULTIPLIER / 100.0f);
-  private static final int MIN_STEP = 1;
-  private static final int MAX_STEP = 10;
-  private static final float STEP_OFFSET = 0.5f;
+  private static final int MIN_STEP = 25;
+  private static final int MAX_STEP = 50;
+  private static final float STEP_OFFSET = 0.05f;
   private static final float START_WEIGHT = MAX_WEIGHT * (MULTIPLIER / 100.0f);
   private final TriangleManager MANAGER = new TriangleManager();
   private Genome genome = null;
@@ -80,6 +80,7 @@ public final class AdaptiveMutator implements Mutator
     }
     // Get the new fitness
     function.generateFitness(genome);
+    ((Engine)engine).incrementGenerationCount();
     double newFitness = genome.getFitness();
     int improved = newFitness > previousFitness ? 1 : -1;
     // Adapt the step sizes/weights depending on how things went

@@ -100,7 +100,7 @@ public class TriangleManager
     // 9 = alpha value
     if (colorVal.ordinal() + colorOffset == 9) newVal = constrain(newVal, 0.0f, maxAlpha);
     else newVal = constrain(newVal, 0.0f, maxColor);
-    data[colorVal.ordinal() + colorOffset] += offset;
+    data[colorVal.ordinal() + colorOffset] = newVal;
   }
 
   private float constrain(float num, float min, float max)
