@@ -1,5 +1,6 @@
 package cs351.core.Engine;
 
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -70,5 +71,11 @@ public interface GUI
    * @return Height of the image being drawn
    */
   int getImageHeight();
+
+  /**
+   *
+   * @return The target image that is supposed to be replicated
+   */
+  Image getTargetImage();
 
 }

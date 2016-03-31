@@ -16,6 +16,7 @@ import java.util.Random;
 
 import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -42,7 +43,6 @@ import javafx.stage.WindowEvent;
 /**
  * GameWindow creates the GUI. The GUI is responsible for showing two images: the original image and the
  * image created by the Genetic Algorithm.
- *
  */
 public class GameWindow implements GUI
 {
@@ -54,7 +54,7 @@ public class GameWindow implements GUI
 
   private double canvasMargin = 40;
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
-  private double canvasStartY = canvasMargin;
+  private double canvasStartY = 10;
   //private double canvasStartY = sceneHeight / 2 - canvasHeight / 2 - canvasHeight / 4;
 
   private int tribeSize = 8;
@@ -94,6 +94,22 @@ public class GameWindow implements GUI
   private HBox triangleSliderContainer; // inside canvas slider container
   private HBox genomeSliderContainer;   // inside canvas slider container
   private HBox tribeSliderContainer;    // inside canvas slider container
+  private HBox statsContainer;          // Holds all stats boxes
+  private VBox stats1;
+  private VBox stats2;
+  private VBox stats3;
+
+  private Label statsLabel;             // Just states, "Statistics:"
+  private Label fitnessLabel;           // shows fitness level of current, selected genome
+  private Label fitnessPerSecondLabel;  // displays change of fitness per second of most fit genome in the population
+  private Label populationLabel;        // shows total current amount of generation
+  private Label generationLabel;        // amount of generations calculated by all tribes since the last population initialization
+  private Label generationPerSecondLabel; // (avg of just last second) current generations per second averaged over the past second (not including paused time);
+  private Label generationAvgLabel;     // current generations averaged over all non-paused time since population initialization
+  private Label hillChildrenLabel;      // amount of hill-climb children
+  private Label crossChildrenLabel;     // amount of cross over children
+  private Label nonPausedTime;          // non paused time since the most recent population initialization hh:mm:ss
+  private AnimationTimer stopwatch;     // Keeps track of all nonPausedTime
 
 
   private Button pauseButton;             // pauses game
@@ -118,13 +134,40 @@ public class GameWindow implements GUI
   private double targetImageWidth = 0;
   private double targetImageHeight = 0;
 
-  Desktop desktop;
-
   // Create array of default pictures
   final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-512x413.png", "images/poppyfields-512x384.png",
     "images/the_great_wave_off_kanagawa-512x352.png"};
 
+  /**
+   *
+   * @return int value representing the current genome's fitness level
+   */
+  private int getGenomeFitness()
+  {
+    getSelectedGenome();
+    return 0;
+  }
 
+  /**
+   * Updates statistics values at each update
+   */
+  private void updateStatistics()
+  {
+    fitnessLabel.setText("Selected Genome Fitness: " + getGenomeFitness());
+    fitnessPerSecondLabel.setText("Fitness/Sec: N/A");
+    populationLabel.setText("Population: " + null + " genomes");
+    generationLabel.setText("Amount of Generations: ");
+    generationPerSecondLabel.setText("Generations/Sec: N/A");
+    generationAvgLabel.setText("Generations on Average: ");
+    hillChildrenLabel.setText("Children from Hill Climbing: ");
+    crossChildrenLabel.setText("Children from Crossover: ");
+    nonPausedTime.setText("Running: hh:mm:ss");
+  }
+
+  /**
+   * Used when selecting an image not already preset in the GUI
+   * @param imgURL String value of image location
+   */
   public void setSelectedImage(String imgURL)
   {
     Image image = new Image("file:" + imgURL);
@@ -256,6 +299,7 @@ public class GameWindow implements GUI
     resizeTargetImage();
   }
 
+  @Override
   /**
    *
    * @return The target image that is supposed to be replicated
@@ -421,7 +465,7 @@ public class GameWindow implements GUI
       else if (result.get().equals("16"))
         tribeSize = 16;
       else
-        tribeSize = 4;
+        tribeSize = 2;
     } catch (Exception e1)
     {
       System.exit(0);
@@ -661,9 +705,47 @@ public class GameWindow implements GUI
 
       canvasDialogContainer = new HBox(10);     // holds drop down menu and file chooser
 
-      topRowContainer = new HBox(15);             // holds tribe label and tribe slider
-      middleRowContainer = new HBox(10);        // holds pause button
-      bottomRowContainer = new HBox(10);        // holds ________
+      topRowContainer = new HBox(15);             // holds pause button
+      middleRowContainer = new HBox(10);        // holds _______
+      bottomRowContainer = new HBox(10);        // holds tribe selector
+
+      statsContainer = new HBox(30);        // Holds statistics
+      stats1 = new VBox(10);
+      stats2 = new VBox(10);
+      stats3 = new VBox(10);
+
+      stats1.setMinWidth(2*canvasWidth / 4);
+      stats2.setMinWidth(2*canvasWidth / 4);
+      stats3.setMinWidth(2*canvasWidth / 4);
+
+      // Create statistics labels
+      int labelWidth = 160;
+      Label statsLabel = new Label ("Statistics:");
+      Label fitnessLabel = new Label("Selected Genome Fitness: ");
+      Label fitnessPerSecondLabel = new Label("Fitness/Sec: N/A");
+      Label populationLabel = new Label("Population: " + null + " genomes");
+      Label generationLabel = new Label("Amount of Generations: ");
+      Label generationPerSecondLabel = new Label("Generations/Sec: N/A");
+      Label generationAvgLabel = new Label("Generations on Average: ");
+      Label hillChildrenLabel = new Label("Children from Hill Climbing: ");
+      Label crossChildrenLabel = new Label("Children from Crossover: ");
+      Label nonPausedTime = new Label("Running: hh:mm:ss");
+
+      statsLabel.setMinWidth(labelWidth);
+      fitnessLabel.setMinWidth(labelWidth);
+      fitnessPerSecondLabel.setMinWidth(labelWidth);
+      populationLabel.setMinWidth(labelWidth);
+      generationLabel.setMinWidth(labelWidth);
+      generationPerSecondLabel.setMinWidth(labelWidth);
+      generationAvgLabel.setMinWidth(labelWidth);
+      hillChildrenLabel.setMinWidth(labelWidth);
+      crossChildrenLabel.setMinWidth(labelWidth);
+      nonPausedTime.setMinWidth(labelWidth);
+
+      stats1.getChildren().addAll(fitnessLabel, fitnessPerSecondLabel, populationLabel);
+      stats2.getChildren().addAll(generationLabel, generationPerSecondLabel, generationAvgLabel);
+      stats3.getChildren().addAll(hillChildrenLabel, crossChildrenLabel, nonPausedTime);
+
 
       // set up sub menu container
       canvasSubMenus.setMaxWidth(2 * canvasWidth + canvasMargin);
@@ -706,17 +788,24 @@ public class GameWindow implements GUI
       middleRowContainer.setLayoutX(topRowContainer.getLayoutX());
       middleRowContainer.setLayoutY(topRowContainer.getLayoutY() + canvasMargin);
       middleRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      middleRowContainer.getChildren().addAll();
+      middleRowContainer.getChildren().addAll(tribeButtonLabel, tribeField, tribeButton);
 
       // Add items to bottom container
       bottomRowContainer.setLayoutX(topRowContainer.getLayoutX());
       bottomRowContainer.setLayoutY(middleRowContainer.getLayoutY() + canvasMargin / 2);
       bottomRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      bottomRowContainer.getChildren().addAll(tribeButtonLabel, tribeField, tribeButton);
+      bottomRowContainer.getChildren().addAll();
+
+      // Add labels to statistics container
+      statsContainer.setLayoutX(topRowContainer.getLayoutX());
+      statsContainer.setLayoutY(bottomRowContainer.getLayoutY() + canvasMargin / 2);
+      statsContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
+      statsContainer.getChildren().addAll(statsLabel, stats1, stats2, stats3);
+
 
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
       root.getChildren().addAll(canvasOriginal, canvasGenetic, canvasSubMenus,
-        topRowContainer, middleRowContainer, bottomRowContainer);
+        topRowContainer, middleRowContainer, bottomRowContainer, statsContainer);
 
       stage.setOnCloseRequest(this::windowClosed);
       stage.setTitle("Triangle Genome Project");
@@ -817,6 +906,8 @@ public class GameWindow implements GUI
       triangleCounter ++;
       if(triangleCounter > getSelectedTriangle()) break;
     }
+
+//    updateStatistics();
   }
 
   private void windowClosed(WindowEvent event)
