@@ -859,20 +859,18 @@ public class GameWindow implements GUI
   }
 
   /**
-   * TODO: Change return value to match actual selected image width
    * @return Width of the image being drawn
    */
   public int getImageWidth()
   {
-    return (int)canvasWidth;
+    return (int)targetImageWidth;
   }
 
   /**
-   * TODO: Change return value to match actual selected image height
    * @return Height of the image being drawn
    */
   public int getImageHeight()
   {
-    return (int)canvasHeight;
+    return (int)targetImageHeight;
   }
 }
