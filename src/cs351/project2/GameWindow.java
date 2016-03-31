@@ -15,9 +15,11 @@ import cs351.utility.Vector4f;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -39,8 +41,8 @@ public class GameWindow implements GUI
   private int sceneWidth = 900;
   private int sceneHeight = 600;
 
-  private double canvasWidth = 400;
-  private double canvasHeight = 300;
+  private double canvasWidth = 400; // Based on images given by CS 351
+  private double canvasHeight = 400;
 
   private double canvasMargin = 40;
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
@@ -65,6 +67,7 @@ public class GameWindow implements GUI
   private GraphicsContext gcGenetic;
 
   private boolean canvasDebugging = false;
+  private boolean selectedNewImage = false;
 
   private Slider triangleListSlider; // Slider for triangle selection
   private Slider genomeListSlider; // Slider for genome selection
@@ -88,11 +91,130 @@ public class GameWindow implements GUI
   private Button pauseButton;
   private Button testButton;
   private boolean genomePaused = false;
+  private boolean tribeCountChanged = false;
   private Boolean userWantsToClose = false;
+  ChoiceBox pictureSelect;
 
   private Genome currentGenome;
   private Triangle currentTriangle;
   private int triangleCounter;
+
+  // Image and Image View Stuff
+  private Image targetImage = null;
+  private double targetImageWidth = 0;
+  private double targetImageHeight = 0;
+
+  // Create array of default pictures
+  final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-512x413.png", "images/poppyfields-512x384.png",
+    "images/the_great_wave_off_kanagawa-512x352.png"};
+
+  @Override
+  public boolean getHasChangedTribeCount()
+  {
+    return tribeCountChanged;
+  }
+
+
+  @Override
+  /**
+   * @return True if user has selected a new image since the last update
+   */
+  public boolean getHasSelectedNewImage()
+  {
+    return selectedNewImage;
+  }
+
+  /**
+   * Resizes the image to fit inside of the canvas. The image file remains the same size however, it drawn smaller
+   */
+  private void resizeTargetImage()
+  {
+    Image img = getTargetImage();
+
+    // Get the dimensions no matter what
+    double newX = img.getWidth();
+    double newY = img.getHeight();
+
+    // When width is way too big
+    if(img.getWidth() >= img.getHeight() && img.getWidth() > canvasWidth)
+    {
+      newX = canvasWidth;
+      newY = img.getHeight() / img.getWidth() * newX;
+      if(newY > canvasHeight)
+      {
+        newY = canvasHeight;
+        newX = img.getWidth()/img.getHeight() * newY;
+      }
+    }
+
+    else if(img.getHeight() > img.getWidth() && img.getHeight() > canvasHeight)
+    {
+      newY = canvasHeight;
+      newX = img.getWidth()/img.getHeight() * newY;
+      if(newX > canvasWidth)
+      {
+        newX = canvasWidth;
+        newY = img.getHeight() / img.getWidth() * newX;
+      }
+    }
+    setTargetImageWidth(newX);
+    setTargetImageHeight(newY);
+  }
+
+  /**
+   * @param width Width of the image
+   */
+  private void setTargetImageWidth(double width)
+  {
+    targetImageWidth = width;
+  }
+
+  /**
+   * @param height Height of the image
+   */
+  private void setTargetImageHeight(double height)
+  {
+    targetImageHeight = height;
+  }
+
+  /**
+   * @return width of the image
+   */
+  public double getTargetImageWidth()
+  {
+    return targetImageWidth;
+  }
+
+  /**
+   * @return height of the image
+   */
+  public double getTargetImageHeight()
+  {
+    return targetImageHeight;
+  }
+
+  /**
+   * Called when the user selects another image to draw
+   *
+   * @param imgURL Image to set the target image
+   */
+  public void setTargetImage(String imgURL)
+  {
+    InputStream stream = GameWindow.class.getResourceAsStream(imgURL);
+    Image image = new Image(stream);
+    targetImage = image;
+    resizeTargetImage();
+  }
+
+  /**
+   *
+   * @return The target image that is supposed to be replicated
+   */
+  public Image getTargetImage()
+  {
+    return targetImage;
+  }
+
 
   /**
    * Called to enable buttons when the game is paused
@@ -100,6 +222,7 @@ public class GameWindow implements GUI
   private void enableButtons()
   {
     testButton.setDisable(false);
+    pictureSelect.setDisable(false);
   }
 
   /**
@@ -108,6 +231,7 @@ public class GameWindow implements GUI
   private void disableButtons()
   {
     testButton.setDisable(true);
+    pictureSelect.setDisable(true);
   }
 
   /**
@@ -293,11 +417,11 @@ public class GameWindow implements GUI
       // Draw Mona Lisa
       gcOriginal.setFill(Color.BLACK);
       gcOriginal.setStroke(Color.BLACK);
-      gcOriginal.strokeRect(0, 0, canvasWidth, canvasHeight);
       gcOriginal.fillText("Placeholder for MonaLisa", canvasWidth / 4, canvasHeight / 2);
-      InputStream stream = GameWindow.class.getResourceAsStream("images/mona-lisa-cropted-512x413.png");
-      Image monaLisa = new Image(stream);
-      gcOriginal.drawImage(monaLisa, 0, 0, canvasWidth, canvasHeight);
+      String defaultImage = pictureUrls[0];
+      setTargetImage(defaultImage);
+      resizeTargetImage();
+      gcOriginal.drawImage(getTargetImage(), 0, 0, getTargetImage().getWidth(), getTargetImage().getHeight(), 0, 0, getTargetImageWidth(), getTargetImageHeight());
 
       // Draw Triangles
       gcGenetic.setFill(Color.BLACK);
@@ -305,6 +429,7 @@ public class GameWindow implements GUI
       gcGenetic.strokeRect(0, 0, canvasWidth, canvasHeight);
       gcGenetic.fillText("Placeholder for Triangle Genomes", canvasWidth / 4, canvasHeight / 2);
 
+      // ************* SLIDERS ************************
       // Create slider - triangle list
       int triangleLabelWidth = 55;
       Label triangleLabel = new Label("Triangle:");
@@ -379,9 +504,11 @@ public class GameWindow implements GUI
         tribeListSlider.setShowTickLabels(false);
       }
 
+      // *********** BUTTONS ***********************
       // Create the pause button
-      pauseButton = new Button("Pause");
+      pauseButton = new Button("Play");
       pauseButton.setMinWidth(70);
+      genomePaused = true;
       pauseButton.setOnAction(new EventHandler<ActionEvent>()
       {
         /**
@@ -412,6 +539,22 @@ public class GameWindow implements GUI
       testButton.setDisable(true);
 
 
+      // ************ ChoiceBox *********************
+      pictureSelect = new ChoiceBox(FXCollections.observableArrayList(
+        "MonaLisa - 512x413", "PoppyFields - 512x384", "The Great Wave - 512x352")
+      );
+      pictureSelect.setMinWidth(50);
+      pictureSelect.setTooltip(new Tooltip("Select an image"));
+      pictureSelect.getSelectionModel().selectedIndexProperty().addListener(new
+        ChangeListener<Number>() {
+         public void changed (ObservableValue ov,
+          Number value, Number new_value){
+           setTargetImage(pictureUrls[new_value.intValue()]);
+           selectedNewImage = true;
+           //engine.getLog().log("window", "Selected: %s" + pictureUrls[new_value.intValue()]);
+      }
+    });
+
       // Create containers to hold components
       canvasSubMenus = new HBox(canvasMargin);              // holds dialog and slider containers
 
@@ -437,6 +580,7 @@ public class GameWindow implements GUI
       canvasDialogContainer.setMinWidth(canvasWidth);
       canvasDialogContainer.setMaxWidth(canvasWidth);
       canvasDialogContainer.setMaxHeight(canvasHeight);
+      canvasDialogContainer.getChildren().addAll(pictureSelect);
 
       // set up slider container (VBox)
       canvasSliderContainer.setMinWidth(canvasWidth);
@@ -458,8 +602,8 @@ public class GameWindow implements GUI
       // Add items to top container - Slider
       //topRowContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
       topRowContainer.setLayoutX(canvasStartX);
-      topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + 2*canvasMargin );
-      topRowContainer.setMinWidth(canvasWidth*2 + canvasMargin);
+      topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + 2 * canvasMargin);
+      topRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
       topRowContainer.getChildren().addAll(pauseButton, testButton);
 
       // Add items to middle container - Pause Button
@@ -488,7 +632,15 @@ public class GameWindow implements GUI
     }
 
   }
-  //
+
+  /*
+   * Clears the canvas holding genomes. This method is to be used at
+   * each update of the canvas
+   */
+  private void clearOriginalCanvas()
+  {
+    gcOriginal.clearRect(0, 0, canvasWidth, canvasHeight);
+  }
 
   /*
    * Clears the canvas holding genomes. This method is to be used at
@@ -515,6 +667,19 @@ public class GameWindow implements GUI
 
     // If we are not debugging, then refresh the canvas at each update
     if (!canvasDebugging) clearGeneticCanvas();
+
+    // If user selected a new image to draw, draw that image
+    if (selectedNewImage)
+    {
+      Image img = getTargetImage();
+      double newWidth = canvasWidth;
+      double newHeight = canvasHeight;
+      clearOriginalCanvas();
+      //gcOriginal.drawImage(getTargetImage(), 0, 0);
+      engine.getLog().log("window", "width: %f height: %f\n", getTargetImageWidth(), getTargetImageHeight());
+      gcOriginal.drawImage(getTargetImage(), 0, 0, img.getWidth(), img.getHeight(), 0, 0, getTargetImageWidth(), getTargetImageHeight());
+      selectedNewImage = false;
+    }
 
     // For time being, select very first genome
     ArrayList<Tribe> tribes = new ArrayList<>();
@@ -550,7 +715,6 @@ public class GameWindow implements GUI
         xVals[i] = xVertices[i];
         yVals[i] = yVertices[i];
       }
-      //engine.getLog().log("window", "\n");
       gcGenetic.fillPolygon(xVals, yVals, 3);
 
       // Draw only specified amount of triangles

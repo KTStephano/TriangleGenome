@@ -36,6 +36,20 @@ public interface GUI
   boolean hasUserSignaledQuit();
 
   /**
+   * Allows the engine to ask if the user has changed the tribe count.
+   * @return True if user changed the tribe count since the last iteration
+   */
+  boolean getHasChangedTribeCount();
+
+  /**
+   * Allows the evolution engine to ask if there has been a new image selected. This will allow the engine to reinitialize
+   * the population. This boolean is turned on by the action listener within the choice box. This is turned to false
+   * when the update method occurs from inside the update method of GUI.
+   * @return True if user has selected a new image since the last update
+   */
+  boolean getHasSelectedNewImage();
+
+  /**
    * This method is used to check if the user has pressed the pause button in the GUI class
    * @return true if user has pressed pause button
    */
