@@ -133,6 +133,8 @@ public class GameWindow implements GUI
   private Image targetImage = null;
   private double targetImageWidth = 0;
   private double targetImageHeight = 0;
+  private double targetImageWidthCropped = 0;
+  private double targetImageHeightCropped = 0;
 
   // Create array of default pictures
   final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-512x413.png", "images/poppyfields-512x384.png",
@@ -250,40 +252,57 @@ public class GameWindow implements GUI
         newY = img.getHeight() / img.getWidth() * newX;
       }
     }
-    setTargetImageWidth(newX);
-    setTargetImageHeight(newY);
+    setTargetImageWidthCropped(newX);
+    setTargetImageHeightCropped(newY);
   }
+
+  /**
+   * @return cropped width of the image
+   */
+  public double getTargetImageWidth()
+  {
+    return targetImage.getWidth();
+  }
+
+  /**
+   * @return cropped height of the image
+   */
+  public double getTargetImageHeight()
+  {
+    return targetImage.getHeight();
+  }
+
 
   /**
    * @param width Width of the image
    */
-  private void setTargetImageWidth(double width)
+  private void setTargetImageWidthCropped(double width)
   {
-    targetImageWidth = width;
+    targetImageWidthCropped = width;
   }
 
   /**
    * @param height Height of the image
    */
-  private void setTargetImageHeight(double height)
+  private void setTargetImageHeightCropped(double height)
   {
-    targetImageHeight = height;
+    targetImageHeightCropped = height;
   }
 
   /**
-   * @return width of the image
+   * @return cropped width of the image
    */
-  public double getTargetImageWidth()
+  public double getTargetImageWidthCropped()
   {
-    return targetImageWidth;
+    return targetImageWidthCropped;
   }
 
   /**
-   * @return height of the image
+   * @return cropped height of the image
    */
-  public double getTargetImageHeight()
+  public double getTargetImageHeightCropped()
   {
-    return targetImageHeight;
+    return targetImageHeightCropped;
   }
 
   /**
@@ -519,7 +538,7 @@ public class GameWindow implements GUI
       String defaultImage = pictureUrls[0];
       setTargetImage(defaultImage);
       resizeTargetImage();
-      gcOriginal.drawImage(getTargetImage(), 0, 0, getTargetImage().getWidth(), getTargetImage().getHeight(), 0, 0, getTargetImageWidth(), getTargetImageHeight());
+      gcOriginal.drawImage(getTargetImage(), 0, 0, getTargetImage().getWidth(), getTargetImage().getHeight(), 0, 0, getTargetImageWidthCropped(), getTargetImageHeightCropped());
 
       // Draw Triangles
       gcGenetic.setFill(Color.BLACK);
@@ -862,7 +881,7 @@ public class GameWindow implements GUI
       clearOriginalCanvas();
       //gcOriginal.drawImage(getTargetImage(), 0, 0);
       engine.getLog().log("window", "width: %f height: %f\n", getTargetImageWidth(), getTargetImageHeight());
-      gcOriginal.drawImage(getTargetImage(), 0, 0, img.getWidth(), img.getHeight(), 0, 0, getTargetImageWidth(), getTargetImageHeight());
+      gcOriginal.drawImage(getTargetImage(), 0, 0, img.getWidth(), img.getHeight(), 0, 0, getTargetImageWidthCropped(), getTargetImageHeightCropped());
       selectedNewImage = false;
     }
 
@@ -954,7 +973,7 @@ public class GameWindow implements GUI
    */
   public int getImageWidth()
   {
-    return (int)targetImageWidth;
+    return (int)getTargetImageWidth();
   }
 
   /**
@@ -962,6 +981,6 @@ public class GameWindow implements GUI
    */
   public int getImageHeight()
   {
-    return (int)targetImageHeight;
+    return (int)getTargetImageHeight();
   }
 }
