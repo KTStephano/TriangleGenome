@@ -23,6 +23,7 @@ public final class Engine implements EvolutionEngine
   private GUI gui;
   private Genome target;
   private Log log;
+  private int numTribes;
   private ParallelJobSystem jobSystem;
   private Statistics statistics;
   private boolean isRunningConsoleMode;
@@ -238,7 +239,7 @@ public final class Engine implements EvolutionEngine
     if (!isRunningConsoleMode)
     {
       gui.update(this);
-      if (gui.getHasChangedTribeCount()) generateStartingState(null, false);
+      if (numTribes != gui.getTribes()) generateStartingState(null, false);
     }
 
     if (!IS_PAUSED.get())
@@ -351,7 +352,7 @@ public final class Engine implements EvolutionEngine
       gui.init(stage, this);
     }
 
-    int numTribes = gui == null ? 1 : gui.getTribes();
+    numTribes = gui == null ? 1 : gui.getTribes();
     if (jobSystem != null) jobSystem.destroy(); // Make sure this gets cleaned up
     jobSystem = new ParallelJobSystem(numTribes);
     jobSystem.init();
