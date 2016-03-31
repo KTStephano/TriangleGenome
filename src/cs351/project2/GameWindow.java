@@ -4,7 +4,11 @@ import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.GUI;
 
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +23,11 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -41,8 +49,8 @@ public class GameWindow implements GUI
   private int sceneWidth = 900;
   private int sceneHeight = 600;
 
-  private double canvasWidth = 400; // Based on images given by CS 351
-  private double canvasHeight = 400;
+  private double canvasWidth = 400;
+  private double canvasHeight = 300;
 
   private double canvasMargin = 40;
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
@@ -78,7 +86,7 @@ public class GameWindow implements GUI
   private int selectedTribe;
 
   private HBox canvasSubMenus;        // holds dialog and slider containers
-  private VBox canvasDialogContainer; // container underneath canvas level
+  private HBox canvasDialogContainer; // container underneath canvas level
   private VBox canvasSliderContainer; // container underneath canvas level
   private HBox topRowContainer;       // below canvas dialog and slider containers
   private HBox middleRowContainer;    // below top row container
@@ -88,12 +96,18 @@ public class GameWindow implements GUI
   private HBox tribeSliderContainer;    // inside canvas slider container
 
 
-  private Button pauseButton;
-  private Button testButton;
+  private Button pauseButton;             // pauses game
+  private Button fileChooserButton;       // chooses custom image to draw
+  private Button tribeButton;             // applies number of tribes
+  private Button saveGenome;              // saves the current genome to a file
+  private Button writeGenome;             // writes the uploaded genome to the game
   private boolean genomePaused = false;
   private boolean tribeCountChanged = false;
   private Boolean userWantsToClose = false;
-  ChoiceBox pictureSelect;
+  private ChoiceBox pictureSelect;
+  private TextField tribeField;
+  private double amtButtons = 5; // how many buttons per row
+  private double buttonSize = (canvasWidth*2 + canvasMargin) / amtButtons;
 
   private Genome currentGenome;
   private Triangle currentTriangle;
@@ -104,16 +118,52 @@ public class GameWindow implements GUI
   private double targetImageWidth = 0;
   private double targetImageHeight = 0;
 
+  Desktop desktop;
+
   // Create array of default pictures
   final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-512x413.png", "images/poppyfields-512x384.png",
     "images/the_great_wave_off_kanagawa-512x352.png"};
+
+
+  public void setSelectedImage(String imgURL)
+  {
+    Image image = new Image("file:" + imgURL);
+    targetImage = image;
+    resizeTargetImage();
+  }
+
+  /**
+   * Allows to access the file
+   * @param file Location of the file
+   */
+  private void openFile(File file)
+  {
+    //System.out.println("file: " + file.toString());
+    setSelectedImage(file.toString());
+  }
+
+  /**
+   * Configures the file chooser. Applies filters to accepted file types.
+   * @param fileChooser File chooser stage
+   */
+  private void configureFileChooser(final FileChooser fileChooser)
+  {
+    fileChooser.setTitle("Select Image");
+    fileChooser.setInitialDirectory(
+      new File(System.getProperty("user.home"))
+    );
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+      new FileChooser.ExtensionFilter("PNG", "*.png")
+    );
+  }
+
 
   @Override
   public boolean getHasChangedTribeCount()
   {
     return tribeCountChanged;
   }
-
 
   @Override
   /**
@@ -221,8 +271,10 @@ public class GameWindow implements GUI
    */
   private void enableButtons()
   {
-    testButton.setDisable(false);
+    tribeButton.setDisable(false);
     pictureSelect.setDisable(false);
+    fileChooserButton.setDisable(false);
+    tribeField.setDisable(false);
   }
 
   /**
@@ -230,8 +282,10 @@ public class GameWindow implements GUI
    */
   private void disableButtons()
   {
-    testButton.setDisable(true);
+    tribeButton.setDisable(true);
     pictureSelect.setDisable(true);
+    fileChooserButton.setDisable(true);
+    tribeField.setDisable(true);
   }
 
   /**
@@ -505,9 +559,28 @@ public class GameWindow implements GUI
       }
 
       // *********** BUTTONS ***********************
+      // Create file chooser button
+      FileChooser fileChooser = new FileChooser();
+      fileChooserButton = new Button("Choose an image ...");
+      fileChooserButton.setMinWidth(100);
+      fileChooserButton.setMaxWidth(150);
+      fileChooserButton.setOnAction(
+        new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(final ActionEvent e) {
+            configureFileChooser(fileChooser);
+            File file = fileChooser.showOpenDialog(stage);
+            if (file != null) {
+              selectedNewImage = true;
+              fileChooserButton.setText(file.toString());
+              openFile(file);
+            }
+          }
+        });
+
       // Create the pause button
       pauseButton = new Button("Play");
-      pauseButton.setMinWidth(70);
+      pauseButton.setMinWidth(buttonSize);
       genomePaused = true;
       pauseButton.setOnAction(new EventHandler<ActionEvent>()
       {
@@ -533,11 +606,34 @@ public class GameWindow implements GUI
         }
       });
 
-      // Create test button
-      testButton = new Button("TEST");
-      testButton.setMinWidth(70);
-      testButton.setDisable(true);
+      // Create text field for tribe selection
+      tribeField = new TextField();
+      tribeField.setMinWidth(70);
+      tribeField.textProperty().addListener(new ChangeListener<String>() {
+        @Override
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+          if (!newValue.matches("\\d*")) {
+            tribeField.setText(newValue.replaceAll("[^\\d]", ""));
+          }
+        }
+      });
 
+      // Create tribe button
+      Label tribeButtonLabel = new Label("Input number of Tribes:");
+      tribeButtonLabel.setMinWidth(150);
+      tribeButton = new Button("OK");
+      tribeButton.setMinWidth(70);
+      tribeButton.setOnAction(new EventHandler<ActionEvent>()
+      {
+        @Override
+        public void handle(ActionEvent e)
+        {
+//          String str = tribeField.getCharacters().toString();
+//          int num = str.getNumericalValue();
+//          setSelectedTribe(Character.getNumericValue(tribeField.getCharacters()));
+//          System.out.println("Stuff: " + tribeField.getCharacters());
+        }
+      });
 
       // ************ ChoiceBox *********************
       pictureSelect = new ChoiceBox(FXCollections.observableArrayList(
@@ -563,7 +659,7 @@ public class GameWindow implements GUI
       genomeSliderContainer = new HBox();       // holds genome label and genome slider
       tribeSliderContainer = new HBox();        // holds tribe label and tribe slider
 
-      canvasDialogContainer = new VBox(10);     // holds drop down menu and file chooser
+      canvasDialogContainer = new HBox(10);     // holds drop down menu and file chooser
 
       topRowContainer = new HBox(15);             // holds tribe label and tribe slider
       middleRowContainer = new HBox(10);        // holds pause button
@@ -580,7 +676,7 @@ public class GameWindow implements GUI
       canvasDialogContainer.setMinWidth(canvasWidth);
       canvasDialogContainer.setMaxWidth(canvasWidth);
       canvasDialogContainer.setMaxHeight(canvasHeight);
-      canvasDialogContainer.getChildren().addAll(pictureSelect);
+      canvasDialogContainer.getChildren().addAll(pictureSelect, fileChooserButton);
 
       // set up slider container (VBox)
       canvasSliderContainer.setMinWidth(canvasWidth);
@@ -599,24 +695,24 @@ public class GameWindow implements GUI
       tribeSliderContainer.setMaxWidth(canvasWidth);
       tribeSliderContainer.getChildren().addAll(tribeLabel, tribeListSlider);
 
-      // Add items to top container - Slider
+      // Add items to top container
       //topRowContainer.setMaxSize(2 * canvasWidth + canvasMargin, canvasHeight);
       topRowContainer.setLayoutX(canvasStartX);
       topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + 2 * canvasMargin);
       topRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      topRowContainer.getChildren().addAll(pauseButton, testButton);
+      topRowContainer.getChildren().addAll(pauseButton);
 
-      // Add items to middle container - Pause Button
+      // Add items to middle container
       middleRowContainer.setLayoutX(topRowContainer.getLayoutX());
       middleRowContainer.setLayoutY(topRowContainer.getLayoutY() + canvasMargin);
       middleRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
       middleRowContainer.getChildren().addAll();
 
-      // Add items to bottom container - N/A
+      // Add items to bottom container
       bottomRowContainer.setLayoutX(topRowContainer.getLayoutX());
       bottomRowContainer.setLayoutY(middleRowContainer.getLayoutY() + canvasMargin / 2);
       bottomRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      bottomRowContainer.getChildren().addAll();
+      bottomRowContainer.getChildren().addAll(tribeButtonLabel, tribeField, tribeButton);
 
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
       root.getChildren().addAll(canvasOriginal, canvasGenetic, canvasSubMenus,
