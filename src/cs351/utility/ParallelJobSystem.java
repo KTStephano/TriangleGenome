@@ -183,6 +183,23 @@ public final class ParallelJobSystem
     return NUM_WORKER_THREADS;
   }
 
+  /**
+   * Checks to see whether the job system is available for work or not - using it
+   * when this returns false will likely throw an exception.
+   */
+  public boolean isInitialized()
+  {
+    try
+    {
+      LOCK.lock();
+      return IS_STARTED.get();
+    }
+    finally
+    {
+      LOCK.unlock();
+    }
+  }
+
   private void dispatchJobs()
   {
     try

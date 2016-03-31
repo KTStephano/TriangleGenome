@@ -6,6 +6,7 @@ import cs351.core.Tribe;
 import cs351.utility.Job;
 import cs351.utility.JobList;
 import cs351.utility.ParallelJobSystem;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -146,60 +147,27 @@ public final class Engine implements EvolutionEngine
   }
 
   @Override
-  public Genome getTarget()
+  public Image getTarget()
   {
     throw new RuntimeException("getTarget() not finished");
     //return null;
   }
 
   @Override
-  public void init(Stage stage, String imageFile, Population population, GUI mainGUI)
+  public void init(Stage stage, Population population, GUI mainGUI)
   {
     // Error handling
     if (IS_PENDING_SHUTDOWN.get()) throw new IllegalStateException("Engine is shutting down - can't initialize");
     else if (IS_INITIALIZED.get()) throw new IllegalStateException("Engine already initialized");
-
-    System.out.println("--- Initializing Engine ---");
-    System.out.println("Engine Version: " + getFullVersion());
-    System.out.println("Available Memory (JVM): " + Runtime.getRuntime().totalMemory() + " bytes");
-    System.out.println("Target Image: " + imageFile);
-    System.out.println("Valid Population: " + (population != null));
-    System.out.println("Console Mode: " + (mainGUI == null));
 
     this.population = population;
     gui = mainGUI;
 
     // Create the log
     log = new Log("GeneticLog" + "-RuntimeCode_" + System.currentTimeMillis() + ".txt");
-    printLogHeader(imageFile);
 
-    // Initialize the statistics system
-    initStats();
-
-    // Init the population and main GUI if they are not null
-    if (mainGUI == null) isRunningConsoleMode = true;
-    else
-    {
-      isRunningConsoleMode = false;
-      gui.init(stage, this);
-    }
-
-    int numTribes = mainGUI == null ? 1 : mainGUI.getTribes();
-    jobSystem = new ParallelJobSystem(numTribes);
-    jobSystem.init();
-    mainJobList = new JobList(jobSystem);
-    GENERATIONS.set(0);
-    if (population != null)
-    {
-      population.generateStartingState(this, numTribes);
-      for (Tribe tribe : population.getTribes()) mainJobList.add(new MutatorJob(population, tribe, this), 1);
-      //Tribe tribe = population.getTribe();
-      // Initialize the mutator jobs
-      //for (int i = 0; i < tribe.size(); i++) mainJobList.add(new MutatorJob(population, tribe.get(i)), 1);
-    }
-
-    IS_INITIALIZED.set(true);
-    IS_SHUTDOWN.set(false);
+    // Initialize the engine
+    generateStartingState(stage, true);
   }
 
   @Override
@@ -267,7 +235,11 @@ public final class Engine implements EvolutionEngine
     if (mainJobList.containsActiveJobs()) mainJobList.waitForCompletion();
     // Tell the GUI it's a good time to do a rendering update since the previous
     // frame is done
-    if (!isRunningConsoleMode) gui.update(this);
+    if (!isRunningConsoleMode)
+    {
+      gui.update(this);
+      if (gui.getHasChangedTribeCount()) generateStartingState(null, false);
+    }
 
     if (!IS_PAUSED.get())
     {
@@ -341,13 +313,62 @@ public final class Engine implements EvolutionEngine
     statistics.add(new TotalGenerations("Total Generations", "engine"));
   }
 
-  private void printLogHeader(String imageFile)
+  private void printLogHeader()
   {
     String engineTag = "engine";
     log.log(engineTag, "Engine Version: %s", getFullVersion());
     log.log(engineTag, "Available Memory (JVM): %s bytes", Runtime.getRuntime().totalMemory());
-    log.log(engineTag, "Target Image: %s", imageFile);
     log.log(engineTag, "Valid Population: %b", (population != null));
     log.log(engineTag, "Console Mode: %b", (gui == null));
+  }
+
+  /**
+   * Makes sure the engine's data is current.
+   */
+  private void validateEngineState()
+  {
+
+  }
+
+  private void generateStartingState(Stage stage, boolean initializeGUI)
+  {
+    System.out.println("--- Initializing Engine ---");
+    System.out.println("Engine Version: " + getFullVersion());
+    System.out.println("Available Memory (JVM): " + Runtime.getRuntime().totalMemory() + " bytes");
+    System.out.println("Valid Population: " + (population != null));
+    System.out.println("Console Mode: " + (gui == null));
+
+    printLogHeader();
+
+    // Initialize the statistics system
+    initStats();
+
+    // Init the population and main GUI if they are not null
+    if (gui == null) isRunningConsoleMode = true;
+    else if (initializeGUI)
+    {
+      isRunningConsoleMode = false;
+      gui.init(stage, this);
+    }
+
+    int numTribes = gui == null ? 1 : gui.getTribes();
+    if (jobSystem != null) jobSystem.destroy(); // Make sure this gets cleaned up
+    jobSystem = new ParallelJobSystem(numTribes);
+    jobSystem.init();
+    mainJobList = new JobList(jobSystem);
+    GENERATIONS.set(0);
+    if (population != null)
+    {
+      population.generateStartingState(this, numTribes);
+      for (Tribe tribe : population.getTribes()) mainJobList.add(new MutatorJob(population, tribe, this), 1);
+      //Tribe tribe = population.getTribe();
+      // Initialize the mutator jobs
+      //for (int i = 0; i < tribe.size(); i++) mainJobList.add(new MutatorJob(population, tribe.get(i)), 1);
+    }
+
+    IS_INITIALIZED.set(true);
+    IS_SHUTDOWN.set(false);
+    GENERATIONS.set(1);
+    NUM_WORKING_JOBS.set(0);
   }
 }

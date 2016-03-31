@@ -28,7 +28,7 @@ public class EvolutionLoop extends Application
     engine = new Engine();
 
     // null for population and gui for now until those classes are up and running
-    engine.init(stage, "images/MonaLisa.jpg", new GamePopulation(), new GameWindow());
+    engine.init(stage, new GamePopulation(), new GameWindow());
     if (!stage.isShowing()) stage.show();
     loop();
   }

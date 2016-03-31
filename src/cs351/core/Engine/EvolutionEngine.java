@@ -3,6 +3,7 @@ package cs351.core.Engine;
 import cs351.core.Genome;
 import cs351.utility.Job;
 import cs351.utility.ParallelJobSystem;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -65,7 +66,7 @@ public interface EvolutionEngine
    *
    * @return target genome or null if none
    */
-  Genome getTarget();
+  Image getTarget();
 
   /**
    * NOTE :: If the population is set to null, the engine will run in a very
@@ -76,11 +77,10 @@ public interface EvolutionEngine
    * init function at a good point during the engine's init sequence).
    *
    * @param stage stage object so the engine can initialize the main GUI
-   * @param imageFile image file
    * @param population population to use to run the simulation
    * @param mainGUI gui to use
    */
-  void init(Stage stage, String imageFile, Population population, GUI mainGUI);
+  void init(Stage stage, Population population, GUI mainGUI);
 
   /**
    * Tells the engine that it needs to begin shutting down. Things that might
