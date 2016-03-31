@@ -650,7 +650,7 @@ public class GameWindow implements GUI
            //engine.getLog().log("window", "Selected: %s" + pictureUrls[new_value.intValue()]);
       }
     });
-
+      //
       // Create containers to hold components
       canvasSubMenus = new HBox(canvasMargin);              // holds dialog and slider containers
 
