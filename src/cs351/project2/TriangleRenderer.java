@@ -97,7 +97,7 @@ public class TriangleRenderer
    * @param packAsARGB true if ARGB, false if RGBA
    * @return packed data
    */
-  private int packData(float[] color, boolean packAsARGB)
+  public static int packData(float[] color, boolean packAsARGB)
   {
     int alpha = (int)(color[3] * 255) << (32 - 8);
     int red = (int)(color[0]) << (32 - 2 * 8);
@@ -113,7 +113,7 @@ public class TriangleRenderer
    * @param argb int representing the 4 color values
    * @return an array with the unpacked data
    */
-  private float[] unpackData(int argb)
+  public static float[] unpackData(int argb)
   {
     float[] colorBuffer = new float[4];
     colorBuffer[3] = ((argb & 0xFF000000) >>> (32 - 8)) / 255.0f;
