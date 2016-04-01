@@ -59,6 +59,17 @@ public class FitnessCalculator implements FitnessFunction
     int width = engine.getGUI().getImageWidth();
     int height = engine.getGUI().getImageHeight();
     double fitness = 0.0;
+    for (int x = 0; x < width; x++)
+    {
+      for (int y = 0;y < height; y++)
+      {
+        // TODO I don't think this makes any sense
+        fitness = fitness + Math.abs((double)reader.getArgb(x, y) / Integer.MAX_VALUE -
+                                     (double)renderer.getPackedARGB(x, y) / Integer.MAX_VALUE);
+      }
+    }
+    fitness = fitness / (width * height);
+    genome.setFitness(fitness);
 
     return fitness;
   }
