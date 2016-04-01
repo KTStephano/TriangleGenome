@@ -116,10 +116,10 @@ public class TriangleRenderer
   private float[] unpackData(int argb)
   {
     float[] colorBuffer = new float[4];
-    colorBuffer[3] = ((argb & 0xFF) >>> (32 - 8)) / 255;
-    colorBuffer[0] = ((argb & 0x00FF) >>> (32 - 2 * 8));
-    colorBuffer[1] = ((argb & 0x0000FF) >>> (32 - 3 * 8));
-    colorBuffer[2] = (argb & 0x000000FF);
+    colorBuffer[3] = ((argb & 0xFF000000) >>> (32 - 8)) / 255.0f;
+    colorBuffer[0] = (argb & 0x00FF0000) >>> (32 - 2 * 8);
+    colorBuffer[1] = (argb & 0x0000FF00) >>> (32 - 3 * 8);
+    colorBuffer[2] = argb & 0x000000FF;
     return colorBuffer;
   }
 }
