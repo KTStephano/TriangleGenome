@@ -361,7 +361,6 @@ public final class Engine implements EvolutionEngine
     if (population != null)
     {
       population.generateStartingState(this, numTribes);
-      if (gui != null) population.getFitnessFunction().setTargetImage(gui.getTargetImage());
       for (Tribe tribe : population.getTribes()) mainJobList.add(new MutatorJob(population, tribe, this), 1);
       //Tribe tribe = population.getTribe();
       // Initialize the mutator jobs

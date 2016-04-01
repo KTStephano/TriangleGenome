@@ -89,6 +89,8 @@ public class GamePopulation implements Population
     numGenerator = new Random();
     function = new FitnessCalculator();
 
+    if (engine.getGUI() != null) function.setTargetImage(engine.getGUI().getTargetImage());
+
     JobList list = new JobList(engine.getParallelJobSystem());
 
     // Initialize tribes, and then add it to the tribe collection
@@ -119,6 +121,7 @@ public class GamePopulation implements Population
               //Triangle triangle = new GameTriangle();
               //triangle.init(numGenerator, engine.getGUI());
               //genome.add(triangle);
+              //genome.setFitness(function.generateFitness(engine, genome));
               genome.add(TriangleGenerator.createTriangle(numGenerator, engine));
             }
 

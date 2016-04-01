@@ -27,9 +27,9 @@ public final class AdaptiveMutator implements Mutator
   private static final float WEIGHT_OFFSET = MULTIPLIER / 100.0f; // increase/decrease amount on success
   private static final float MAX_WEIGHT = 1.0f;
   private static final float MIN_WEIGHT = MAX_WEIGHT * (MULTIPLIER / 100.0f);
-  private static final int MIN_STEP = 10;
+  private static final int MIN_STEP = 1;
   private static final int MAX_STEP = 50;
-  private static final float STEP_OFFSET = 0.5f;
+  private static final float STEP_OFFSET = 2f;
   private static final float START_WEIGHT = MAX_WEIGHT * (MULTIPLIER / 100.0f);
   private final TriangleManager MANAGER = new TriangleManager();
   private Genome genome = null;
@@ -41,10 +41,15 @@ public final class AdaptiveMutator implements Mutator
                                 MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP,
                                 MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP
                               };
+  private int[] previousTriangles = new int[10];
   private int[] lastSuccessfulDirection = new int[10];
 
   {
-    for (int i = 0; i < lastSuccessfulDirection.length; i++) lastSuccessfulDirection[i] = 0;
+    for (int i = 0; i < lastSuccessfulDirection.length; i++)
+    {
+      previousTriangles[i] = -1;
+      lastSuccessfulDirection[i] = 0;
+    }
   }
 
   @Override
@@ -70,27 +75,34 @@ public final class AdaptiveMutator implements Mutator
       }
     }
     int direction = lastSuccessfulDirection[selection] != 0 ? lastSuccessfulDirection[selection] :
-                    RAND.nextInt(3) - 1; // [-1, 1]
-    int index = RAND.nextInt(triangles.size());
+            RAND.nextInt(3) - 1; // [-1, 1]
+    int index = previousTriangles[selection] == -1 ? RAND.nextInt(triangles.size()) : previousTriangles[selection];
     float step = stepSizes[selection];
     MANAGER.setTriangleData(engine.getGUI(), triangles.get(index));
     double previousFitness = genome.getFitness();
     if (selection < 6)
     {
       MANAGER.mutateCoordinate((TriangleManager.Coordinate) GENES[selection], step * direction);
-    }
-    else
+    } else
     {
       if (selection == 9) step /= MAX_STEP; // normalize the step for alpha value
       MANAGER.mutateColorValue((TriangleManager.ColorValue) GENES[selection], step * direction);
     }
     // Get the new fitness
     genome.setFitness(function.generateFitness(engine, genome));
-    ((Engine)engine).incrementGenerationCount();
+    ((Engine) engine).incrementGenerationCount();
     double newFitness = genome.getFitness();
     int improved = newFitness > previousFitness ? 1 : -1;
-    if (improved == 1) lastSuccessfulDirection[selection] = direction;
-    else lastSuccessfulDirection[selection] = 0;
+    if (improved == 1)
+    {
+      previousTriangles[selection] = index;
+      lastSuccessfulDirection[selection] = direction;
+    }
+    else
+    {
+      previousTriangles[selection] = -1;
+      lastSuccessfulDirection[selection] = 0;
+    }
     // Adapt the step sizes/weights depending on how things went
     stepSizes[selection] = constrain(stepSizes[selection] + STEP_OFFSET * improved, MIN_STEP, MAX_STEP);
     weights[selection] = constrain(weights[selection] + WEIGHT_OFFSET * improved, MIN_WEIGHT, MAX_WEIGHT);
