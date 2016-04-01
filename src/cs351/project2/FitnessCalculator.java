@@ -64,8 +64,15 @@ public class FitnessCalculator implements FitnessFunction
       for (int y = 0;y < height; y++)
       {
         // TODO I don't think this makes any sense
-        fitness = fitness + Math.abs((double)reader.getArgb(x, y) / Integer.MAX_VALUE -
-                                     (double)renderer.getPackedARGB(x, y) / Integer.MAX_VALUE);
+        //fitness = fitness + Math.abs((double)reader.getArgb(x, y) / Integer.MAX_VALUE -
+                                     //(double)renderer.getPackedARGB(x, y) / Integer.MAX_VALUE);
+        float[] targetImg = TriangleRenderer.unpackData(reader.getArgb(x, y));
+        float[] genomeImg = TriangleRenderer.unpackData(renderer.getPackedARGB(x, y));
+        float redDiff = Math.abs(targetImg[0] - genomeImg[0]) / 255;
+        float greenDiff = Math.abs(targetImg[1] - genomeImg[1]) / 255;
+        float blueDiff = Math.abs(targetImg[2] - genomeImg[2]) / 255;
+        float alphaDiff = Math.abs(targetImg[3] - genomeImg[3]);
+        fitness += (redDiff + greenDiff + blueDiff + alphaDiff) / 4;
       }
     }
     fitness = fitness / (width * height);
