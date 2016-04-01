@@ -1,5 +1,8 @@
 package cs351.core;
 
+import cs351.core.Engine.EvolutionEngine;
+import javafx.scene.image.Image;
+
 /**
  * See slide 17.
  *
@@ -17,7 +20,7 @@ package cs351.core;
  */
 public interface FitnessFunction
 {
-  void setTargetGenome(Genome genome);
+  void setTargetImage(Image image);
 
   /**
    * Takes two Genomes and compares them based on their fitness.
@@ -35,7 +38,7 @@ public interface FitnessFunction
    * @param genome genome to generate a fitness for
    * @return normalized fitness for the given genome
    */
-  double generateFitness(Genome genome);
+  double generateFitness(EvolutionEngine engine, Genome genome);
 
   /**
    * Returns the maximum fitness for a Genome as a non-normalized integer. This

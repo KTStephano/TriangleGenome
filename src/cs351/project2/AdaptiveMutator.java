@@ -79,7 +79,7 @@ public final class AdaptiveMutator implements Mutator
       MANAGER.mutateColorValue((TriangleManager.ColorValue) GENES[selection], step * direction);
     }
     // Get the new fitness
-    genome.setFitness(function.generateFitness(genome));
+    genome.setFitness(function.generateFitness(engine, genome));
     ((Engine)engine).incrementGenerationCount();
     double newFitness = genome.getFitness();
     int improved = newFitness > previousFitness ? 1 : -1;

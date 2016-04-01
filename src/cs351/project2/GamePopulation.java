@@ -87,7 +87,7 @@ public class GamePopulation implements Population
     this.numTribes = numTribes;
     tribesCollection = new ArrayList<>();
     numGenerator = new Random();
-    function = new NotTheRealFitnessFunction();
+    function = new FitnessCalculator();
 
     JobList list = new JobList(engine.getParallelJobSystem());
 

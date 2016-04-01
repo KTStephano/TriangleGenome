@@ -1,7 +1,10 @@
 package cs351.project2;
 
+import cs351.core.Engine.EvolutionEngine;
 import cs351.core.FitnessFunction;
 import cs351.core.Genome;
+import javafx.scene.image.Image;
+
 import java.util.Random;
 
 /**
@@ -13,7 +16,7 @@ public class NotTheRealFitnessFunction implements FitnessFunction
   private final Random RAND = new Random();
 
   @Override
-  public void setTargetGenome(Genome genome)
+  public void setTargetImage(Image image)
   {
 
   }
@@ -28,7 +31,7 @@ public class NotTheRealFitnessFunction implements FitnessFunction
   }
 
   @Override
-  public double generateFitness(Genome genome)
+  public double generateFitness(EvolutionEngine engine, Genome genome)
   {
     return RAND.nextDouble();
   }
