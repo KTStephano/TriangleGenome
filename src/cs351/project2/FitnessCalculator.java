@@ -69,7 +69,7 @@ public class FitnessCalculator implements FitnessFunction
       }
     }
     fitness = fitness / (width * height);
-    System.out.println(fitness);
+    //System.out.println(fitness);
     return fitness;
   }
 

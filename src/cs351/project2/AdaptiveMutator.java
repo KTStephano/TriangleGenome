@@ -41,6 +41,11 @@ public final class AdaptiveMutator implements Mutator
                                 MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP,
                                 MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP, MIN_STEP
                               };
+  private int[] lastSuccessfulDirection = new int[10];
+
+  {
+    for (int i = 0; i < lastSuccessfulDirection.length; i++) lastSuccessfulDirection[i] = 0;
+  }
 
   @Override
   public void setGenome(Genome genome)
@@ -64,7 +69,8 @@ public final class AdaptiveMutator implements Mutator
         if (RAND.nextDouble() <= weights[i]) selection = i;
       }
     }
-    int direction = RAND.nextInt(3) - 1; // [-1, 1]
+    int direction = lastSuccessfulDirection[selection] != 0 ? lastSuccessfulDirection[selection] :
+                    RAND.nextInt(3) - 1; // [-1, 1]
     int index = RAND.nextInt(triangles.size());
     float step = stepSizes[selection];
     MANAGER.setTriangleData(engine.getGUI(), triangles.get(index));
@@ -83,6 +89,7 @@ public final class AdaptiveMutator implements Mutator
     ((Engine)engine).incrementGenerationCount();
     double newFitness = genome.getFitness();
     int improved = newFitness > previousFitness ? 1 : -1;
+    if (improved == 1) lastSuccessfulDirection[selection] = direction;
     // Adapt the step sizes/weights depending on how things went
     stepSizes[selection] = constrain(stepSizes[selection] + STEP_OFFSET * improved, MIN_STEP, MAX_STEP);
     weights[selection] = constrain(weights[selection] + WEIGHT_OFFSET * improved, MIN_WEIGHT, MAX_WEIGHT);
