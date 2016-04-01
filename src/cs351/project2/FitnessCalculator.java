@@ -69,8 +69,7 @@ public class FitnessCalculator implements FitnessFunction
       }
     }
     fitness = fitness / (width * height);
-    genome.setFitness(fitness);
-
+    System.out.println(fitness);
     return fitness;
   }
 
