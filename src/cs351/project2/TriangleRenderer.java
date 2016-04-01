@@ -1,5 +1,8 @@
 package cs351.project2;
 
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -10,7 +13,6 @@ public class TriangleRenderer
 {
   private int width, height;
   private int[] xVertBuffer, yVertBuffer;
-  float[] colorBuffer = new float[4];
   private final BufferedImage IMAGE;
   private final Graphics2D CONTEXT;
 
@@ -23,6 +25,7 @@ public class TriangleRenderer
     IMAGE = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     CONTEXT = (Graphics2D)IMAGE.getGraphics();
     CONTEXT.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    CONTEXT.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
     clear();
   }
 
@@ -43,13 +46,13 @@ public class TriangleRenderer
     yVertBuffer[1] = (int)yVertices[1];
     yVertBuffer[2] = (int)yVertices[2];
 
-    CONTEXT.setColor(new Color(color[0] / 255, color[1] / 255, color[2] / 255, color[3]));
-    CONTEXT.drawPolygon(xVertBuffer, yVertBuffer, 3);
+    CONTEXT.setColor(new Color(packData(color, false), true));
+    CONTEXT.fillPolygon(xVertBuffer, yVertBuffer, 3);
   }
 
   public void clear()
   {
-    CONTEXT.clearRect(0, 0, width, height);
+    CONTEXT.setBackground(Color.WHITE);
   }
 
   public int getWidth()
@@ -62,18 +65,46 @@ public class TriangleRenderer
     return height;
   }
 
+  public int getPackedARGB(int x, int y)
+  {
+    return IMAGE.getRGB(x, y);
+  }
+
   public float[] getRGBA(int x, int y)
   {
     return unpackData(IMAGE.getRGB(x, y));
   }
 
-  private int packData(float[] color)
+  public javafx.scene.image.Image convertToImage()
   {
-    int alpha = (int)(color[3]) << (32 - 8);
+    javafx.scene.image.WritableImage image = new WritableImage(width, height);
+    PixelWriter writer = image.getPixelWriter();
+    for (int x = 0; x < width; x++)
+    {
+      for (int y = 0; y < height; y++)
+      {
+        writer.setArgb(x, y, getPackedARGB(x, y));
+      }
+    }
+    return image;
+  }
+
+  /**
+   * If packAsARGB is true, the value will be packed with the alpha value being
+   * first (most significant bits) - otherwise it will be packed last (least significant
+   * bits).
+   * @param color color array (r, g, b, a) with a normalized alpha
+   * @param packAsARGB true if ARGB, false if RGBA
+   * @return packed data
+   */
+  private int packData(float[] color, boolean packAsARGB)
+  {
+    int alpha = (int)(color[3] * 255) << (32 - 8);
     int red = (int)(color[0]) << (32 - 2 * 8);
     int green = (int)(color[1]) << (32 - 3 * 8);
     int blue = (int)color[2];
-    return alpha | red | green | blue;
+    return packAsARGB ? alpha | red | green | blue :
+                        red | green | blue | alpha;
   }
 
   /**
@@ -84,10 +115,11 @@ public class TriangleRenderer
    */
   private float[] unpackData(int argb)
   {
-    colorBuffer[3] = (argb & 0xFF) >>> (32 - 8);
-    colorBuffer[0] = ((argb & 0x00FF) >>> (32 - 2 * 8)) * 255;
-    colorBuffer[1] = ((argb & 0x0000FF) >>> (32 - 3 * 8)) * 255;
-    colorBuffer[2] = (argb & 0x000000FF) * 255;
+    float[] colorBuffer = new float[4];
+    colorBuffer[3] = ((argb & 0xFF) >>> (32 - 8)) / 255;
+    colorBuffer[0] = ((argb & 0x00FF) >>> (32 - 2 * 8));
+    colorBuffer[1] = ((argb & 0x0000FF) >>> (32 - 3 * 8));
+    colorBuffer[2] = (argb & 0x000000FF);
     return colorBuffer;
   }
 }

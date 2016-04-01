@@ -987,6 +987,7 @@ public class GameWindow implements GUI
 
     // Loop through each triangle of genome
     TriangleManager manager = new TriangleManager(); // need this to interpret the triangle data
+    //TriangleRenderer renderer = new TriangleRenderer(getImageWidth(), getImageHeight());
 
     triangleCounter = 0;
     for(float[] currentTriangle: selectedGenome.getTriangles())
@@ -1002,6 +1003,7 @@ public class GameWindow implements GUI
       gColor = (int)color[1];
       bColor = (int)color[2];
       alpha = color[3];
+      //renderer.renderTriangle(manager.getXCoordinates(), manager.getYCoordinates(), manager.getColor());
       gcGenetic.setFill(Color.rgb(rColor, gColor, bColor, alpha));
 
       float[] xVertices = manager.getXCoordinates();
@@ -1017,6 +1019,7 @@ public class GameWindow implements GUI
       triangleCounter ++;
       if(triangleCounter > getSelectedTriangle()) break;
     }
+    //gcGenetic.drawImage(renderer.convertToImage(), 0, 0);
 
     updateStatistics(engine);
   }
