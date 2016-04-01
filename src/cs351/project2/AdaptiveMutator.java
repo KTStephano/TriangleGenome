@@ -29,7 +29,7 @@ public final class AdaptiveMutator implements Mutator
   private static final float MIN_WEIGHT = MAX_WEIGHT * (MULTIPLIER / 100.0f);
   private static final int MIN_STEP = 10;
   private static final int MAX_STEP = 50;
-  private static final float STEP_OFFSET = 0.05f;
+  private static final float STEP_OFFSET = 0.5f;
   private static final float START_WEIGHT = MAX_WEIGHT * (MULTIPLIER / 100.0f);
   private final TriangleManager MANAGER = new TriangleManager();
   private Genome genome = null;
