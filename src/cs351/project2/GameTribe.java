@@ -119,7 +119,7 @@ public class GameTribe implements Tribe
    * the tribe won't know about these mutations.
    */
   @Override
-  public void recalculate()
+  public void sort()
   {
 
   }

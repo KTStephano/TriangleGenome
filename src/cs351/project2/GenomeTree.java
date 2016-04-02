@@ -83,7 +83,7 @@ public class GenomeTree implements Tribe
   }
 
   @Override
-  public void recalculate()
+  public void sort()
   {
     GENOME_TREE.clear();
     GENOME_TREE.addAll(UNSORTED_GENOMES);

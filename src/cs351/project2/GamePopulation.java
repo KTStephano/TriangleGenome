@@ -2,7 +2,6 @@ package cs351.project2;
 
 import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
-import cs351.core.Engine.GUI;
 import cs351.core.Engine.Population;
 import cs351.utility.Job;
 import cs351.utility.JobList;
@@ -129,7 +128,7 @@ public class GamePopulation implements Population
             TRIBE.add(genome);
           }
           // Once current tribe has had all of its genomes added, organize them by fitness
-          TRIBE.recalculate();
+          TRIBE.sort();
         }
       }, 1);
 

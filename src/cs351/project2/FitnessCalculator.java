@@ -68,14 +68,14 @@ public class FitnessCalculator implements FitnessFunction
                                      //(double)renderer.getPackedARGB(x, y) / Integer.MAX_VALUE);
         float[] targetImg = TriangleRenderer.unpackData(reader.getArgb(x, y));
         float[] genomeImg = TriangleRenderer.unpackData(renderer.getPackedARGB(x, y));
-        float redDiff = Math.abs(targetImg[0] - genomeImg[0]) / 255;
-        float greenDiff = Math.abs(targetImg[1] - genomeImg[1]) / 255;
-        float blueDiff = Math.abs(targetImg[2] - genomeImg[2]) / 255;
-        float alphaDiff = Math.abs(targetImg[3] - genomeImg[3]);
-        fitness += (redDiff + greenDiff + blueDiff + alphaDiff) / 4;
+        float redDiff = Math.abs(targetImg[0] - genomeImg[0]);
+        float greenDiff = Math.abs(targetImg[1] - genomeImg[1]);
+        float blueDiff = Math.abs(targetImg[2] - genomeImg[2]);
+        float alphaDiff = Math.abs(targetImg[3] * 255 - genomeImg[3] * 255);
+        fitness += redDiff + greenDiff + blueDiff + alphaDiff;
       }
     }
-    fitness = fitness / (width * height);
+    fitness = 1.0 - fitness / (width * height * 4 * 256);
     //System.out.println(fitness);
     return fitness;
   }

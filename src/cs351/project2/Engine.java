@@ -61,7 +61,7 @@ public final class Engine implements EvolutionEngine
     {
       Genome best = TRIBE.getBest();
       TRIBE.getMutatorForGenome(best).mutate(POPULATION.getFitnessFunction(), ENGINE);
-      TRIBE.recalculate();
+      TRIBE.sort();
     }
   }
 

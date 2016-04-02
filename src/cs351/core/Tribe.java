@@ -82,5 +82,5 @@ public interface Tribe
    * This is needed since the genomes in a population might mutate at some point, but
    * the tribe won't know about these mutations.
    */
-  void recalculate();
+  void sort();
 }

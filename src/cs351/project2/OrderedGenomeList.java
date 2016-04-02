@@ -129,21 +129,21 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   @Override
   public Genome getBest()
   {
-    if (isDirty) recalculate();
+    if (isDirty) sort();
     return list[0];
   }
 
   @Override
   public Collection<Genome> getGenomes()
   {
-    if (isDirty) recalculate();
+    if (isDirty) sort();
     LinkedList<Genome> genomes = new LinkedList<>();
     for (int i = 0; i < size; i++) genomes.add(list[i]);
     return genomes;
   }
 
   @Override
-  public void recalculate()
+  public void sort()
   {
     isDirty = false;
     Arrays.sort(list, 0, size, (first, second) -> -1 * Double.compare(first.getFitness(), second.getFitness()));
