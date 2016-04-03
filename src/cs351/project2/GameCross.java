@@ -34,7 +34,7 @@ public class GameCross implements Cross
     childGenome = singleCross(first, second);
 
     // Generate childGenome fitness
-    engine.getPopulation().getFitnessFunction().generateFitness(engine, childGenome);
+    childGenome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, childGenome));
 
     // If child is greater than either parent genome, just return the child genome
     if(childGenome == engine.getPopulation().getFitnessFunction().compare(childGenome, first) ||
@@ -45,7 +45,7 @@ public class GameCross implements Cross
 
     // Otherwise use the double cross, and just return the child genome
     childGenome = doubleCross(first, second);
-    engine.getPopulation().getFitnessFunction().generateFitness(engine, childGenome);
+    childGenome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, childGenome));
     return childGenome;
   }
 
