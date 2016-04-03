@@ -51,5 +51,6 @@ public class CrossPhase implements Job
       TRIBE.add(CROSS.cross(ENGINE, itr.next(), itr.next()));
       ENGINE.incrementGenerationCount();
     }
+    TRIBE.sort();
   }
 }
