@@ -91,6 +91,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     isDirty = true;
     if (needsToGrow()) grow(); // grow the array if needed
     list[size] = genome;
+    genome.setTribe(this); // now a member of this tribe
     ++size;
   }
 
@@ -100,7 +101,8 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     // NOTE: this will remove one element if it exists and preserve the order
     // of everything else, so isDirty does not need to be set to true
     int index = indexOf(genome);
-    if (index == -1) return;
+    if (index == -1) return; // not found
+    genome.setTribe(null); // no longer has a tribe for the time being
     list[index] = null;
     for (int i = index; i < size - 1; i++) list[i] = list[i + 1];
     --size;

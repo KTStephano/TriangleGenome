@@ -75,6 +75,12 @@ public class JobList
     return size;
   }
 
+  public void clear()
+  {
+    JOBS.clear();
+  }
+
+
   /**
    * Submits all jobs to the given job system. All lists are wiped afterwards
    * so future calls to submitJobs will have no effect unless jobs are

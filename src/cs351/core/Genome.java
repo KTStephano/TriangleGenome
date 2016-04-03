@@ -10,6 +10,7 @@ public final class Genome
   private int id;
   protected Double fitness = 0.0;
   protected final LinkedList<float[]> TRIANGLES = new LinkedList<>();
+  protected Tribe tribe;
   //protected final LinkedList<Integer> GENES = new LinkedList<>();
 
   {
@@ -57,6 +58,15 @@ public final class Genome
   }
 
   /**
+   * Removes all triangle data associated with this genome.
+   */
+  public void clear()
+  {
+    TRIANGLES.clear();
+  }
+
+
+  /**
    * Gets the size in terms of number of triangles.
    * @return number of triangles
    */
@@ -84,6 +94,25 @@ public final class Genome
   public void setFitness(double fitness)
   {
     this.fitness = fitness;
+  }
+
+  /**
+   * Sets the tribe that this genome belongs to (should be done by the tribe itself
+   * when the genome is added).
+   * @param tribe tribe to associate with this genome
+   */
+  public void setTribe(Tribe tribe)
+  {
+    this.tribe = tribe;
+  }
+
+  /**
+   * Gets the tribe that this genome belongs to (should be set by the tribe when added).
+   * @return tribe
+   */
+  public Tribe getTribe()
+  {
+    return tribe;
   }
 
   /**

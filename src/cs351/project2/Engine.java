@@ -238,6 +238,12 @@ public final class Engine implements EvolutionEngine
     // frame is done
     if (!isRunningConsoleMode)
     {
+      if (gui.getHasSelectedNewImage() && population != null)
+      {
+        population.generateStartingState(this, numTribes);
+        mainJobList.clear();
+        for (Tribe tribe : population.getTribes()) mainJobList.add(new MutatorJob(population, tribe, this), 1);
+      }
       gui.update(this);
       if (numTribes != gui.getTribes()) generateStartingState(null, false);
     }
