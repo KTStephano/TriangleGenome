@@ -381,8 +381,11 @@ public final class Engine implements EvolutionEngine
     if (population != null)
     {
       population.generateStartingState(this, numTribes);
-      for (Tribe tribe : population.getTribes()) mutatorJobList.add(new MutatorJob(population, tribe, this), 1);
-      for (Tribe tribe : population.getTribes()) crossJobList.add(new CrossPhase(this, tribe), 1);
+      for (Tribe tribe : population.getTribes())
+      {
+        mutatorJobList.add(new MutatorJob(population, tribe, this), 1);
+        crossJobList.add(new CrossPhase(this, tribe), 1);
+      }
       //for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
     }
 
