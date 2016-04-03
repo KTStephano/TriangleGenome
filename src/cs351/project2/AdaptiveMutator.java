@@ -91,6 +91,7 @@ public final class AdaptiveMutator implements Mutator
     // Get the new fitness
     double prevFitness = genome.getFitness();
     genome.setFitness(function.generateFitness(engine, genome));
+    // TODO This makes me upset but I'm not sure if it's actually bad to have the increment here
     ((Engine) engine).incrementGenerationCount();
     double newFitness = genome.getFitness();
     int improved = newFitness >= previousFitness ? 1 : -1;

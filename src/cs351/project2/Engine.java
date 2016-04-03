@@ -275,7 +275,7 @@ public final class Engine implements EvolutionEngine
       }
 
       // TODO add rest of loop here
-      GENERATIONS.getAndIncrement();
+      //GENERATIONS.getAndIncrement();
       mainJobList.submitJobs(false);
     }
   }

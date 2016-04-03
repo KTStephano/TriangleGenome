@@ -4,7 +4,7 @@ public class HistogramTest
 {
   public static void main(String[] args)
   {
-    Histogram histogram = new Histogram("images/MonaLisa.jpg");
+    Histogram histogram = new Histogram("images/mona-lisa-cropted-100x81.png");
     Histogram.ColorData rData = histogram.getRedColorData();
     Histogram.ColorData gData = histogram.getGreenColorData();
     Histogram.ColorData bData = histogram.getBlueColorData();
