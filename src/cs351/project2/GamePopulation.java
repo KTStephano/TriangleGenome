@@ -114,6 +114,7 @@ public class GamePopulation implements Population
             // A genome will also have a fitness level, however that will be calculated within the recalulate method
             // within tribe.
             Genome genome = new Genome();
+            genome.setFitness(0.0);
             for(int k = 0; k < numTriangles; k++)
             {
               //Triangle triangle = new GameTriangle();
@@ -122,7 +123,6 @@ public class GamePopulation implements Population
               //genome.setFitness(function.generateFitness(engine, genome));
               genome.add(TriangleGenerator.createTriangle(numGenerator, engine));
             }
-            genome.setFitness(function.generateFitness(engine, genome));
 
             // Add completed genome to tribe
             TRIBE.add(genome);

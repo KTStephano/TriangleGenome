@@ -59,9 +59,10 @@ public class FitnessCalculator implements FitnessFunction
     int width = engine.getGUI().getImageWidth();
     int height = engine.getGUI().getImageHeight();
     double fitness = 0.0;
-    for (int x = 0; x < width; x++)
+    int offset = 1;
+    for (int x = 0; x < width; x+=offset)
     {
-      for (int y = 0;y < height; y++)
+      for (int y = 0;y < height; y+=offset)
       {
         // TODO I don't think this makes any sense
         //fitness = fitness + Math.abs((double)reader.getArgb(x, y) / Integer.MAX_VALUE -
@@ -75,7 +76,7 @@ public class FitnessCalculator implements FitnessFunction
         fitness += redDiff + greenDiff + blueDiff + alphaDiff;
       }
     }
-    fitness = 1.0 - fitness / (width * height * 4 * 256);
+    fitness = 1.0 - fitness / ((width / offset) * (height / offset) * 4 * 256);
     //System.out.println(fitness);
     return fitness;
   }
