@@ -1,5 +1,6 @@
 package cs351.project2;
 import cs351.core.*;
+import cs351.core.Engine.EvolutionEngine;
 
 import java.util.*;
 
@@ -28,24 +29,27 @@ public class GameCross implements Cross
   private static final Random RAND = new Random();
 
   @Override
-  public Genome cross(FitnessFunction function, Genome first, Genome second)
+  public Genome cross(EvolutionEngine engine, Genome first, Genome second)
   {
-    childGenome = singleCross(function, first, second);
+    childGenome = singleCross(first, second);
 
     // Generate childGenome fitness
+    engine.getPopulation().getFitnessFunction().generateFitness(engine, childGenome);
 
     // If child is greater than either parent genome, just return the child genome
-    if(childGenome == function.compare(childGenome, first) || childGenome == function.compare(childGenome, second))
+    if(childGenome == engine.getPopulation().getFitnessFunction().compare(childGenome, first) ||
+      childGenome == engine.getPopulation().getFitnessFunction().compare(childGenome, second))
     {
       return childGenome;
     }
 
     // Otherwise use the double cross, and just return the child genome
-    childGenome = doubleCross(function, first, second);
+    childGenome = doubleCross(first, second);
+    engine.getPopulation().getFitnessFunction().generateFitness(engine, childGenome);
     return childGenome;
   }
 
-  private Genome singleCross(FitnessFunction function, Genome first, Genome second)
+  private Genome singleCross(Genome first, Genome second)
   {
     Genome singleCrossGenome = new Genome();
 
@@ -91,7 +95,7 @@ public class GameCross implements Cross
     return singleCrossGenome;
   }
 
-  private Genome doubleCross(FitnessFunction function, Genome first, Genome second)
+  private Genome doubleCross(Genome first, Genome second)
   {
     Genome doubleCrossGenome = new Genome();
 

@@ -1,5 +1,7 @@
 package cs351.core;
 
+import cs351.core.Engine.EvolutionEngine;
+
 /**
  * See slide 25.
  *
@@ -18,10 +20,10 @@ public interface Cross
    * with all of its own triangles. This will prevent issues with genomes sharing
    * references to genes/triangles in other genomes.
    *
-   * @param function fitness function to use to calculate the fitness of the new genome
+   * @param engine game engine
    * @param first first of the two parent genomes
    * @param second second of the two parent genomes
    * @return a brand new genome inheriting traits from the two parents
    */
-  Genome cross(FitnessFunction function, Genome first, Genome second);
+  Genome cross(EvolutionEngine engine, Genome first, Genome second);
 }
