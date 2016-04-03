@@ -902,7 +902,7 @@ public class GameWindow implements GUI
     }
 
     // Fill black background
-    gcGenetic.setFill(Color.BLACK);
+    gcGenetic.setFill(Color.WHITE);
     gcGenetic.fillRect(0,0, getTargetImageWidth(), getTargetImageHeight());
 
     // For time being, select very first genome
