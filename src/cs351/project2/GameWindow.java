@@ -135,7 +135,9 @@ public class GameWindow implements GUI
   private double targetImageHeightCropped = 0;
 
   // Create array of default pictures
-  final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-512x413.png", "images/poppyfields-512x384.png",
+  final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-100x81.png", "images/mona-lisa-cropted-250x202.png",
+    "images/mona-lisa-cropted-512x413.png", "images/poppyfields-100x75.png", "images/poppyfields-250x188.png", "images/poppyfields-512x384.png",
+    "images/the_great_wave_off_kanagawa-100x69.png", "images/the_great_wave_off_kanagawa-250x172.png",
     "images/the_great_wave_off_kanagawa-512x352.png"};
 
 
@@ -194,7 +196,7 @@ public class GameWindow implements GUI
     fitnessLabel.setText("Selected Genome Fitness: ");
     fitnessPerSecondLabel.setText("Fitness/Sec: N/A");
     populationLabel.setText("Population: " + null + " genomes");
-    generationLabel.setText("Amount of Generations: ");
+    generationLabel.setText("Amount of Generations: " + engine.getGenerationCount());
     generationPerSecondLabel.setText("Generations/Sec: ");
     generationAvgLabel.setText("Generations on Average: ");
     hillChildrenLabel.setText("Children from Hill Climbing: ");
@@ -234,7 +236,6 @@ public class GameWindow implements GUI
       new File(System.getProperty("user.home"))
     );
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("JPG", "*.jpg"),
       new FileChooser.ExtensionFilter("PNG", "*.png")
     );
   }
@@ -464,83 +465,6 @@ public class GameWindow implements GUI
   }
 
 
-  /**
-   * Creates a popup dialog box prompting the user for the amount
-   * of tribes that they would like to use
-   *
-   * @param stage Stage of the game
-   */
-  private void askForTribes(Stage stage)
-  {
-    try
-    {
-      // Give choice how many threads user would like to have running
-      List<String> choices = new ArrayList<String>();
-      choices.add("1");
-      choices.add("2");
-      choices.add("3");
-      choices.add("4");
-      choices.add("5");
-      choices.add("6");
-      choices.add("7");
-      choices.add("8");
-      choices.add("9");
-      choices.add("10");
-      choices.add("11");
-      choices.add("12");
-      choices.add("13");
-      choices.add("14");
-      choices.add("15");
-      choices.add("16");
-
-      ChoiceDialog<String> prompt = new ChoiceDialog<>("--", choices);
-      prompt.setContentText("How many tribes would you like to use?");
-      prompt.setHeaderText("Triangle Genome Project");
-
-      // Makes everything wait until prompt is finished being used
-      Optional<String> result = prompt.showAndWait();
-
-      // Assign their answer to variables list
-      if (result.get().equals("1"))
-        tribeSize = 1;
-      else if (result.get().equals("2"))
-        tribeSize = 2;
-      else if (result.get().equals("3"))
-        tribeSize = 3;
-      else if (result.get().equals("4"))
-        tribeSize = 4;
-      else if (result.get().equals("5"))
-        tribeSize = 5;
-      else if (result.get().equals("6"))
-        tribeSize = 6;
-      else if (result.get().equals("7"))
-        tribeSize = 7;
-      else if (result.get().equals("8"))
-        tribeSize = 8;
-      else if (result.get().equals("9"))
-        tribeSize = 9;
-      else if (result.get().equals("10"))
-        tribeSize = 10;
-      else if (result.get().equals("11"))
-        tribeSize = 11;
-      else if (result.get().equals("12"))
-        tribeSize = 12;
-      else if (result.get().equals("13"))
-        tribeSize = 13;
-      else if (result.get().equals("14"))
-        tribeSize = 14;
-      else if (result.get().equals("15"))
-        tribeSize = 15;
-      else if (result.get().equals("16"))
-        tribeSize = 16;
-      else
-        tribeSize = 2;
-    } catch (Exception e1)
-    {
-      System.exit(0);
-    }
-
-  }
   // Random comment because GitHub won't let me upload
   /**
    * Initializes the GUI with the given JavaFX stage and the given engine.
@@ -552,7 +476,6 @@ public class GameWindow implements GUI
   public void init(Stage stage, EvolutionEngine engine)
   {
     // Ask user for amount of tribes that they would like to use
-    //askForTribes(stage);
     //setSelectedTribe(startingTribes);
 
     // Error check to see if clicked the close button in the dialog box
@@ -585,8 +508,7 @@ public class GameWindow implements GUI
       // Draw Mona Lisa
       gcOriginal.setFill(Color.BLACK);
       gcOriginal.setStroke(Color.BLACK);
-      gcOriginal.fillText("Placeholder for MonaLisa", canvasWidth / 4, canvasHeight / 2);
-      String defaultImage = pictureUrls[0];
+      String defaultImage = pictureUrls[1];
       setTargetImage(defaultImage);
       resizeTargetImage();
       gcOriginal.drawImage(getTargetImage(), 0, 0, getTargetImage().getWidth(), getTargetImage().getHeight(), 0, 0, getTargetImageWidthCropped(), getTargetImageHeightCropped());
@@ -790,7 +712,8 @@ public class GameWindow implements GUI
 
       // ************ ChoiceBox *********************
       pictureSelect = new ChoiceBox(FXCollections.observableArrayList(
-        "MonaLisa - 512x413", "PoppyFields - 512x384", "The Great Wave - 512x352")
+        "MonaLisa - 100x81","MonaLisa - 250x202","MonaLisa - 512x413", "PoppyFields - 100x75", "PoppyFields - 250x188",
+        "PoppyFields - 512x384", "The Great Wave - 100x69", "The Great Wave - 250x172", "The Great Wave - 512x352")
       );
       pictureSelect.setMinWidth(50);
       pictureSelect.setTooltip(new Tooltip("Select an image"));
@@ -968,14 +891,16 @@ public class GameWindow implements GUI
     if (selectedNewImage)
     {
       Image img = getTargetImage();
-      double newWidth = canvasWidth;
-      double newHeight = canvasHeight;
       clearOriginalCanvas();
       //gcOriginal.drawImage(getTargetImage(), 0, 0);
       engine.getLog().log("window", "width: %f height: %f\n", getTargetImageWidth(), getTargetImageHeight());
       gcOriginal.drawImage(getTargetImage(), 0, 0, img.getWidth(), img.getHeight(), 0, 0, getTargetImageWidthCropped(), getTargetImageHeightCropped());
       selectedNewImage = false;
     }
+
+    // Fill black background
+    gcGenetic.setFill(Color.BLACK);
+    gcGenetic.fillRect(0,0, getTargetImageWidth(), getTargetImageHeight());
 
     // For time being, select very first genome
     ArrayList<Tribe> tribes = new ArrayList<>();

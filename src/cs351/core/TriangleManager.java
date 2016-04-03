@@ -49,6 +49,16 @@ public class TriangleManager
   }
 
   /**
+   * Sets the triangle data when used for crossover (called by GameCross.java)
+   * @param data array of 10 elements
+   */
+  public void setTriangleData(float[] data)
+  {
+    if (data.length != 10) throw new IllegalArgumentException("Invalid triangle data");
+    this.data = data;
+  }
+
+  /**
    * Format :: { x1, x2, x3 }
    * @return float array with the formatted data
    */

@@ -9,7 +9,7 @@ import java.util.Random;
 
 /**
  * Gives a fitness based on the time of day, how it's feeling or
- * what it had for breakfast.
+ * what it had for breakfast. #swag
  */
 public class NotTheRealFitnessFunction implements FitnessFunction
 {
