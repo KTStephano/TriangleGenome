@@ -31,6 +31,14 @@ public class GameCross implements Cross
   @Override
   public Genome cross(EvolutionEngine engine, Genome first, Genome second)
   {
+    if (first.getFitness() == 0.0)
+    {
+      first.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, first));
+    }
+    if (second.getFitness() == 0.0)
+    {
+      second.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, second));
+    }
     childGenome = singleCross(first, second);
 
     // Generate childGenome fitness
