@@ -138,7 +138,8 @@ public class GameWindow implements GUI
   final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-100x81.png", "images/mona-lisa-cropted-250x202.png",
     "images/mona-lisa-cropted-512x413.png", "images/poppyfields-100x75.png", "images/poppyfields-250x188.png", "images/poppyfields-512x384.png",
     "images/the_great_wave_off_kanagawa-100x69.png", "images/the_great_wave_off_kanagawa-250x172.png",
-    "images/the_great_wave_off_kanagawa-512x352.png"};
+    "images/the_great_wave_off_kanagawa-512x352.png", "images/Piet_Mondrian-100x75.png", "images/Piet_Mondrian-250x188.png",
+    "images/Piet_Mondrian-512x385.png", "images/trianglePic-100x80.png", "images/trianglePic-250x201.png", "images/trianglePic-512x412.png"};
 
 
   public void writeNewGenomeFile(EvolutionEngine engine) {
@@ -713,7 +714,9 @@ public class GameWindow implements GUI
       // ************ ChoiceBox *********************
       pictureSelect = new ChoiceBox(FXCollections.observableArrayList(
         "MonaLisa - 100x81","MonaLisa - 250x202","MonaLisa - 512x413", "PoppyFields - 100x75", "PoppyFields - 250x188",
-        "PoppyFields - 512x384", "The Great Wave - 100x69", "The Great Wave - 250x172", "The Great Wave - 512x352")
+        "PoppyFields - 512x384", "The Great Wave - 100x69", "The Great Wave - 250x172", "The Great Wave - 512x352",
+        "Piet Mondrian - 100x75", "Piet Mondrian - 250x188", "Piet Mondrian - 512385", "TriangePic - 100x80",
+        "TriangePic - 250x201", "TriangePic - 512x412" )
       );
       pictureSelect.setMinWidth(50);
       pictureSelect.setTooltip(new Tooltip("Select an image"));
