@@ -115,10 +115,11 @@ public class GameCross implements Cross
 
     float[] firstTriangle = new float[10];
     float[] secondTriangle = new float[10];
-    float[] currentTriangle = new float[10];
+
 
     for(int i = 0; i < firstGenome.size(); i++)
     {
+      float[] currentTriangle = new float[10];
       firstTriangle = fIterator.next();
       secondTriangle = sIterator.next();
 

@@ -6,6 +6,8 @@ import cs351.core.Engine.GUI;
 
 import java.awt.*;
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,9 +125,10 @@ public class GameWindow implements GUI
   private double amtButtons = 5; // how many buttons per row
   private double buttonSize = (canvasWidth*2 + canvasMargin) / amtButtons;
 
-  private Genome currentGenome;
+  private Genome currentGenome = new Genome();
   private Triangle currentTriangle;
   private int triangleCounter;
+  private NumberFormat formatter = new DecimalFormat("#0.0000");
 
   // Image and Image View Stuff
   private Image targetImage = null;
@@ -150,6 +153,7 @@ public class GameWindow implements GUI
       ArrayList<Genome> genomes = new ArrayList<>();
       genomes.addAll(tribes.get(selectedTribe).getGenomes());
       Genome selectedGenome = genomes.get(getSelectedGenome());
+      currentGenome = selectedGenome;
       String str;
 
 //      while(selectedGenome.getTriangles().iterator().hasNext())
@@ -179,22 +183,13 @@ public class GameWindow implements GUI
     tribeListSlider.setMax(getTribes());
   }
 
-  /**
-   *
-   * @return int value representing the current genome's fitness level
-   */
-  private int getGenomeFitness()
-  {
-    getSelectedGenome();
-    return 0;
-  }
 
   /**
    * Updates statistics values at each update
    */
   private void updateStatistics(EvolutionEngine engine)
   {
-    fitnessLabel.setText("Selected Genome Fitness: ");
+    fitnessLabel.setText("Selected Genome Fitness: " + formatter.format(currentGenome.getFitness()));
     fitnessPerSecondLabel.setText("Fitness/Sec: N/A");
     populationLabel.setText("Population: " + null + " genomes");
     generationLabel.setText("Amount of Generations: " + engine.getGenerationCount());
@@ -839,7 +834,7 @@ public class GameWindow implements GUI
       statsContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
       statsContainer.getChildren().addAll(statsLabel, stats1, stats2, stats3);
 
-
+      currentGenome.setFitness(0);
       scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
       root.getChildren().addAll(canvasOriginal, canvasGenetic, canvasSubMenus,
         topRowContainer, middleRowContainer, bottomRowContainer, statsContainer);
@@ -912,6 +907,8 @@ public class GameWindow implements GUI
     ArrayList<Genome> genomes = new ArrayList<>();
     genomes.addAll(tribes.get(selectedTribe).getGenomes());
     Genome selectedGenome = genomes.get(getSelectedGenome());
+    selectedGenome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, selectedGenome));
+    currentGenome = selectedGenome;
 
     // Loop through each triangle of genome
     TriangleManager manager = new TriangleManager(); // need this to interpret the triangle data
