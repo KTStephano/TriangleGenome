@@ -27,7 +27,8 @@ public final class Engine implements EvolutionEngine
   private ParallelJobSystem jobSystem;
   private Statistics statistics;
   private boolean isRunningConsoleMode;
-  private JobList mainJobList;
+  private JobList mutatorJobList;
+  private JobList crossJobList;
 
   // Atomic objects - these are the values that need to be thread safe
   private final AtomicInteger GENERATIONS;
@@ -42,6 +43,7 @@ public final class Engine implements EvolutionEngine
   private long millisecondTimeStamp;
   private final long[] LAST_100_FRAME_TIMESTAMPS = new long[100];
   private int currentTimestamp = 0;
+  private int currentNumMutatorPhasesRun = 0;
 
   private final class MutatorJob implements Job
   {
@@ -108,7 +110,7 @@ public final class Engine implements EvolutionEngine
 
   // Initialize atomic objects
   {
-    //mainJobList = new JobList(Globals.JOB_SYSTEM);
+    //crossJobList = new JobList(Globals.JOB_SYSTEM);
     GENERATIONS = new AtomicInteger(1);
     NUM_WORKING_JOBS = new AtomicInteger(0);
     IS_INITIALIZED = new AtomicBoolean(false);
@@ -223,7 +225,7 @@ public final class Engine implements EvolutionEngine
     if (!IS_INITIALIZED.get()) throw new RuntimeException("Engine was not initialized before generation() call");
     if (IS_PENDING_SHUTDOWN.get())
     {
-      mainJobList.waitForCompletion();
+      crossJobList.waitForCompletion();
       IS_PENDING_SHUTDOWN.set(false);
       IS_INITIALIZED.set(false);
       IS_SHUTDOWN.set(true);
@@ -233,7 +235,7 @@ public final class Engine implements EvolutionEngine
       return; // finish here
     }
     // Check the status of the last queued frame
-    if (mainJobList.containsActiveJobs()) mainJobList.waitForCompletion();
+    if (mutatorJobList.containsActiveJobs() || crossJobList.containsActiveJobs()) return;//crossJobList.waitForCompletion();
     // Tell the GUI it's a good time to do a rendering update since the previous
     // frame is done
     if (!isRunningConsoleMode)
@@ -241,8 +243,8 @@ public final class Engine implements EvolutionEngine
       if (gui.getHasSelectedNewImage() && population != null)
       {
         population.generateStartingState(this, numTribes);
-        mainJobList.clear();
-        for (Tribe tribe : population.getTribes()) mainJobList.add(new MutatorJob(population, tribe, this), 1);
+        crossJobList.clear();
+        for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
       }
       gui.update(this);
       if (numTribes != gui.getTribes()) generateStartingState(null, false);
@@ -276,7 +278,16 @@ public final class Engine implements EvolutionEngine
 
       // TODO add rest of loop here
       //GENERATIONS.getAndIncrement();
-      mainJobList.submitJobs(false);
+      if (currentNumMutatorPhasesRun < 10)
+      {
+        mutatorJobList.submitJobs(false);
+        ++currentNumMutatorPhasesRun;
+      }
+      else
+      {
+        crossJobList.submitJobs(false);
+        currentNumMutatorPhasesRun = 0;
+      }
     }
   }
 
@@ -345,6 +356,8 @@ public final class Engine implements EvolutionEngine
     System.out.println("Valid Population: " + (population != null));
     System.out.println("Console Mode: " + (gui == null));
 
+    currentNumMutatorPhasesRun = 0;
+
     printLogHeader();
 
     // Initialize the statistics system
@@ -362,13 +375,15 @@ public final class Engine implements EvolutionEngine
     if (jobSystem != null) jobSystem.destroy(); // Make sure this gets cleaned up
     jobSystem = new ParallelJobSystem(numTribes);
     jobSystem.init();
-    mainJobList = new JobList(jobSystem);
+    mutatorJobList = new JobList(jobSystem);
+    crossJobList = new JobList(jobSystem);
     GENERATIONS.set(0);
     if (population != null)
     {
       population.generateStartingState(this, numTribes);
-      for (Tribe tribe : population.getTribes()) mainJobList.add(new CrossPhase(this, tribe), 1);
-      //for (Tribe tribe : population.getTribes()) mainJobList.add(new MutatorJob(population, tribe, this), 1);
+      for (Tribe tribe : population.getTribes()) mutatorJobList.add(new MutatorJob(population, tribe, this), 1);
+      for (Tribe tribe : population.getTribes()) crossJobList.add(new CrossPhase(this, tribe), 1);
+      //for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
     }
 
     IS_INITIALIZED.set(true);
