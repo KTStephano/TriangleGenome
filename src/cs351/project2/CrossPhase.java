@@ -52,5 +52,6 @@ public class CrossPhase implements Job
       ENGINE.incrementGenerationCount();
     }
     TRIBE.sort();
+    if(threadID == 0) System.out.println("Tribe Size: " + TRIBE.size());
   }
 }

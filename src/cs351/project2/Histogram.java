@@ -120,7 +120,7 @@ public class Histogram
         Color color = reader.getColor(x, y);
         int r = (int)(color.getRed() * 255);
         int g = (int)(color.getGreen() * 255);
-        int b = (int)(color.getRed() * 255);
+        int b = (int)(color.getBlue() * 255);
         int rFreq = RED_SHADE_FREQUENCY.get(r) + 1;
         int gFreq = GREEN_SHADE_FREQUENCY.get(g) + 1;
         int bFreq = BLUE_SHADE_FREQUENCY.get(b) + 1;
