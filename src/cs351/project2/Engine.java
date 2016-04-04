@@ -286,7 +286,7 @@ public final class Engine implements EvolutionEngine
       else
       {
         crossJobList.submitJobs(false);
-        currentNumMutatorPhasesRun = 0;
+        if(currentNumMutatorPhasesRun == 20) currentNumMutatorPhasesRun = 0;
       }
     }
   }

@@ -66,6 +66,8 @@ public class GameWindow implements GUI
   Vector2f[] vector3List = new Vector2f[genomeSize];
   Vector4f[] vectorColorList = new Vector4f[genomeSize];
 
+  private Color backgroundColor = Color.BLACK;
+
   private Random randNum = new Random();
 
   private Canvas canvasOriginal;
@@ -136,6 +138,7 @@ public class GameWindow implements GUI
   private double targetImageHeight = 0;
   private double targetImageWidthCropped = 0;
   private double targetImageHeightCropped = 0;
+  private ColorSelector colorSelector;
 
   // Create array of default pictures
   final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-100x81.png", "images/mona-lisa-cropted-250x202.png",
@@ -145,7 +148,30 @@ public class GameWindow implements GUI
     "images/Piet_Mondrian-512x385.png", "images/trianglePic-100x80.png", "images/trianglePic-250x201.png", "images/trianglePic-512x412.png"};
 
 
-  public void writeNewGenomeFile(EvolutionEngine engine) {
+  /**
+   * Sets the background color
+   * @param color Color to what the background should be
+   */
+  private void setBackgroundColor(Color color)
+  {
+    backgroundColor = color;
+  }
+
+  /**
+   *
+   * @return color, returns the background color value
+   */
+  private Color getBackgroundColor()
+  {
+    return backgroundColor;
+  }
+
+  /**
+   * Used to write a genome file for the user. User will be able to save this file to their
+   * own space to reuse at another time
+   * @param engine Game engine
+   */
+  private void writeNewGenomeFile(EvolutionEngine engine) {
     try (BufferedWriter bw = new BufferedWriter(new FileWriter("genome.txt", true))) {
       ArrayList<Tribe> tribes = new ArrayList<>();
       tribes.addAll(engine.getPopulation().getTribes());
@@ -501,13 +527,15 @@ public class GameWindow implements GUI
       gcOriginal = canvasOriginal.getGraphicsContext2D();
       gcGenetic = canvasGenetic.getGraphicsContext2D();
 
-      // Draw Mona Lisa
+      // Draw the Mona Lisa
       gcOriginal.setFill(Color.BLACK);
       gcOriginal.setStroke(Color.BLACK);
       String defaultImage = pictureUrls[1];
       setTargetImage(defaultImage);
       resizeTargetImage();
       gcOriginal.drawImage(getTargetImage(), 0, 0, getTargetImage().getWidth(), getTargetImage().getHeight(), 0, 0, getTargetImageWidthCropped(), getTargetImageHeightCropped());
+      colorSelector = new ColorSelector();
+      setBackgroundColor(colorSelector.getAverageColor(getTargetImage()));
 
       // Draw Triangles
       gcGenetic.setFill(Color.BLACK);
@@ -889,6 +917,7 @@ public class GameWindow implements GUI
     if (selectedNewImage)
     {
       Image img = getTargetImage();
+      setBackgroundColor(colorSelector.getAverageColor(img));
       clearOriginalCanvas();
       //gcOriginal.drawImage(getTargetImage(), 0, 0);
       engine.getLog().log("window", "width: %f height: %f\n", getTargetImageWidth(), getTargetImageHeight());
@@ -897,7 +926,7 @@ public class GameWindow implements GUI
     }
 
     // Fill black background
-    gcGenetic.setFill(Color.WHITE);
+    gcGenetic.setFill(getBackgroundColor());
     gcGenetic.fillRect(0,0, getTargetImageWidth(), getTargetImageHeight());
 
     // For time being, select very first genome
