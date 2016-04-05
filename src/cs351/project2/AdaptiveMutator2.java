@@ -35,7 +35,8 @@ public class AdaptiveMutator2 implements Mutator
   {
     if (genome == null) throw new IllegalStateException("Genome is null");
     Genome offspring = CROSS.cross(engine, genome, genome);
-    if (offspring.getFitness() > genome.getFitness())
+    double difference = offspring.getFitness() - genome.getFitness();
+    if (difference >= 0)
     {
       genome.clear();
       for (float[] triangle : offspring.getTriangles()) genome.add(triangle);

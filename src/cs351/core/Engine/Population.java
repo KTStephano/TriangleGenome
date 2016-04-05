@@ -46,6 +46,12 @@ public interface Population
   Collection<Tribe> getTribes();
 
   /**
+   * Returns the best genome out of *every* available tribe.
+   * @return best genome out of all tribes
+   */
+  Genome getOverallBest();
+
+  /**
    * This function should clear the existing tribe and reinitialize it
    * to some starting state. Along with this, a fitness function should be generated
    * in order to be used not only by this class, but by all other classes that

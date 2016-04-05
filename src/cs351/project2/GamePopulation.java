@@ -71,6 +71,17 @@ public class GamePopulation implements Population
     return tribesCollection;
   }
 
+  @Override
+  public Genome getOverallBest()
+  {
+    Genome best = null;
+    for (Tribe tribe : getTribes())
+    {
+      if (best == null || best.getFitness() < tribe.getBest().getFitness()) best = tribe.getBest();
+    }
+    return best;
+  }
+
   /**
    * This function should clear the existing tribe and reinitialize it
    * to some starting state. Along with this, a fitness function should be generated

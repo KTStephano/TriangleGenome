@@ -44,6 +44,7 @@ public final class Engine implements EvolutionEngine
   private final long[] LAST_100_FRAME_TIMESTAMPS = new long[100];
   private int currentTimestamp = 0;
   private int currentNumMutatorPhasesRun = 0;
+  private int currentNumCrossPhasesRun = 0;
 
   private final class MutatorJob implements Job
   {
@@ -285,9 +286,14 @@ public final class Engine implements EvolutionEngine
       }
       else
       {
-        crossJobList.submitJobs(false);
-        ++currentNumMutatorPhasesRun;
-        if(currentNumMutatorPhasesRun >= 102) currentNumMutatorPhasesRun = 0;
+        //crossJobList.submitJobs(false);
+        //++currentNumMutatorPhasesRun;
+        ++currentNumCrossPhasesRun;
+        if(currentNumCrossPhasesRun >= 2)
+        {
+          currentNumMutatorPhasesRun = 0;
+          currentNumCrossPhasesRun = 0;
+        }
       }
     }
   }
@@ -358,6 +364,7 @@ public final class Engine implements EvolutionEngine
     System.out.println("Console Mode: " + (gui == null));
 
     currentNumMutatorPhasesRun = 0;
+    currentNumCrossPhasesRun = 0;
 
     printLogHeader();
 

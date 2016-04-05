@@ -20,23 +20,20 @@ public class TriangleGenerator
 
     boolean reCalculate = true;
     // Create x values, check to make sure all values are valid
-    while(reCalculate)
-    {
-      x1 = RAND.nextInt(mainGUI.getImageWidth());
-      x2 = RAND.nextInt(mainGUI.getImageWidth());
-      x3 = RAND.nextInt(mainGUI.getImageWidth());
-      if(x1 != x2 && x2 != x3 && x3 != x1) reCalculate = false;
-    }
+    int width = mainGUI.getImageWidth();
+    int height = mainGUI.getImageHeight();
 
-    // Create y values, check to make sure all values are valid
-    reCalculate = true;
-    while(reCalculate)
-    {
-      y1 = RAND.nextInt(mainGUI.getImageHeight());
-      y2 = RAND.nextInt(mainGUI.getImageHeight());
-      y3 = RAND.nextInt(mainGUI.getImageHeight());
-      if(y1 != y2 && y2 != y3 && y3 != y1) reCalculate = false;
-    }
+    x1 = RAND.nextFloat() * width;
+    x2 = RAND.nextFloat() * width;
+    x3 = RAND.nextFloat() * width;
+    //x2 = x1 + RAND.nextInt(width / 4);
+    //x3 = x1 + RAND.nextInt(width / 4);
+
+    y1 = RAND.nextFloat() * height;
+    y2 = RAND.nextFloat() * height;
+    y3 = RAND.nextFloat() * height;
+    //y2 = y1 + RAND.nextInt(height / 4);
+    //y3 = y1 + RAND.nextInt(height / 4);
 
     // Create rgb values
     red = RAND.nextInt(255);
@@ -44,7 +41,7 @@ public class TriangleGenerator
     blue = RAND.nextInt(255);
 
     // Create alpha value
-    alpha = Math.max(RAND.nextFloat() * RAND.nextFloat(), 0.2f);
+    alpha = Math.max(RAND.nextFloat() * RAND.nextFloat(), .2f);
 
     // Build the collection of genes in the following order { x1, y1, x2, y2, x3, y3, r, g, b, a }
     geneCollection[0] = x1;

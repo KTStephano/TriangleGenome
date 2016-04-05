@@ -16,8 +16,14 @@ public class CrossMutate implements Cross
 {
   private static final Random RAND = new Random();
   private int dnaLength = 10;
-  private float mutationChance = 0.05f;
-  private float mutateAmount = 0.1f;
+  private float mutationChance = 0.01f;
+  private float mutateAmount = 0.15f;
+  private boolean shouldMutate = true;
+
+  public void setShouldMutate(boolean value)
+  {
+    shouldMutate = value;
+  }
 
   /**
    * This should cross the genes from this genome and another genome, creating a brand
@@ -39,6 +45,10 @@ public class CrossMutate implements Cross
     Iterator<float[]> itrSecond = first.getTriangles().iterator();
     GUI gui = engine.getGUI();
     TriangleManager manager = new TriangleManager();
+    //mutateAmount = 1.0f - (float)((first.getFitness() > second.getFitness()) ? first.getFitness() : second.getFitness());
+    //if (mutateAmount <= 0.1) mutateAmount = 1.0f - mutateAmount;
+    //mutateAmount = RAND.nextFloat() < 0.5f ? RAND.nextFloat() : 0.1f;
+    //mutateAmount = mutateAmount < 0.1f ? RAND.nextFloat() : mutateAmount;
 
     while (itrFirst.hasNext())
     {
@@ -52,9 +62,11 @@ public class CrossMutate implements Cross
       {
         newGenes[i] = (RAND.nextFloat() < 0.5f) ? firstGenes[i] : secondGenes[i];
 
-        if (RAND.nextFloat() < mutationChance)
+        if (RAND.nextFloat() < mutationChance && shouldMutate)
         {
-          newGenes[i] += RAND.nextFloat() * mutateAmount * 2 - mutateAmount;
+          float mutation = RAND.nextFloat() * mutateAmount * 2;// - mutateAmount;
+          if (RAND.nextFloat() < 0.5f) mutation *= -1;
+          newGenes[i] += mutation;
 
           if (newGenes[i] < 0) newGenes[i] = 0.0f;
           else if (newGenes[i] > 1) newGenes[i] = 1.0f;

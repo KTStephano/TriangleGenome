@@ -47,6 +47,8 @@ public class FitnessCalculator implements FitnessFunction
                                                      engine.getGUI().getImageHeight());
     TriangleManager manager = new TriangleManager();
 
+    renderer.clear();
+
     Collection<float[]> triangles = genome.getTriangles();
     GUI gui = engine.getGUI();
     for (float[] triangle : triangles)
@@ -69,14 +71,20 @@ public class FitnessCalculator implements FitnessFunction
                                      //(double)renderer.getPackedARGB(x, y) / Integer.MAX_VALUE);
         float[] targetImg = TriangleRenderer.unpackData(reader.getArgb(x, y));
         float[] genomeImg = TriangleRenderer.unpackData(renderer.getPackedARGB(x, y));
+        /*
         float redDiff = Math.abs(targetImg[0] - genomeImg[0]);
         float greenDiff = Math.abs(targetImg[1] - genomeImg[1]);
         float blueDiff = Math.abs(targetImg[2] - genomeImg[2]);
         float alphaDiff = Math.abs(targetImg[3] * 255 - genomeImg[3] * 255);
-        fitness += redDiff + greenDiff + blueDiff + alphaDiff;
+        */
+        float redDiff = targetImg[0] - genomeImg[0];
+        float greenDiff = targetImg[1] - genomeImg[1];
+        float blueDiff = targetImg[2] - genomeImg[2];
+        //float alphaDiff = targetImg[3] * 255 - genomeImg[3] * 255;
+        fitness += (redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff);// + alphaDiff * alphaDiff;
       }
     }
-    fitness = 1.0 - fitness / ((width / offset) * (height / offset) * 4 * 256);
+    fitness = 1.0 - fitness / ((width / offset) * (height / offset) * 3 * 256 * 256);
     //System.out.println(fitness);
     return fitness;
   }

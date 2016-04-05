@@ -1,6 +1,5 @@
 package cs351.project2;
 
-import cs351.core.Cross;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Genome;
 import cs351.core.Tribe;
@@ -13,7 +12,7 @@ public class CrossMutateSelection implements Job
 {
   private final EvolutionEngine ENGINE;
   private final Tribe TRIBE;
-  private final Cross CROSS;
+  private final CrossMutate CROSS;
   private float selectionCutoff = 0.15f;
   private final Random RAND = new Random();
 
@@ -39,6 +38,7 @@ public class CrossMutateSelection implements Job
     int numCreated = 0;
     int selectCount = (int) (size * selectionCutoff);
     int randCount = (int) Math.ceil(1 / selectionCutoff);
+    //CROSS.setShouldMutate(false); // for pure crossover
     for (int i = 0; i < selectCount; i++)
     {
       for (int j = 0; j < randCount; j++)
@@ -50,6 +50,7 @@ public class CrossMutateSelection implements Job
         ++numCreated;
       }
     }
+    //CROSS.setShouldMutate(true);
 
     for (int i = 0; i < numCreated; i++)
     {

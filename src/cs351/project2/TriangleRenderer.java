@@ -52,7 +52,9 @@ public class TriangleRenderer
 
   public void clear()
   {
-    CONTEXT.setBackground(Color.WHITE);
+    CONTEXT.setBackground(Color.BLACK);
+    CONTEXT.setColor(Color.BLACK);
+    CONTEXT.clearRect(0, 0, width, height);
   }
 
   public int getWidth()
