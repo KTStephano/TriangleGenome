@@ -78,7 +78,8 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   {
     if (!mutatorMap.containsKey(genome))
     {
-      AdaptiveMutator mutator = new AdaptiveMutator();
+      //AdaptiveMutator mutator = new AdaptiveMutator();
+      AdaptiveMutator2 mutator = new AdaptiveMutator2();
       mutator.setGenome(genome);
       mutatorMap.put(genome, mutator);
     }
@@ -103,6 +104,15 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     int index = indexOf(genome);
     if (index == -1) return; // not found
     genome.setTribe(null); // no longer has a tribe for the time being
+    list[index] = null;
+    for (int i = index; i < size - 1; i++) list[i] = list[i + 1];
+    --size;
+  }
+
+  public void removeAt(int index)
+  {
+    if (!isValidIndex(index)) throw new IllegalArgumentException("Index out of bounds");
+    list[index].setTribe(null);
     list[index] = null;
     for (int i = index; i < size - 1; i++) list[i] = list[i + 1];
     --size;

@@ -12,6 +12,7 @@ import cs351.core.Engine.GUI;
 public class TriangleManager
 {
   protected float[] data;
+  protected float[] normalizedData;
   protected float maxColor = 255.0f;
   protected float maxAlpha = 1.0f;
   protected float maxXValue; // pulled from GUI
@@ -44,8 +45,20 @@ public class TriangleManager
   {
     if (data.length != 10) throw new IllegalArgumentException("Invalid triangle data");
     this.data = data;
+    normalizedData = new float[10];
     maxXValue = gui.getImageWidth();
     maxYValue = gui.getImageHeight();
+
+    normalizedData[0] = data[0] / maxXValue;
+    normalizedData[1] = data[1] / maxYValue;
+    normalizedData[2] = data[2] / maxXValue;
+    normalizedData[3] = data[3] / maxYValue;
+    normalizedData[4] = data[4] / maxXValue;
+    normalizedData[5] = data[5] / maxYValue;
+    normalizedData[6] = data[6] / 255;
+    normalizedData[7] = data[7] / 255;
+    normalizedData[8] = data[8] / 255;
+    normalizedData[9] = data[9];
   }
 
   /**
@@ -56,6 +69,26 @@ public class TriangleManager
   {
     if (data.length != 10) throw new IllegalArgumentException("Invalid triangle data");
     this.data = data;
+  }
+
+  public float[] getNormalizedDNA()
+  {
+    return normalizedData;
+  }
+
+  public float[] revertNormalization(float[] dna)
+  {
+    dna[0] = dna[0] * maxXValue;
+    dna[1] = dna[1] * maxYValue;
+    dna[2] = dna[2] * maxXValue;
+    dna[3] = dna[3] * maxYValue;
+    dna[4] = dna[4] * maxXValue;
+    dna[5] = dna[5] * maxYValue;
+    dna[6] = dna[6] * 255;
+    dna[7] = dna[7] * 255;
+    dna[8] = dna[8] * 255;
+    dna[9] = dna[9];
+    return dna;
   }
 
   /**

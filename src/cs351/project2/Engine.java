@@ -278,7 +278,7 @@ public final class Engine implements EvolutionEngine
 
       // TODO add rest of loop here
       //GENERATIONS.getAndIncrement();
-      if (currentNumMutatorPhasesRun < 10)
+      if (currentNumMutatorPhasesRun < 100)
       {
         mutatorJobList.submitJobs(false);
         ++currentNumMutatorPhasesRun;
@@ -286,7 +286,8 @@ public final class Engine implements EvolutionEngine
       else
       {
         crossJobList.submitJobs(false);
-        if(currentNumMutatorPhasesRun == 20) currentNumMutatorPhasesRun = 0;
+        ++currentNumMutatorPhasesRun;
+        if(currentNumMutatorPhasesRun >= 102) currentNumMutatorPhasesRun = 0;
       }
     }
   }
@@ -384,7 +385,8 @@ public final class Engine implements EvolutionEngine
       for (Tribe tribe : population.getTribes())
       {
         mutatorJobList.add(new MutatorJob(population, tribe, this), 1);
-        crossJobList.add(new CrossPhase(this, tribe), 1);
+        //crossJobList.add(new CrossPhase(this, tribe), 1);
+        crossJobList.add(new CrossMutateSelection(this, tribe), 1);
       }
       //for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
     }

@@ -44,7 +44,7 @@ public class TriangleGenerator
     blue = RAND.nextInt(255);
 
     // Create alpha value
-    alpha = RAND.nextFloat();
+    alpha = Math.max(RAND.nextFloat() * RAND.nextFloat(), 0.2f);
 
     // Build the collection of genes in the following order { x1, y1, x2, y2, x3, y3, r, g, b, a }
     geneCollection[0] = x1;

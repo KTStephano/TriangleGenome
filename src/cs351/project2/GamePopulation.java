@@ -17,7 +17,7 @@ import java.util.Random;
 public class GamePopulation implements Population
 {
   private int numTribes = 16; // Default value of tribes in a population
-  private int numGenomes = 2000;  // Default value of starting genomes per tribe
+  private int numGenomes = 100;  // Default value of starting genomes per tribe
   private int numTriangles = 200; // Default value of starting triangles per genome
 
   private Random numGenerator; // initialized once to be used when creating initial triangle vertices
@@ -123,7 +123,7 @@ public class GamePopulation implements Population
               //genome.setFitness(function.generateFitness(engine, genome));
               genome.add(TriangleGenerator.createTriangle(numGenerator, engine));
             }
-
+            genome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, genome));
             // Add completed genome to tribe
             TRIBE.add(genome);
           }
