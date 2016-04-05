@@ -46,6 +46,13 @@ public final class Engine implements EvolutionEngine
   private int currentNumMutatorPhasesRun = 0;
   private int currentNumCrossPhasesRun = 0;
 
+  // Additional Engine Stats
+  private int middleMan = 0; // milliseconds that have elapsed
+  private int seconds = 0;
+  private int minutes = 0;
+  private int hours = 0;
+  private int populationCount = 0; // sum of genomes among all tribes
+
   private final class MutatorJob implements Job
   {
     private final Population POPULATION;
@@ -255,6 +262,7 @@ public final class Engine implements EvolutionEngine
     {
       millisecondsSinceLastFrame = System.currentTimeMillis() - millisecondTimeStamp;
       millisecondTimeStamp = System.currentTimeMillis(); // mark the time when this frame started
+      addToRunningTime(millisecondsSinceLastFrame);
       // Log the milliseconds since last frame for frame rate averaging
       LAST_100_FRAME_TIMESTAMPS[currentTimestamp] = millisecondsSinceLastFrame;
       currentTimestamp++;
@@ -298,12 +306,121 @@ public final class Engine implements EvolutionEngine
     }
   }
 
+  @Override
   public double getAverageGenerationsPerSecond()
   {
     long totalMilliseconds = 0;
     for (int i = 0; i < LAST_100_FRAME_TIMESTAMPS.length; i++) totalMilliseconds += LAST_100_FRAME_TIMESTAMPS[i];
     double averageTime = totalMilliseconds / (double) LAST_100_FRAME_TIMESTAMPS.length;
     return averageTime / 1000.0; // convert to seconds
+  }
+
+  /**
+   * Hours that have elapsed when the game is running
+   *
+   * @return number of elapsed hours
+   */
+  @Override
+  public int getHours()
+  {
+    return hours;
+  }
+
+  /**
+   * Minutes that have elapsed when the game is running. When minutes reaches 60, variable resets to 0
+   * and increments hours by 1.
+   *
+   * @return number of minutes
+   */
+  @Override
+  public int getMinutes()
+  {
+    return minutes;
+  }
+
+  /**
+   * Seconds that have elapsed when the game is running. When seconds reaches 60, variable resets to 0
+   * and increments minutes by 1.
+   *
+   * @return number of seconds
+   */
+  @Override
+  public int getSeconds()
+  {
+    return seconds;
+  }
+
+  /**
+   * The sum of genomes across all tribes
+   *
+   * @return amount of genomes in the population
+   */
+  @Override
+  public int getPopulationCount()
+  {
+    return populationCount;
+  }
+
+  /**
+   * Increments the population count by one
+   */
+  @Override
+  public void incrementPopulationCount()
+  {
+    populationCount ++;
+  }
+
+  /**
+   * Decrements the population count by one
+   */
+  @Override
+  public void decrementPopulationCount()
+  {
+    if(populationCount > 0) populationCount --;
+  }
+
+  private void addToRunningTime(long time)
+  {
+    if(time > 1000) return;
+    middleMan += time;
+
+    if(middleMan >= 1000)
+    {
+      middleMan = middleMan - 1000;
+      seconds ++;
+    }
+
+    // Check if 1 minute has elapsed
+    if(this.seconds >= 60)
+    {
+      this.seconds = this.seconds - 60;
+      this.minutes += 1;
+    }
+
+    // Check if 1 second has elapsed
+    if(this.minutes >= 60)
+    {
+      this.minutes = this.minutes - 60;
+      this.hours += 1;
+    }
+  }
+
+  /**
+   * Resets running time statistics
+   */
+  private void resetRunningTime()
+  {
+    seconds = 0;
+    minutes = 0;
+    hours = 0;
+  }
+
+  /**
+   * Resets the population count statistic to zero
+   */
+  private void resetPopulationCount()
+  {
+    populationCount = 0;
   }
 
   public int getVersionMinor()
@@ -370,6 +487,8 @@ public final class Engine implements EvolutionEngine
 
     // Initialize the statistics system
     initStats();
+    resetRunningTime();
+    resetPopulationCount();
 
     // Init the population and main GUI if they are not null
     if (gui == null) isRunningConsoleMode = true;

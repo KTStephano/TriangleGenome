@@ -1,5 +1,6 @@
 package cs351.project2;
 
+import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Genome;
 import cs351.core.Mutator;
 import cs351.core.Tribe;
@@ -16,6 +17,7 @@ public class GenomeTree implements Tribe
 {
   private final HashSet<Genome> UNSORTED_GENOMES = new HashSet<>();
   private final TreeSet<Genome> GENOME_TREE;
+  private EvolutionEngine engine;
 
   {
     GENOME_TREE = new TreeSet<>((first, second) -> -1 * Double.compare(first.getFitness(), second.getFitness()));
@@ -87,5 +89,16 @@ public class GenomeTree implements Tribe
   {
     GENOME_TREE.clear();
     GENOME_TREE.addAll(UNSORTED_GENOMES);
+  }
+
+  /**
+   * Passes the address of the engine to this tribe
+   *
+   * @param engine
+   */
+  @Override
+  public void init(EvolutionEngine engine)
+  {
+    this.engine = engine;
   }
 }

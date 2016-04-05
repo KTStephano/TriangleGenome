@@ -128,6 +128,12 @@ public interface EvolutionEngine
   int getGenerationCount();
 
   /**
+   * Gets the number of generations that have occurred on average over the past second
+   * @return number of generations on average per second
+   */
+  double getAverageGenerationsPerSecond();
+
+  /**
    * The engine may have any number of jobs running as part of a generation,
    * and this is an easy way for jobs to let the engine know when they are done
    * so it knows when the generation is complete.
@@ -135,6 +141,43 @@ public interface EvolutionEngine
    * @param job job that just completed
    */
   //void notifyEngineOfJobCompletion(Job job);
+
+
+  /**
+   * Hours that have elapsed when the game is running
+   * @return number of elapsed hours
+   */
+  int getHours();
+
+  /**
+   * Minutes that have elapsed when the game is running. When minutes reaches 60, variable resets to 0
+   * and increments hours by 1.
+   * @return number of minutes
+   */
+  int getMinutes();
+
+  /**
+   * Seconds that have elapsed when the game is running. When seconds reaches 60, variable resets to 0
+   * and increments minutes by 1.
+   * @return number of seconds
+   */
+  int getSeconds();
+
+  /**
+   * The sum of genomes across all tribes
+   * @return amount of genomes in the population
+   */
+  int getPopulationCount();
+
+  /**
+   * Increments the population count by one
+   */
+  void incrementPopulationCount();
+
+  /**
+   * Decrements the population count by one
+   */
+  void decrementPopulationCount();
 
   /**
    * Creates the next generation of the given population. Each time this is called,

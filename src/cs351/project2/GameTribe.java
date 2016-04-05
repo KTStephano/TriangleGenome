@@ -1,6 +1,7 @@
 package cs351.project2;
 
 
+import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Genome;
 import cs351.core.Mutator;
 import cs351.core.Tribe;
@@ -120,6 +121,17 @@ public class GameTribe implements Tribe
    */
   @Override
   public void sort()
+  {
+
+  }
+
+  /**
+   * Passes the address of the engine to this tribe
+   *
+   * @param engine
+   */
+  @Override
+  public void init(EvolutionEngine engine)
   {
 
   }

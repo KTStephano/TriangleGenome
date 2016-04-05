@@ -1,5 +1,7 @@
 package cs351.core;
 
+import cs351.core.Engine.EvolutionEngine;
+
 import java.util.Collection;
 
 /**
@@ -83,4 +85,9 @@ public interface Tribe
    * the tribe won't know about these mutations.
    */
   void sort();
+
+  /**
+   * Passes the address of the engine to this tribe
+   */
+  void init(EvolutionEngine engine);
 }

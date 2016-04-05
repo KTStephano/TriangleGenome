@@ -123,6 +123,7 @@ public class GameWindow implements GUI
   private boolean genomePaused = false;
   private boolean nextGen = false;
   private boolean tribeCountChanged = false;
+  private boolean hasSecondElapsed = false; // used for statistics dependent on time
   private Boolean userWantsToClose = false;
   private ChoiceBox pictureSelect;
   private TextField tribeField;
@@ -133,6 +134,8 @@ public class GameWindow implements GUI
   private Triangle currentTriangle;
   private int triangleCounter;
   private NumberFormat formatter = new DecimalFormat("#0.0000");
+  private NumberFormat formatterTime = new DecimalFormat("#00");
+  private EvolutionEngine engine;
 
   // Image and Image View Stuff
   private Image targetImage = null;
@@ -221,14 +224,24 @@ public class GameWindow implements GUI
   {
     fitnessLabel.setText("Selected Genome Fitness: " + formatter.format(currentGenome.getFitness()));
     fitnessPerSecondLabel.setText("Fitness/Sec: N/A");
-    populationLabel.setText("Population: " + null + " genomes");
+    populationLabel.setText("Population (Genomes): " + getPopulationCount());
     generationLabel.setText("Amount of Generations: " + engine.getGenerationCount());
-    generationPerSecondLabel.setText("Generations/Sec: ");
-    generationAvgLabel.setText("Generations on Average: ");
+    if(hasSecondElapsed)generationPerSecondLabel.setText("Generations/Sec: " + formatter.format(engine.getAverageGenerationsPerSecond()));
+    generationAvgLabel.setText("Generations on Average: " );
     hillChildrenLabel.setText("Children from Hill Climbing: ");
     crossChildrenLabel.setText("Children from Crossover: ");
-    nonPausedTime.setText("Running: hh:mm:ss");
+    nonPausedTime.setText("Running: " + formatterTime.format(engine.getHours())+ ":" +
+      formatterTime.format(engine.getMinutes())+ ":" + formatterTime.format(engine.getSeconds()));
   }
+
+  /**
+   * @return number of genomes in the entire population
+   */
+  private int getPopulationCount()
+  {
+    return engine.getPopulationCount();
+  }
+
 
   /**
    * Used when selecting an image not already preset in the GUI
@@ -506,8 +519,7 @@ public class GameWindow implements GUI
     // Ask user for amount of tribes that they would like to use
     //setSelectedTribe(startingTribes);
 
-    // Error check to see if clicked the close button in the dialog box
-    if(hasUserSignaledQuit()) return;
+    this.engine = engine;
 
     try
     {
@@ -741,6 +753,7 @@ public class GameWindow implements GUI
         public void handle(ActionEvent e)
         {
           String str = tribeField.getText();
+          if(str == null) return;
           int tribeNumber = Integer.parseInt(str);
           System.out.println("tribeNumber: " + tribeNumber);
           if(tribeNumber <= 0) return;
@@ -924,6 +937,8 @@ public class GameWindow implements GUI
     int rColor, gColor, bColor = 0;
     double alpha = 0;
     int vertexCounter = 0;
+
+    if(engine.getSeconds() >= 1) hasSecondElapsed = true;
 
     if(nextGen == true && genomePaused == false)
     {

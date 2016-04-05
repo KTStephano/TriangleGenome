@@ -108,6 +108,7 @@ public class GamePopulation implements Population
     {
       //final Tribe TRIBE = new GenomeTree();
       final Tribe TRIBE = new OrderedGenomeList(numGenomes);
+      TRIBE.init(engine);
       final int TRIBE_NUM = i;
       
       // add a new job to the list with the given tribe

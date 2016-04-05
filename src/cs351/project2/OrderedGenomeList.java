@@ -1,5 +1,6 @@
 package cs351.project2;
 
+import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Genome;
 import cs351.core.Mutator;
 import cs351.core.Tribe;
@@ -18,6 +19,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   private Genome[] list;
   private HashMap<Genome, Mutator> mutatorMap = new HashMap<>();
   private boolean isDirty = false; // true if the list needs reordering
+  private EvolutionEngine engine;
 
   private final class GenomeIterator implements Iterator<Genome>
   {
@@ -94,6 +96,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     list[size] = genome;
     genome.setTribe(this); // now a member of this tribe
     ++size;
+    engine.incrementPopulationCount();
   }
 
   @Override
@@ -107,6 +110,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     list[index] = null;
     for (int i = index; i < size - 1; i++) list[i] = list[i + 1];
     --size;
+    engine.decrementPopulationCount();
   }
 
   public void removeAt(int index)
@@ -159,6 +163,15 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   {
     isDirty = false;
     Arrays.sort(list, 0, size, (first, second) -> -1 * Double.compare(first.getFitness(), second.getFitness()));
+  }
+
+  /**
+   * Passes the address of the engine to this tribe
+   */
+  @Override
+  public void init(EvolutionEngine engine)
+  {
+    this.engine = engine;
   }
 
   /**
