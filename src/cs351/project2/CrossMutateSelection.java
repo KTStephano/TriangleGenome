@@ -39,9 +39,9 @@ public class CrossMutateSelection implements Job
     int selectCount = (int) (size * selectionCutoff);
     int randCount = (int) Math.ceil(1 / selectionCutoff);
     //CROSS.setShouldMutate(false); // for pure crossover
-    for (int i = 0; i < selectCount; i++)
+    for (int i = 0; i < 1; i++)
     {
-      for (int j = 0; j < randCount; j++)
+      for (int j = 0; j < randCount + selectCount; j++)
       {
         int randTriangle = i;
         while (randTriangle == i) randTriangle = RAND.nextInt(size);

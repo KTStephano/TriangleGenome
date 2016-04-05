@@ -17,7 +17,7 @@ public class CrossMutate implements Cross
   private static final Random RAND = new Random();
   private int dnaLength = 10;
   private float mutationChance = 0.01f;
-  private float mutateAmount = 0.15f;
+  private float mutateAmount = 0.1f;
   private boolean shouldMutate = true;
 
   public void setShouldMutate(boolean value)
