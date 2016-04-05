@@ -742,12 +742,10 @@ public class GameWindow implements GUI
         {
           String str = tribeField.getText();
           int tribeNumber = Integer.parseInt(str);
+          System.out.println("tribeNumber: " + tribeNumber);
+          if(tribeNumber <= 0) return;
           tribeSize = tribeNumber;
           resetSlider();
-//          String str = tribeField.getCharacters().toString();
-//          int num = str.getNumericalValue();
-//          setSelectedTribe(Character.getNumericValue(tribeField.getCharacters()));
-//          System.out.println("Stuff: " + tribeField.getCharacters());
         }
       });
 
@@ -953,7 +951,7 @@ public class GameWindow implements GUI
     // Fill black background
     //gcGenetic.setFill(getBackgroundColor());
     gcGenetic.setFill(Color.BLACK);
-    gcGenetic.fillRect(0,0, getTargetImageWidth(), getTargetImageHeight());
+    gcGenetic.fillRect(0, 0, getTargetImageWidth(), getTargetImageHeight());
 
     // For time being, select very first genome
     ArrayList<Tribe> tribes = new ArrayList<>();
@@ -964,6 +962,7 @@ public class GameWindow implements GUI
     Genome selectedGenome = genomes.get(getSelectedGenome());
     selectedGenome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, selectedGenome));
     currentGenome = selectedGenome;
+    genomeListSlider.setMax(genomes.size()-1);
 
     // Loop through each triangle of genome
     TriangleManager manager = new TriangleManager(); // need this to interpret the triangle data
