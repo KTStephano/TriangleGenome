@@ -115,11 +115,13 @@ public class GameWindow implements GUI
 
 
   private Button pauseButton;             // pauses game
+  private Button nextButton;           // Runs the next generation
   private Button fileChooserButton;       // chooses custom image to draw
   private Button tribeButton;             // applies number of tribes
   private Button saveGenome;              // saves the current genome to a file
   private Button loadGenome;             // writes the uploaded genome to the game
   private boolean genomePaused = false;
+  private boolean nextGen = false;
   private boolean tribeCountChanged = false;
   private Boolean userWantsToClose = false;
   private ChoiceBox pictureSelect;
@@ -146,6 +148,8 @@ public class GameWindow implements GUI
     "images/the_great_wave_off_kanagawa-100x69.png", "images/the_great_wave_off_kanagawa-250x172.png",
     "images/the_great_wave_off_kanagawa-512x352.png", "images/Piet_Mondrian-100x75.png", "images/Piet_Mondrian-250x188.png",
     "images/Piet_Mondrian-512x385.png", "images/trianglePic-100x80.png", "images/trianglePic-250x201.png", "images/trianglePic-512x412.png"};
+
+
 
 
   /**
@@ -394,6 +398,7 @@ public class GameWindow implements GUI
   private void enableButtons()
   {
     tribeButton.setDisable(false);
+    nextButton.setDisable(false);
     pictureSelect.setDisable(false);
     fileChooserButton.setDisable(false);
     tribeField.setDisable(false);
@@ -412,6 +417,7 @@ public class GameWindow implements GUI
   private void disableButtons()
   {
     tribeButton.setDisable(true);
+    nextButton.setDisable(true);
     pictureSelect.setDisable(true);
     fileChooserButton.setDisable(true);
     tribeField.setDisable(true);
@@ -655,6 +661,7 @@ public class GameWindow implements GUI
         @Override
         public void handle(ActionEvent e)
         {
+          // if game is running, pause it and reset button
           if (!genomePaused)
           {
             pauseButton.setText("Resume");
@@ -667,6 +674,16 @@ public class GameWindow implements GUI
           genomePaused = !genomePaused;
         }
       });
+
+      nextButton = new Button("Next");
+      nextButton.setMinWidth(buttonSize);
+      nextButton.setOnAction(e -> {
+        nextGen = true;
+        genomePaused = false;
+        disableButtons();
+        pauseButton.setDefaultButton(true);
+      });
+
 
       saveGenome = new Button("Save Genome");
       saveGenome.setMinWidth(buttonSize);
@@ -840,7 +857,7 @@ public class GameWindow implements GUI
       topRowContainer.setLayoutX(canvasStartX);
       topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + 2 * canvasMargin);
       topRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      topRowContainer.getChildren().addAll(pauseButton);
+      topRowContainer.getChildren().addAll(pauseButton, nextButton);
       //topRowContainer.getChildren().addAll(pauseButton, saveGenome, loadGenome);
 
 
@@ -909,6 +926,14 @@ public class GameWindow implements GUI
     int rColor, gColor, bColor = 0;
     double alpha = 0;
     int vertexCounter = 0;
+
+    if(nextGen == true && genomePaused == false)
+    {
+      nextGen = false;
+      genomePaused = true;
+      enableButtons();
+      pauseButton.setDisable(false);
+    }
 
     // If we are not debugging, then refresh the canvas at each update
     if (!canvasDebugging) clearGeneticCanvas();
