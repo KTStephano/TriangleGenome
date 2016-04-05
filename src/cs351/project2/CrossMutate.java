@@ -9,6 +9,9 @@ import cs351.core.TriangleManager;
 import java.util.Iterator;
 import java.util.Random;
 
+/**
+ * CITATION: http://chriscummins.cc/s/genetics/#
+ */
 public class CrossMutate implements Cross
 {
   private static final Random RAND = new Random();
