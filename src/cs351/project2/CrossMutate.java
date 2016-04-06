@@ -42,7 +42,7 @@ public class CrossMutate implements Cross
     Genome offspring = new Genome();
 
     Iterator<float[]> itrFirst = first.getTriangles().iterator();
-    Iterator<float[]> itrSecond = first.getTriangles().iterator();
+    Iterator<float[]> itrSecond = second.getTriangles().iterator();
     GUI gui = engine.getGUI();
     TriangleManager manager = new TriangleManager();
     //mutateAmount = 1.0f - (float)((first.getFitness() > second.getFitness()) ? first.getFitness() : second.getFitness());
