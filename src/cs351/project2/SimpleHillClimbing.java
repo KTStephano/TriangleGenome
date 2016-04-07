@@ -76,7 +76,7 @@ public class SimpleHillClimbing implements Mutator
         // step 1 - possibly randomize the vertex completely
         if (shouldMutate)
         {
-          if (RAND.nextFloat() <= vertexMutationChance) newGene[i] = RAND.nextFloat();
+          //if (RAND.nextFloat() <= vertexMutationChance) newGene[i] = RAND.nextFloat();
           // step 2 - mutate randomly based on the max change amount
           if (RAND.nextFloat() <= vertexMutationChance)
           {
