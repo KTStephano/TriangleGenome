@@ -45,8 +45,8 @@ public class FitnessCalculator implements FitnessFunction
   {
     TriangleRenderer renderer = new TriangleRenderer(engine.getGUI().getImageWidth(),
                                                      engine.getGUI().getImageHeight());
-    TriangleManager manager = new TriangleManager();
 
+    TriangleManager manager = new TriangleManager();
     renderer.clear();
 
     Collection<float[]> triangles = genome.getTriangles();
