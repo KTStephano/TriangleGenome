@@ -295,7 +295,7 @@ public final class Engine implements EvolutionEngine
       }
       else
       {
-        crossJobList.submitJobs(false);
+        //crossJobList.submitJobs(false);
         //++currentNumMutatorPhasesRun;
         ++currentNumCrossPhasesRun;
         if(currentNumCrossPhasesRun >= 2)
