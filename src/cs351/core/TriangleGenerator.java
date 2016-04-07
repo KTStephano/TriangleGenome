@@ -24,14 +24,18 @@ public class TriangleGenerator
     int height = mainGUI.getImageHeight();
 
     x1 = RAND.nextFloat() * width;
-    x2 = RAND.nextFloat() * width;
-    x3 = RAND.nextFloat() * width;
+    x2 = x1 + 1;
+    x3 = x1 - 1;
+    //x2 = RAND.nextFloat() * width;
+    //x3 = RAND.nextFloat() * width;
     //x2 = x1 + RAND.nextInt(width / 4);
     //x3 = x1 + RAND.nextInt(width / 4);
 
     y1 = RAND.nextFloat() * height;
-    y2 = RAND.nextFloat() * height;
-    y3 = RAND.nextFloat() * height;
+    y2 = y1 + 1;
+    y3 = y1 - 1;
+    //y2 = RAND.nextFloat() * height;
+    //y3 = RAND.nextFloat() * height;
     //y2 = y1 + RAND.nextInt(height / 4);
     //y3 = y1 + RAND.nextInt(height / 4);
 

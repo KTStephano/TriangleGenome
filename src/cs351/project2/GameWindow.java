@@ -57,7 +57,7 @@ public class GameWindow implements GUI
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
   private double canvasStartY = 10;
 
-  private int tribeSize = 3;
+  private int tribeSize = 1;
   private int genomeSize = 200;
   private double[] xVals = new double [3];
   private double[] yVals = new double [3];

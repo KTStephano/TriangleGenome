@@ -21,7 +21,7 @@ public final class Engine implements EvolutionEngine
   // General class members
   private Population population;
   private GUI gui;
-  private Genome target;
+  private Image target;
   private Log log;
   private int numTribes;
   private ParallelJobSystem jobSystem;
@@ -248,11 +248,12 @@ public final class Engine implements EvolutionEngine
     // frame is done
     if (!isRunningConsoleMode)
     {
-      if (gui.getHasSelectedNewImage() && population != null)
+      if (gui.getTargetImage() != target && population != null)
       {
-        population.generateStartingState(this, numTribes);
-        crossJobList.clear();
-        for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
+        generateStartingState(null, false);
+        //population.generateStartingState(this, numTribes);
+        //crossJobList.clear();
+        //for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
       }
       gui.update(this);
       if (numTribes != gui.getTribes()) generateStartingState(null, false);
@@ -497,6 +498,7 @@ public final class Engine implements EvolutionEngine
       isRunningConsoleMode = false;
       gui.init(stage, this);
     }
+    target = gui.getTargetImage();
 
     numTribes = gui == null ? 1 : gui.getTribes();
     if (jobSystem != null) jobSystem.destroy(); // Make sure this gets cleaned up

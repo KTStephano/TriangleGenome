@@ -80,11 +80,15 @@ public class FitnessCalculator implements FitnessFunction
         float redDiff = targetImg[0] - genomeImg[0];
         float greenDiff = targetImg[1] - genomeImg[1];
         float blueDiff = targetImg[2] - genomeImg[2];
+        if (redDiff > 255 || blueDiff > 255 || greenDiff > 255) System.out.println("true");
         //float alphaDiff = targetImg[3] * 255 - genomeImg[3] * 255;
         fitness += (redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff);// + alphaDiff * alphaDiff;
+        //fitness += redDiff + greenDiff + blueDiff;
       }
     }
-    fitness = 1.0 - fitness / ((width / offset) * (height / offset) * 3 * 256 * 256);
+    //fitness = 1.0 - fitness / ((width / offset) * (height / offset) * 3 * 256);
+    fitness = 1.0 - fitness / (width * height * 3 * 256.0 * 256.0);
+    //fitness = width * height * 3 * 256.0 * 256.0 - fitness;
     //System.out.println(fitness);
     return fitness;
   }

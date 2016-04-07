@@ -81,7 +81,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     if (!mutatorMap.containsKey(genome))
     {
       //AdaptiveMutator mutator = new AdaptiveMutator();
-      AdaptiveMutator2 mutator = new AdaptiveMutator2();
+      Mutator mutator = new SimpleHillClimbing();
       mutator.setGenome(genome);
       mutatorMap.put(genome, mutator);
     }
