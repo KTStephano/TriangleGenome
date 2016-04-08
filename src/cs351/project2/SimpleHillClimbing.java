@@ -149,7 +149,12 @@ public class SimpleHillClimbing implements Mutator
       for (float[] triangle : best.getTriangles()) genome.add(triangle);
       genome.setFitness(best.getFitness());
     }
-    else best.clear();
+    else
+    {
+      temperature = temperature * friction;
+      best.clear();
+    }
+
     /*
     if (best.getFitness() >= genome.getFitness())
     {
