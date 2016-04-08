@@ -290,7 +290,7 @@ public final class Engine implements EvolutionEngine
       //GENERATIONS.getAndIncrement();
       if (currentNumCrossPhasesRun < 4)
       {
-        crossJobList.submitJobs(false);
+        //crossJobList.submitJobs(false);
         //++currentNumMutatorPhasesRun;
         ++currentNumCrossPhasesRun;
       }

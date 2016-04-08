@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
+ * CITATION: http://katrinaeg.com/simulated-annealing.html
+ *
  * Performs simple hill climbing by mutating different parts of a triangle's
  * genetic sequence.
  */
@@ -22,6 +24,8 @@ public class SimpleHillClimbing implements Mutator
   private float vertexMutationChance = DEFAULT_MUTATION_CHANCE;
   private float colorMutationChance = DEFAULT_MUTATION_CHANCE;
   private int numTrianglesToMutate = 200;
+  private double temperature = 1.0;
+  private double friction = 0.99;
 
   /**
    * Sets the genome. Should clear out all data maintained for the
@@ -54,14 +58,13 @@ public class SimpleHillClimbing implements Mutator
     int colorChangeAmount = 10;
     float addTriangleChance = 0.05f;
     Genome best = null;
-    for (int trials = 0; trials < 25; trials++)
+    for (int trials = 0; trials < 10; trials++)
     {
       Genome spinoff = new Genome();
       if (RAND.nextFloat() <= addTriangleChance) numTrianglesToMutate++;
       Iterator<float[]> triangleItr = genome.getTriangles().iterator();
       int numMutations = 0;
       int index = 0;
-      boolean shouldMutate = true;
       //System.out.println(numTrianglesToMutate);
 
       while (triangleItr.hasNext())
@@ -71,6 +74,7 @@ public class SimpleHillClimbing implements Mutator
         float[] newGene = new float[10];
         MANAGER.setTriangleData(engine.getGUI(), triangle);
         normalizedTriangle = MANAGER.getNormalizedDNA();
+        boolean shouldMutate = true;
 
         // Set up the vertices and give them a chance to mutate
         for (int i = 0; i < 6; i++)
@@ -86,6 +90,7 @@ public class SimpleHillClimbing implements Mutator
               numMutations++;
               newGene[i] += generateMutationAmount(changeAmountMax, changeAmountBound);
               newGene[i] = bound(newGene[i], 0.0f, 1.0f);
+              //if (genome.getFitness() > .99) shouldMutate = false;
             }
             // step 3 - mutate randomly based on the min change amount
             if (RAND.nextFloat() <= vertexMutationChance)
@@ -93,6 +98,7 @@ public class SimpleHillClimbing implements Mutator
               numMutations++;
               newGene[i] += generateMutationAmount(changeAmountMin, changeAmountBound);
               newGene[i] = bound(newGene[i], 0.0f, 1.0f);
+              //if (genome.getFitness() > .99) shouldMutate = false;
             }
           }
         }
@@ -107,12 +113,13 @@ public class SimpleHillClimbing implements Mutator
             // strict equals rather than additive mutation
             newGene[i] += generateMutationAmount(colorChangeAmount, 255.0f);
             newGene[i] = bound(newGene[i], 0.0f, 1.0f);
+            //if (genome.getFitness() > .99) shouldMutate = false;
           }
         }
 
         spinoff.add(MANAGER.revertNormalization(newGene));
         index++;
-        if (index >= numTrianglesToMutate) shouldMutate = false;
+        //if (index >= numTrianglesToMutate) shouldMutate = false;
       }
 
       //System.out.println(numMutations);
@@ -121,6 +128,8 @@ public class SimpleHillClimbing implements Mutator
       best = evaluate(best, spinoff);
     }
     completeStep(best);
+    //if (temperature > 0.01) temperature = temperature * friction;
+    //else temperature = 0.01;
   }
 
   private Genome evaluate(Genome currentBest, Genome spinoff)
@@ -132,6 +141,16 @@ public class SimpleHillClimbing implements Mutator
 
   private void completeStep(Genome best)
   {
+    double value = Math.pow(Math.E, ((genome.getFitness() - best.getFitness()) / temperature));
+    //System.out.println(value);
+    if (RAND.nextDouble() <= value)
+    {
+      genome.clear();
+      for (float[] triangle : best.getTriangles()) genome.add(triangle);
+      genome.setFitness(best.getFitness());
+    }
+    else best.clear();
+    /*
     if (best.getFitness() >= genome.getFitness())
     {
       genome.clear();
@@ -139,6 +158,7 @@ public class SimpleHillClimbing implements Mutator
       genome.setFitness(best.getFitness());
     }
     else best.clear();
+    */
   }
 
   private float generateMutationAmount(int bound, float normalize)

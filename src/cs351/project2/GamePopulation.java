@@ -135,7 +135,7 @@ public class GamePopulation implements Population
               //genome.setFitness(function.generateFitness(engine, genome));
               genome.add(TriangleGenerator.createTriangle(numGenerator, engine));
             }
-            genome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, genome));
+            //genome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, genome));
             // Add completed genome to tribe
             TRIBE.add(genome);
           }
