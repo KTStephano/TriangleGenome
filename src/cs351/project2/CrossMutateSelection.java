@@ -13,7 +13,7 @@ public class CrossMutateSelection implements Job
   private final EvolutionEngine ENGINE;
   private final Tribe TRIBE;
   private final CrossMutate CROSS;
-  private float selectionCutoff = 0.15f;
+  private float selectionCutoff = 0.25f;
   private final Random RAND = new Random();
 
   public CrossMutateSelection(Engine engine, Tribe tribe)
@@ -33,29 +33,34 @@ public class CrossMutateSelection implements Job
   public void start(int threadID)
   {
     int size = TRIBE.size();
+    int sampleSize = 100;
     OrderedGenomeList tribe = (OrderedGenomeList)TRIBE;
     final ArrayList<Genome> OFFSPRING = new ArrayList<>(10);
     int numCreated = 0;
-    int selectCount = (int) (size * selectionCutoff);
+    int selectCount = (int) (sampleSize / 2 * selectionCutoff);
     int randCount = (int) Math.ceil(1 / selectionCutoff);
     //CROSS.setShouldMutate(false); // for pure crossover
-    for (int i = 0; i < 1; i++)
+    for (int i = 0; i < selectCount; i++)
     {
-      for (int j = 0; j < randCount + selectCount; j++)
+      int choice = i;
+      for (int j = 0; j < randCount; j++)
       {
-        int randTriangle = i;
-        while (randTriangle == i) randTriangle = RAND.nextInt(size);
+        int randTriangle = choice;
+        while (randTriangle == choice) randTriangle = RAND.nextInt(size);
 
-        OFFSPRING.add(CROSS.cross(ENGINE, tribe.get(i), tribe.get(randTriangle)));
+        OFFSPRING.add(CROSS.cross(ENGINE, tribe.get(choice), tribe.get(randTriangle)));
         ++numCreated;
       }
     }
     //CROSS.setShouldMutate(true);
 
-    for (int i = 0; i < numCreated; i++)
+    if (TRIBE.size() > 10_000)
     {
-      if (tribe.size() - 1 < 0) break;
-      tribe.removeAt(tribe.size() - 1);
+      for (int i = 0; i < numCreated; i++)
+      {
+        if (tribe.size() - 1 < 0) break;
+        tribe.removeAt(tribe.size() - 1);
+      }
     }
 
     for (Genome genome : OFFSPRING) tribe.add(genome);

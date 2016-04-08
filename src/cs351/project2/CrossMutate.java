@@ -16,7 +16,7 @@ public class CrossMutate implements Cross
 {
   private static final Random RAND = new Random();
   private int dnaLength = 10;
-  private float mutationChance = 0.01f;
+  private float mutationChance = 0.006f;
   private float mutateAmount = 0.1f;
   private boolean shouldMutate = true;
 
@@ -39,45 +39,52 @@ public class CrossMutate implements Cross
   @Override
   public Genome cross(EvolutionEngine engine, Genome first, Genome second)
   {
-    Genome offspring = new Genome();
+    Genome best = null;
 
-    Iterator<float[]> itrFirst = first.getTriangles().iterator();
-    Iterator<float[]> itrSecond = second.getTriangles().iterator();
-    GUI gui = engine.getGUI();
-    TriangleManager manager = new TriangleManager();
-    //mutateAmount = 1.0f - (float)((first.getFitness() > second.getFitness()) ? first.getFitness() : second.getFitness());
-    //if (mutateAmount <= 0.1) mutateAmount = 1.0f - mutateAmount;
-    //mutateAmount = RAND.nextFloat() < 0.5f ? RAND.nextFloat() : 0.1f;
-    //mutateAmount = mutateAmount < 0.1f ? RAND.nextFloat() : mutateAmount;
-
-    while (itrFirst.hasNext())
+    for (int tries = 0; tries < 1; tries++)
     {
-      manager.setTriangleData(gui, itrFirst.next());
-      float[] firstGenes = manager.getNormalizedDNA();
-      manager.setTriangleData(gui, itrSecond.next());
-      float[] secondGenes = manager.getNormalizedDNA();
-      float[] newGenes = new float[10];
+      Genome offspring = new Genome();
+      Iterator<float[]> itrFirst = first.getTriangles().iterator();
+      Iterator<float[]> itrSecond = second.getTriangles().iterator();
+      GUI gui = engine.getGUI();
+      TriangleManager manager = new TriangleManager();
+      //mutateAmount = 1.0f - (float)((first.getFitness() > second.getFitness()) ? first.getFitness() : second.getFitness());
 
-      for (int i = 0; i < dnaLength; i++)
+      //if (mutateAmount <= 0.1) mutateAmount = 1.0f - mutateAmount;
+      //mutateAmount = RAND.nextFloat() < 0.5f ? RAND.nextFloat() : 0.1f;
+      //mutateAmount = mutateAmount < 0.1f ? RAND.nextFloat() : mutateAmount;
+
+      while (itrFirst.hasNext())
       {
-        newGenes[i] = (RAND.nextFloat() < 0.5f) ? firstGenes[i] : secondGenes[i];
+        manager.setTriangleData(gui, itrFirst.next());
+        float[] firstGenes = manager.getNormalizedDNA();
+        manager.setTriangleData(gui, itrSecond.next());
+        float[] secondGenes = manager.getNormalizedDNA();
+        float[] newGenes = new float[10];
 
-        if (RAND.nextFloat() < mutationChance && shouldMutate)
+        for (int i = 0; i < dnaLength; i++)
         {
-          float mutation = RAND.nextFloat() * mutateAmount * 2;// - mutateAmount;
-          if (RAND.nextFloat() < 0.5f) mutation *= -1;
-          newGenes[i] += mutation;
+          newGenes[i] = (RAND.nextFloat() < 0.5f) ? firstGenes[i] : secondGenes[i];
 
-          if (newGenes[i] < 0) newGenes[i] = 0.0f;
-          else if (newGenes[i] > 1) newGenes[i] = 1.0f;
+          if (RAND.nextFloat() < mutationChance && shouldMutate)
+          {
+            float mutation = RAND.nextFloat() * mutateAmount * 2;// - mutateAmount;
+            if (RAND.nextFloat() < 0.5f) mutation *= -1;
+            newGenes[i] += mutation;
+
+            if (newGenes[i] < 0) newGenes[i] = 0.0f;
+            else if (newGenes[i] > 1) newGenes[i] = 1.0f;
+          }
         }
+
+        offspring.add(manager.revertNormalization(newGenes));
       }
 
-      offspring.add(manager.revertNormalization(newGenes));
+      offspring.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, offspring));
+      ((Engine) engine).incrementGenerationCount();
+      if (best == null) best = offspring;
+      else best = engine.getPopulation().getFitnessFunction().compare(best, offspring);
     }
-
-    offspring.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, offspring));
-    ((Engine)engine).incrementGenerationCount();
-    return offspring;
+    return best;
   }
 }

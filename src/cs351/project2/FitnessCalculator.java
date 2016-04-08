@@ -7,12 +7,15 @@ import cs351.core.Genome;
 import cs351.core.TriangleManager;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelReader;
-
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class FitnessCalculator implements FitnessFunction
 {
+  private final ReentrantLock LOCK = new ReentrantLock();
   private Image target;
+  private LinkedList<TriangleRenderer> renderList = new LinkedList<>();
 
   @Override
   public void setTargetImage(Image image)
@@ -43,10 +46,20 @@ public class FitnessCalculator implements FitnessFunction
   @Override
   public double generateFitness(EvolutionEngine engine, Genome genome)
   {
-    TriangleRenderer renderer = new TriangleRenderer(engine.getGUI().getImageWidth(),
-                                                     engine.getGUI().getImageHeight());
-
+    TriangleRenderer renderer;
+    try
+    {
+      LOCK.lock();
+      if (renderList.size() == 0) renderList.add(new TriangleRenderer(engine.getGUI().getImageWidth(),
+                                                                    engine.getGUI().getImageHeight()));
+      renderer = renderList.pop();
+    }
+    finally
+    {
+      LOCK.unlock();
+    }
     TriangleManager manager = new TriangleManager();
+
     renderer.clear();
 
     Collection<float[]> triangles = genome.getTriangles();
@@ -90,6 +103,15 @@ public class FitnessCalculator implements FitnessFunction
     fitness = 1.0 - fitness / (width * height * 3 * 256.0 * 256.0);
     //fitness = width * height * 3 * 256.0 * 256.0 - fitness;
     //System.out.println(fitness);
+    try
+    {
+      LOCK.lock();
+      renderList.add(renderer);
+    }
+    finally
+    {
+      LOCK.unlock();
+    }
     return fitness;
   }
 
