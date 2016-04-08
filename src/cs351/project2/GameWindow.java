@@ -6,13 +6,13 @@ import cs351.core.Engine.GUI;
 
 import java.awt.*;
 import java.io.*;
+import java.security.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
@@ -120,6 +120,8 @@ public class GameWindow implements GUI
   private Button tribeButton;             // applies number of tribes
   private Button saveGenome;              // saves the current genome to a file
   private Button loadGenome;             // writes the uploaded genome to the game
+  private FileChooser fileChooser;
+  private FileChooser loadGenomeChooser;
   private boolean genomePaused = false;
   private boolean nextGen = false;
   private boolean tribeCountChanged = false;
@@ -136,6 +138,7 @@ public class GameWindow implements GUI
   private NumberFormat formatter = new DecimalFormat("#0.0000");
   private NumberFormat formatterTime = new DecimalFormat("#00");
   private EvolutionEngine engine;
+  private Stage stage;
 
   // Image and Image View Stuff
   private Image targetImage = null;
@@ -177,32 +180,54 @@ public class GameWindow implements GUI
   /**
    * Used to write a genome file for the user. User will be able to save this file to their
    * own space to reuse at another time
-   * @param engine Game engine
    */
-  private void writeNewGenomeFile(EvolutionEngine engine) {
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter("genome.txt", true))) {
-      ArrayList<Tribe> tribes = new ArrayList<>();
-      tribes.addAll(engine.getPopulation().getTribes());
+  private void writeNewGenomeFile() {
+    java.util.Date date2= new java.util.Date();
+    //int tribeNumber = Integer.parseInt(str);
 
-      ArrayList<Genome> genomes = new ArrayList<>();
-      genomes.addAll(tribes.get(selectedTribe).getGenomes());
-      Genome selectedGenome = genomes.get(getSelectedGenome());
-      currentGenome = selectedGenome;
-      String str;
+//    Date dNow = new Date( );
+//    SimpleDateFormat ft =
+//      new SimpleDateFormat("hh-mm-ss");
+//    System.out.println("Current Date: " + ft.format(dNow));
+//    String time = String.valueOf(Calendar.HOUR_OF_DAY) + ":" +String.valueOf(Calendar.MINUTE) + ":"  + String.valueOf(Calendar.SECOND);
+//
+//    System.out.println(">> DATE: " + time);
+//    String fileName = "genome_" + ft.format(dNow) +  ".txt";
 
-//      while(selectedGenome.getTriangles().iterator().hasNext())
-//      {
-        float[] currentTriangle = selectedGenome.getTriangles().iterator().next();
-        for(float number: currentTriangle)
+//    String fileName = "genome.txt";
+//    String userHomeFolder = System.getProperty("user.home");
+
+    // Create file chooser. User can only save .txt files
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Open Resource File");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("Text Files (.txt)", "*.txt"));
+    File textFile = fileChooser.showSaveDialog(stage);
+
+    // Error check for null pointer exceptions, if true then return from the method
+    if (textFile == null) return;
+
+    // Otherwise write the file
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(textFile)))
+    {
+      // Get list of triangles from current Genome
+      Collection<float[]> triangles = new ArrayList<>();
+      triangles = currentGenome.getTriangles();
+
+      // Loop through triangle list
+      for(float[] triangle: triangles)
+      {
+        // Loop through each index of the array
+        for(int i = 0; i < 10; i++)
         {
-          str = String.valueOf(number);
-          bw.write(str);
+          bw.write(Float.toString(triangle[i]));
+          bw.write(" ");
         }
-//      }
-
-      //bw.write(selectedGenome.getTriangles());
-      bw.newLine();
-    } catch (IOException e) {
+        bw.newLine();
+      }
+      bw.close();
+    } catch (IOException e)
+    {
       e.printStackTrace();
 
     }
@@ -231,8 +256,8 @@ public class GameWindow implements GUI
     generationAvgLabel.setText("Generations on Average: " );
     hillChildrenLabel.setText("Children from Hill Climbing: ");
     crossChildrenLabel.setText("Children from Crossover: ");
-    nonPausedTime.setText("Running: " + formatterTime.format(engine.getHours())+ ":" +
-      formatterTime.format(engine.getMinutes())+ ":" + formatterTime.format(engine.getSeconds()));
+    nonPausedTime.setText("Running: " + formatterTime.format(engine.getHours()) + ":" +
+      formatterTime.format(engine.getMinutes()) + ":" + formatterTime.format(engine.getSeconds()));
   }
 
   /**
@@ -255,6 +280,46 @@ public class GameWindow implements GUI
     resizeTargetImage();
   }
 
+  private void addGenomeToTribe(File file)
+  {
+    int counter = 0;
+    Genome userGenome = new Genome();
+
+    try(FileReader fileReader = new FileReader(file.toString())){
+      Scanner scanner = new Scanner(fileReader);
+      scanner.useLocale(Locale.US);
+      while(scanner.hasNextLine())
+      {
+        float[] triangle = new float[10];
+        for(int i = 0; i<10 ; i++)
+        {
+          if(scanner.hasNextDouble())
+          {
+            triangle[i] = scanner.nextFloat();
+          }
+        }
+        userGenome.add(triangle);
+        counter ++;
+        if(counter == 200) break;
+      }
+      System.out.println("-- Scanned Genome");
+      userGenome.setFitness(1);
+      //engine.getPopulation().getFitnessFunction().generateFitness(engine, userGenome);
+
+      ArrayList<Tribe> tribes = new ArrayList<>();
+      tribes.addAll(engine.getPopulation().getTribes());
+      tribes.get(selectedTribe).add(userGenome);
+      setSelectedGenome(0);
+
+      scanner.close();
+      System.out.println("-- Genome added to tribe");
+
+    }catch (IOException e)
+    {
+      System.out.println("something broke in addGenomeToTribe");
+    }
+  }
+
   /**
    * Allows to access the file
    * @param file Location of the file
@@ -264,6 +329,22 @@ public class GameWindow implements GUI
     //System.out.println("file: " + file.toString());
     setSelectedImage(file.toString());
   }
+
+  /**
+   * Configures the file chooser. Applies filters to accepted file types.
+   * @param fileChooser File chooser stage
+   */
+  private void configureGenomeChooser(final FileChooser fileChooser)
+  {
+    fileChooser.setTitle("Select genome file");
+    fileChooser.setInitialDirectory(
+      new File(System.getProperty("user.home"))
+    );
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("TXT", "*.txt")
+    );
+  }
+
 
   /**
    * Configures the file chooser. Applies filters to accepted file types.
@@ -521,6 +602,7 @@ public class GameWindow implements GUI
     //setSelectedTribe(startingTribes);
 
     this.engine = engine;
+    this.stage = stage;
 
     try
     {
@@ -639,7 +721,7 @@ public class GameWindow implements GUI
 
       // *********** BUTTONS ***********************
       // Create file chooser button
-      FileChooser fileChooser = new FileChooser();
+      fileChooser = new FileChooser();
       fileChooserButton = new Button("Choose an image ...");
       fileChooserButton.setMinWidth(100);
       fileChooserButton.setMaxWidth(150);
@@ -700,36 +782,44 @@ public class GameWindow implements GUI
 
       saveGenome = new Button("Save Genome");
       saveGenome.setMinWidth(buttonSize);
-      saveGenome.setOnAction(new EventHandler<ActionEvent>()
-      {
-        /**
-         * Saves the genome file
-         *
-         * @param e Event from the pause button
-         */
-        @Override
-        public void handle(ActionEvent e)
-        {
-          //writeNewGenomeFile(engine);
-        }
+      saveGenome.setOnAction(e -> {
+        writeNewGenomeFile();
       });
 
+      FileChooser genomeChooser = new FileChooser();
       loadGenome = new Button("Load Genome");
       loadGenome.setMinWidth(buttonSize);
-      loadGenome.setOnAction(new EventHandler<ActionEvent>()
-      {
-        /**
-         * Opens a dialog box to upload a genome file
-         *
-         * @param e Event from the pause button
-         */
-        @Override
-        public void handle(ActionEvent e)
+      loadGenome.setOnAction(e -> {
+        configureGenomeChooser(genomeChooser);
+        File file = genomeChooser.showOpenDialog(stage);
+        if (file != null)
         {
-
+          System.out.println("HERE inside if");
+          addGenomeToTribe(file);
         }
       });
 
+      // Create file chooser button
+      //FileChooser fileChooser = new FileChooser();
+      fileChooserButton = new Button("Choose an image ...");
+      fileChooserButton.setMinWidth(100);
+      fileChooserButton.setMaxWidth(150);
+      fileChooserButton.setOnAction(
+        new EventHandler<ActionEvent>()
+        {
+          @Override
+          public void handle(final ActionEvent e)
+          {
+            configureFileChooser(fileChooser);
+            File file = fileChooser.showOpenDialog(stage);
+            if (file != null)
+            {
+              selectedNewImage = true;
+              fileChooserButton.setText(file.toString());
+              openFile(file);
+            }
+          }
+        });
 
       // Create text field for tribe selection
       tribeField = new TextField();
@@ -869,7 +959,7 @@ public class GameWindow implements GUI
       topRowContainer.setLayoutX(canvasStartX);
       topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + 2 * canvasMargin);
       topRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      topRowContainer.getChildren().addAll(pauseButton, nextButton);
+      topRowContainer.getChildren().addAll(pauseButton, nextButton, saveGenome, loadGenome);
       //topRowContainer.getChildren().addAll(pauseButton, saveGenome, loadGenome);
 
 
