@@ -15,6 +15,7 @@ public class CrossMutateSelection implements Job
   private final EvolutionEngine ENGINE;
   private final Tribe TRIBE;
   private final Cross CROSS;
+  private final int MAX_GENOMES = 10_000;
   private int sampleSize = 100;
   private float selectionCutoff = 0.25f;
   private float globalSubmitChance = 0.1f;
@@ -77,7 +78,7 @@ public class CrossMutateSelection implements Job
     }
     //CROSS.setShouldMutate(true);
 
-    if (TRIBE.size() > 10_000)
+    if (TRIBE.size() > MAX_GENOMES)
     {
       for (int i = 0; i < numCreated; i++)
       {
@@ -109,12 +110,12 @@ public class CrossMutateSelection implements Job
     {
       Globals.LOCK.lock();
       // If the concurrent genome list has gone over 10_000, then remove some genomes before adding more
-      if (Globals.CONCURRENT_GENOME_LIST.size() > 10_000)
+      if (Globals.CONCURRENT_GENOME_LIST.size() > MAX_GENOMES)
       {
         for (int i = 0; i < selectCount; i++) Globals.CONCURRENT_GENOME_LIST.removeAt(Globals.CONCURRENT_GENOME_LIST.size() - 1);
       }
       for (int i = 0; i < selectCount; i++) Globals.CONCURRENT_GENOME_LIST.add(copyGenome(tribe.get(i)));
-      System.out.println("Globals size: " + Globals.CONCURRENT_GENOME_LIST.size());
+      //System.out.println("Globals size: " + Globals.CONCURRENT_GENOME_LIST.size());
       Globals.CONCURRENT_GENOME_LIST.sort();
     }
     finally

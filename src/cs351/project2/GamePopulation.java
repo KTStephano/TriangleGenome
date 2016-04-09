@@ -97,6 +97,7 @@ public class GamePopulation implements Population
     this.numTribes = numTribes;
     tribesCollection = new ArrayList<>();
     numGenerator = new Random();
+    numGenomes = numGenerator.nextInt(8000) + 2000;
     function = new FitnessCalculator();
 
     if (engine.getGUI() != null) function.setTargetImage(engine.getGUI().getTargetImage());
@@ -117,6 +118,7 @@ public class GamePopulation implements Population
         @Override
         public void start(int threadID)
         {
+          int index = 0;
           System.out.println(">>>>>>>>>>>>> Tribe " + TRIBE_NUM + " started on thread " + threadID);
 
           // For each tribe, initialize and add specified number of genomes to that tribe
@@ -135,9 +137,10 @@ public class GamePopulation implements Population
               //genome.setFitness(function.generateFitness(engine, genome));
               genome.add(TriangleGenerator.createTriangle(numGenerator, engine));
             }
-            //genome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, genome));
+            if (index < 200) genome.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, genome));
             // Add completed genome to tribe
             TRIBE.add(genome);
+            index++;
           }
           // Once current tribe has had all of its genomes added, organize them by fitness
           TRIBE.sort();
