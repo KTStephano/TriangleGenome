@@ -3,12 +3,9 @@ package cs351.project2;
 import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 public class AdaptiveMutator2 implements Mutator
 {
-  private final Cross CROSS = new CrossMutate();
+  private final Cross CROSS = new UniformCrossMutate();
   private Genome genome = null;
 
   /**

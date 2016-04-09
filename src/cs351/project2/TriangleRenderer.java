@@ -5,6 +5,7 @@ import javafx.scene.image.WritableImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 
 /**
  * Draws triangles to a buffered image. This is not thread safe.
@@ -14,7 +15,10 @@ public class TriangleRenderer
   private int width, height;
   private int[] xVertBuffer, yVertBuffer;
   private final BufferedImage IMAGE;
+  //private final VolatileImage IMAGE;
   private final Graphics2D CONTEXT;
+  private boolean isComplete = true;
+  private BufferedImage snapshot;
 
   public TriangleRenderer(int width, int height)
   {
@@ -23,6 +27,7 @@ public class TriangleRenderer
     xVertBuffer = new int[3];
     yVertBuffer = new int[3];
     IMAGE = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    //IMAGE = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().createCompatibleVolatileImage(width, height);
     CONTEXT = (Graphics2D)IMAGE.getGraphics();
     CONTEXT.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     CONTEXT.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
@@ -38,6 +43,7 @@ public class TriangleRenderer
    */
   public void renderTriangle(float[] xVertices, float[] yVertices, float[] color)
   {
+    isComplete = false;
     xVertBuffer[0] = (int)xVertices[0];
     xVertBuffer[1] = (int)xVertices[1];
     xVertBuffer[2] = (int)xVertices[2];
@@ -52,9 +58,21 @@ public class TriangleRenderer
 
   public void clear()
   {
+    isComplete = false;
     CONTEXT.setBackground(Color.BLACK);
     CONTEXT.setColor(Color.BLACK);
     CONTEXT.clearRect(0, 0, width, height);
+  }
+
+  /**
+   * Call this after calling either renderTriangle or clear (after every set
+   * of calls to them).
+   */
+  public void markComplete()
+  {
+    isComplete = true;
+    //IMAGE.validate(GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration());
+    //snapshot = IMAGE.getSnapshot();
   }
 
   public int getWidth()
@@ -70,11 +88,15 @@ public class TriangleRenderer
   public int getPackedARGB(int x, int y)
   {
     return IMAGE.getRGB(x, y);
+    //if (!isComplete) throw new IllegalStateException("markComplete() not called");
+    //return snapshot.getRGB(x, y);
   }
 
   public float[] getRGBA(int x, int y)
   {
     return unpackData(IMAGE.getRGB(x, y));
+    //if (!isComplete) throw new IllegalStateException("markComplete() not called");
+    //return unpackData(snapshot.getRGB(x, y));
   }
 
   public javafx.scene.image.Image convertToImage()

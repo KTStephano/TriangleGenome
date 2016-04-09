@@ -288,9 +288,9 @@ public final class Engine implements EvolutionEngine
 
       // TODO add rest of loop here
       //GENERATIONS.getAndIncrement();
-      if (currentNumCrossPhasesRun < 4)
+      if (currentNumCrossPhasesRun < 1)
       {
-        //crossJobList.submitJobs(false);
+        crossJobList.submitJobs(false);
         //++currentNumMutatorPhasesRun;
         ++currentNumCrossPhasesRun;
       }
@@ -514,9 +514,20 @@ public final class Engine implements EvolutionEngine
       {
         mutatorJobList.add(new MutatorJob(population, tribe, this), 1);
         //crossJobList.add(new CrossPhase(this, tribe), 1);
-        crossJobList.add(new CrossMutateSelection(this, tribe), 1);
+        crossJobList.add(new CrossMutateSelection(this, tribe, new TwoPointCrossMutate()), 1);
       }
       //for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
+    }
+
+    // Clear the global genome list
+    try
+    {
+      Globals.LOCK.lock();
+      Globals.CONCURRENT_GENOME_LIST.clear();
+    }
+    finally
+    {
+      Globals.LOCK.unlock();
     }
 
     IS_INITIALIZED.set(true);

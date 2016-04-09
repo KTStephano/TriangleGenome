@@ -69,6 +69,7 @@ public class FitnessCalculator implements FitnessFunction
       manager.setTriangleData(gui, triangle);
       renderer.renderTriangle(manager.getXCoordinates(), manager.getYCoordinates(), manager.getColor());
     }
+    renderer.markComplete();
 
     PixelReader reader = target.getPixelReader();
     int width = engine.getGUI().getImageWidth();

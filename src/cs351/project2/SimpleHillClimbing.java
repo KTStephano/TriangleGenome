@@ -141,19 +141,19 @@ public class SimpleHillClimbing implements Mutator
 
   private void completeStep(Genome best)
   {
-    double value = Math.pow(Math.E, ((genome.getFitness() - best.getFitness()) / temperature));
+    double value = Math.pow(Math.E,
+                            ((genome.getFitness() - best.getFitness()) / temperature));
     //System.out.println(value);
-    if (RAND.nextDouble() <= value)
+    double minval = 0.006;
+    if ((temperature > minval && RAND.nextDouble() <= value) || best.getFitness() >= genome.getFitness())
     {
+      temperature = temperature * friction;
+      if (temperature < minval) temperature = minval;
       genome.clear();
       for (float[] triangle : best.getTriangles()) genome.add(triangle);
       genome.setFitness(best.getFitness());
     }
-    else
-    {
-      temperature = temperature * friction;
-      best.clear();
-    }
+    else best.clear();
 
     /*
     if (best.getFitness() >= genome.getFitness())

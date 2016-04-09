@@ -26,7 +26,7 @@ public class EvolutionLoop extends Application
     stage.setHeight(350);
     stage.setOnCloseRequest(this::windowClosed); // Just in case the GUI doesn't overwrite this
     engine = new Engine();
-
+    Globals.CONCURRENT_GENOME_LIST.init(engine);
     // null for population and gui for now until those classes are up and running
     engine.init(stage, new GamePopulation(), new GameWindow());
     if (!stage.isShowing()) stage.show();
