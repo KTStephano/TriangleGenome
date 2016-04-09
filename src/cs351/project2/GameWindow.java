@@ -18,15 +18,19 @@ import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -61,20 +65,16 @@ public class GameWindow implements GUI
   private int genomeSize = 200;
   private double[] xVals = new double [3];
   private double[] yVals = new double [3];
-  Vector2f[] vector1List = new Vector2f[genomeSize];
-  Vector2f[] vector2List = new Vector2f[genomeSize];
-  Vector2f[] vector3List = new Vector2f[genomeSize];
-  Vector4f[] vectorColorList = new Vector4f[genomeSize];
 
   private Color backgroundColor = Color.BLACK;
 
   private Random randNum = new Random();
 
-  private Canvas canvasOriginal;
-  private Canvas canvasGenetic;
+  private Canvas canvasOriginal;      // Holds the target image
+  private Canvas canvasGenetic;       // Holds the triangles painting
 
-  private GraphicsContext gcOriginal;
-  private GraphicsContext gcGenetic;
+  private GraphicsContext gcOriginal; // Draws the target image
+  private GraphicsContext gcGenetic;  // Draws the triangles
 
   private boolean canvasDebugging = false;
   private boolean selectedNewImage = false;
@@ -115,11 +115,11 @@ public class GameWindow implements GUI
 
 
   private Button pauseButton;             // pauses game
-  private Button nextButton;           // Runs the next generation
+  private Button nextButton;              // Runs the next generation
   private Button fileChooserButton;       // chooses custom image to draw
   private Button tribeButton;             // applies number of tribes
   private Button saveGenome;              // saves the current genome to a file
-  private Button loadGenome;             // writes the uploaded genome to the game
+  private Button loadGenome;              // writes the uploaded genome to the game
   private FileChooser fileChooser;
   private FileChooser loadGenomeChooser;
   private boolean genomePaused = false;
@@ -130,7 +130,7 @@ public class GameWindow implements GUI
   private ChoiceBox pictureSelect;
   private TextField tribeField;
   private double amtButtons = 5; // how many buttons per row
-  private double buttonSize = (canvasWidth*2 + canvasMargin) / amtButtons;
+  private double buttonSize = (canvasWidth*2 + canvasMargin) / amtButtons - 20;
 
   private Genome currentGenome = new Genome();
   private Triangle currentTriangle;
@@ -148,6 +148,10 @@ public class GameWindow implements GUI
   private double targetImageHeightCropped = 0;
   private ColorSelector colorSelector;
 
+  // TableView and Stuff
+  private Button tableButton;               // shows table of the selected genome
+  private TableView <Genes> tableView;
+
   // Create array of default pictures
   final private String[] pictureUrls = new String[]{"images/mona-lisa-cropted-100x81.png", "images/mona-lisa-cropted-250x202.png",
     "images/mona-lisa-cropted-512x413.png", "images/poppyfields-100x75.png", "images/poppyfields-250x188.png", "images/poppyfields-512x384.png",
@@ -157,6 +161,184 @@ public class GameWindow implements GUI
     "images/MonaClose - 200x161.png", "images/TriangleOcean.png" };
 
 
+  /**
+   * GeneTablePopup is used to show the genes of the selected Genome. It opens a second window, which contains
+   * and displays the genes.
+   */
+  class GeneTablePopup extends Stage
+  {
+    VBox vBox = new VBox(10);
+    private final ObservableList<Genes> data = FXCollections.observableArrayList(); // Holds genome values
+
+    /**
+     * Fills data array with information from the selected genome
+     */
+    private void populateData()
+    {
+      Collection<float[]> triangles = new ArrayList<>();
+      triangles = currentGenome.getTriangles();
+
+      // Loop through triangle list
+      for(float[] triangle: triangles)
+      {
+        data.add(new Genes(triangle[0], triangle[1], triangle[2], triangle[3], triangle[4], triangle[5], triangle[6],
+          triangle[7], triangle[8], triangle[9]));
+      }
+    }
+
+    /**
+     * CONSTRUCTOR
+     * Constructs the window followed by placing a table within the window to display a gene table. It will create
+     * and define the different columns. It will then save the data from the current genome and set it to the table.
+     */
+    GeneTablePopup()
+    {
+      // Create Table
+      tableView = new TableView<Genes>();
+      tableView.setEditable(true);
+
+      // Create table Columns
+      TableColumn x1 = new TableColumn("X1");
+      TableColumn y1 = new TableColumn("Y1");
+      TableColumn x2 = new TableColumn("X2");
+      TableColumn y2 = new TableColumn("Y2");
+      TableColumn x3 = new TableColumn("X3");
+      TableColumn y3 = new TableColumn("Y3");
+      TableColumn red = new TableColumn("Red");
+      TableColumn green = new TableColumn("Green");
+      TableColumn blue = new TableColumn("Blue");
+      TableColumn alpha = new TableColumn("Alpha");
+
+      // Set up columns
+      x1.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueX1"));
+      y1.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueY1"));
+      x2.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueX2"));
+      y2.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueY2"));
+      x3.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueX3"));
+      y3.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueY3"));
+      red.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueRed"));
+      green.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueGreen"));
+      blue.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueBlue"));
+      alpha.setCellValueFactory(new PropertyValueFactory<Genes, Float>("geneValueAlpha"));
+
+      // Populate data with information from genome
+      populateData();
+
+      // Add values to their containers
+      tableView.getColumns().addAll(x1, y1, x2, y2, x3, y3, red, green, blue, alpha);
+      tableView.setItems(data);
+      vBox.getChildren().addAll(tableView);
+
+      this.setTitle("Selected Genome - Gene Table");
+      this.setScene(new Scene(vBox, 400, 400));
+      this.show();
+    }
+  }
+
+  /**
+   * Genes is an internal class that is used and regulated by the "Show Genome Table" button. This allows properties to
+   * be shown in the table as well as having the capability of being changed
+   */
+  public static class Genes {
+
+    private final SimpleFloatProperty geneValueX1;
+    private final SimpleFloatProperty geneValueY1;
+    private final SimpleFloatProperty geneValueX2;
+    private final SimpleFloatProperty geneValueY2;
+    private final SimpleFloatProperty geneValueX3;
+    private final SimpleFloatProperty geneValueY3;
+    private final SimpleFloatProperty geneValueRed;
+    private final SimpleFloatProperty geneValueGreen;
+    private final SimpleFloatProperty geneValueBlue;
+    private final SimpleFloatProperty geneValueAlpha;
+
+
+    private Genes(Float x1,Float y1,Float x2,Float y2,Float x3,Float y3,Float red,Float green,Float blue,Float alpha) {
+      this.geneValueX1 = new SimpleFloatProperty(x1);
+      this.geneValueY1 = new SimpleFloatProperty(y1);
+      this.geneValueX2 = new SimpleFloatProperty(x2);
+      this.geneValueY2 = new SimpleFloatProperty(y2);
+      this.geneValueX3 = new SimpleFloatProperty(x3);
+      this.geneValueY3 = new SimpleFloatProperty(y3);
+      this.geneValueRed = new SimpleFloatProperty(red);
+      this.geneValueGreen = new SimpleFloatProperty(green);
+      this.geneValueBlue = new SimpleFloatProperty(blue);
+      this.geneValueAlpha = new SimpleFloatProperty(alpha);
+    }
+
+    /**
+     * Gets and sets per method name
+     */
+    public Float getGeneValueX1() {
+      return geneValueX1.get();
+    }
+    public void setGeneValueX1(Float value) {
+      geneValueX1.set(value);
+    }
+
+    public Float getGeneValueY1() {
+      return geneValueY1.get();
+    }
+    public void setGeneValueY1(Float value) {
+      geneValueY1.set(value);
+    }
+
+    public Float getGeneValueX2() {
+      return geneValueX2.get();
+    }
+    public void setGeneValueX2(Float value) {
+      geneValueX2.set(value);
+    }
+
+    public Float getGeneValueY2() {
+      return geneValueY2.get();
+    }
+    public void setGeneValueY2(Float value) {
+      geneValueY2.set(value);
+    }
+
+    public Float getGeneValueX3() {
+      return geneValueX3.get();
+    }
+    public void setGeneValueX3(Float value) {
+      geneValueX3.set(value);
+    }
+
+    public Float getGeneValueY3() {
+      return geneValueY3.get();
+    }
+    public void setGeneValueY3(Float value) {
+      geneValueY3.set(value);
+    }
+
+    public Float getGeneValueRed() {
+      return geneValueRed.get();
+    }
+    public void setGeneValueRed(Float value) {
+      geneValueRed.set(value);
+    }
+
+    public Float getGeneValueGreen() {
+      return geneValueGreen.get();
+    }
+    public void setGeneValueGreen(Float value) {
+      geneValueGreen.set(value);
+    }
+
+    public Float getGeneValueBlue() {
+      return geneValueBlue.get();
+    }
+    public void setGeneValueBlue(Float value) {
+      geneValueBlue.set(value);
+    }
+
+    public Float getGeneValueAlpha() {
+      return geneValueAlpha.get();
+    }
+    public void setGeneValueAlpha(Float value) {
+      geneValueAlpha.set(value);
+    }
+  }
 
 
   /**
@@ -201,7 +383,7 @@ public class GameWindow implements GUI
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Resource File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Text Files (.txt)", "*.txt"));
+      new FileChooser.ExtensionFilter("Genome Files (.genome)", "*.genome"));
     File textFile = fileChooser.showSaveDialog(stage);
 
     // Error check for null pointer exceptions, if true then return from the method
@@ -341,7 +523,7 @@ public class GameWindow implements GUI
       new File(System.getProperty("user.home"))
     );
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("TXT", "*.txt")
+      new FileChooser.ExtensionFilter("GENOME", "*.genome")
     );
   }
 
@@ -499,6 +681,7 @@ public class GameWindow implements GUI
     tribeField.setDisable(false);
     saveGenome.setDisable(false);
     loadGenome.setDisable(false);
+    tableButton.setDisable(false);
 
     // Sliders
     triangleListSlider.setDisable(false);
@@ -518,6 +701,7 @@ public class GameWindow implements GUI
     tribeField.setDisable(true);
     saveGenome.setDisable(true);
     loadGenome.setDisable(true);
+    tableButton.setDisable(true);
 
     // Sliders
     triangleListSlider.setDisable(true);
@@ -782,14 +966,16 @@ public class GameWindow implements GUI
 
       saveGenome = new Button("Save Genome");
       saveGenome.setMinWidth(buttonSize);
-      saveGenome.setOnAction(e -> {
+      saveGenome.setOnAction(e ->
+      {
         writeNewGenomeFile();
       });
 
       FileChooser genomeChooser = new FileChooser();
       loadGenome = new Button("Load Genome");
       loadGenome.setMinWidth(buttonSize);
-      loadGenome.setOnAction(e -> {
+      loadGenome.setOnAction(e ->
+      {
         configureGenomeChooser(genomeChooser);
         File file = genomeChooser.showOpenDialog(stage);
         if (file != null)
@@ -797,6 +983,14 @@ public class GameWindow implements GUI
           System.out.println("HERE inside if");
           addGenomeToTribe(file);
         }
+      });
+
+      // Create show genome button
+      tableButton = new Button("Show Genome");
+      tableButton.setMinWidth(buttonSize);
+      tableButton.setOnAction(e ->
+      {
+        new GeneTablePopup();
       });
 
       // Create file chooser button
@@ -844,10 +1038,10 @@ public class GameWindow implements GUI
         public void handle(ActionEvent e)
         {
           String str = tribeField.getText();
-          if(str == null) return;
+          if (str == null) return;
           int tribeNumber = Integer.parseInt(str);
           System.out.println("tribeNumber: " + tribeNumber);
-          if(tribeNumber <= 0) return;
+          if (tribeNumber <= 0) return;
           tribeSize = tribeNumber;
           resetSlider();
         }
@@ -882,9 +1076,9 @@ public class GameWindow implements GUI
 
       canvasDialogContainer = new HBox(10);     // holds drop down menu and file chooser
 
-      topRowContainer = new HBox(15);             // holds pause button
-      middleRowContainer = new HBox(10);        // holds _______
-      bottomRowContainer = new HBox(10);        // holds tribe selector
+      topRowContainer = new HBox(15);           // holds pause, save, load, genome table buttons
+      middleRowContainer = new HBox(10);        // holds tribe selector
+      bottomRowContainer = new HBox(10);        //
 
       statsContainer = new HBox(30);        // Holds statistics
       stats1 = new VBox(10);
@@ -959,7 +1153,7 @@ public class GameWindow implements GUI
       topRowContainer.setLayoutX(canvasStartX);
       topRowContainer.setLayoutY(canvasSubMenus.getLayoutY() + 2 * canvasMargin);
       topRowContainer.setMinWidth(canvasWidth * 2 + canvasMargin);
-      topRowContainer.getChildren().addAll(pauseButton, nextButton, saveGenome, loadGenome);
+      topRowContainer.getChildren().addAll(pauseButton, nextButton, saveGenome, loadGenome, tableButton);
       //topRowContainer.getChildren().addAll(pauseButton, saveGenome, loadGenome);
 
 
