@@ -54,7 +54,7 @@ import jxl.write.WriteException;
  */
 public class GameWindow implements GUI
 {
-  private boolean graphBuilding = false;
+  private boolean graphBuilding = true;
   private int updateCount = 0;
   private boolean updateOkay = true;
   private ArrayList<String> graphInformation = new ArrayList<>();
@@ -73,7 +73,7 @@ public class GameWindow implements GUI
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
   private double canvasStartY = 10;
 
-  private int tribeSize = 3;
+  private int tribeSize = 1;
   private int genomeSize = 200;
   private double[] xVals = new double [3];
   private double[] yVals = new double [3];
@@ -495,20 +495,20 @@ public class GameWindow implements GUI
   private void graphSaveData()
   {
     // Every thirty seconds print out fitness data and save genome file
-    if((engine.getSeconds() == 10 || engine.getSeconds() == 30)&& updateOkay)
+    if((engine.getSeconds() == 28 || engine.getSeconds() == 58)&& updateOkay)
     {
       updateCount ++;
       graphSaveWrittenData();
       updateOkay = false;
       System.out.println("---- wrote data ---");
     }
-    if((engine.getSeconds() == 11 || engine.getSeconds() == 31) && !updateOkay)
+    if((engine.getSeconds() == 29 || engine.getSeconds() == 58) && !updateOkay)
     {
       updateOkay = true;
     }
 
     // After five minutes kill the program
-    if(engine.getMinutes() >= 1)
+    if(engine.getMinutes() >= 30)
     {
       File writtenFile = new File( "Thread"+ getTribes() + "-Image1-FinalOutput.txt");
       graphWriteData(writtenFile);
