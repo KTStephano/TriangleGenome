@@ -16,21 +16,21 @@ import java.util.Random;
 public class AdaptiveMutator3 implements Mutator
 {
   private final ArrayList<float[]> TRIANGLE_LIST = new ArrayList<>(200);
-  private final LinkedList<GeneWrapper> TRIANGLE_GENE_PROBABILITY_MAP = new LinkedList<>();
+  private final LinkedList<TriangleGeneWrapper> TRIANGLE_GENE_PROBABILITY_MAP = new LinkedList<>();
   private final float START_STEP = 0.02f;
   private final float STEP_CHANGE = 0.02f;
   private final float PROBABILITY_CHANGE = 0.05f;
   private final Random RAND = new Random();
   private Genome genome = null;
 
-  private final class GeneWrapper
+  private final class TriangleGeneWrapper
   {
     private final int TRIANGLE_INDEX, GENE_INDEX;
     private float probability;
     private float step;
     private int direction;
 
-    public GeneWrapper(float startStep, int direction, int triangleIndex, int geneIndex, float initialProbability)
+    public TriangleGeneWrapper(float startStep, int direction, int triangleIndex, int geneIndex, float initialProbability)
     {
       step = startStep;
       this.direction = direction;
@@ -45,7 +45,7 @@ public class AdaptiveMutator3 implements Mutator
       return Float.toString(probability);
     }
 
-    public int compareTo(GeneWrapper other)
+    public int compareTo(TriangleGeneWrapper other)
     {
       return -1 * Float.compare(probability, other.probability);
     }
@@ -109,7 +109,7 @@ public class AdaptiveMutator3 implements Mutator
       TRIANGLE_LIST.add(triangle);
       for (int k = 0; k < triangle.length; k++)
       {
-        TRIANGLE_GENE_PROBABILITY_MAP.add(new GeneWrapper(START_STEP, RAND.nextFloat() < 0.5f ? -1 : 1, i, k, 0.0f));
+        TRIANGLE_GENE_PROBABILITY_MAP.add(new TriangleGeneWrapper(START_STEP, RAND.nextFloat() < 0.5f ? -1 : 1, i, k, 0.0f));
       }
       i++;
     }
@@ -129,7 +129,7 @@ public class AdaptiveMutator3 implements Mutator
     TriangleManager manager = new TriangleManager();
     int size = TRIANGLE_GENE_PROBABILITY_MAP.size();
     int choiceTriangleGene = Math.abs(RAND.nextInt(size) - RAND.nextInt(size));
-    GeneWrapper wrapper = TRIANGLE_GENE_PROBABILITY_MAP.get(choiceTriangleGene);
+    TriangleGeneWrapper wrapper = TRIANGLE_GENE_PROBABILITY_MAP.get(choiceTriangleGene);
     float[] triangle = TRIANGLE_LIST.get(wrapper.getTriangleIndex());
     manager.setTriangleData(engine.getGUI(), triangle);
     float[] normalizedTriangle = manager.getNormalizedDNA();
