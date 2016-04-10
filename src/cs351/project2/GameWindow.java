@@ -56,7 +56,13 @@ public class GameWindow implements GUI
 {
   private boolean graphBuilding = false;
   private int updateCount = 0;
-  private int run = 0; // for graph building re-write issues
+  private int run = 1;      // for graph building re-write issues
+  private int imageNum = 1; // for graph building re-write issues
+  private int tribeSize = 1;
+  private int genomeSize = 200;
+  private double[] xVals = new double [3];
+  private double[] yVals = new double [3];
+
   private boolean updateOkay = true;
   private ArrayList<String> graphInformation = new ArrayList<>();
   private ArrayList<String> graphInformationLabels = new ArrayList<>();
@@ -76,11 +82,6 @@ public class GameWindow implements GUI
   private double canvasMargin = 40;
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
   private double canvasStartY = 10;
-
-  private int tribeSize = 1;
-  private int genomeSize = 200;
-  private double[] xVals = new double [3];
-  private double[] yVals = new double [3];
 
   private Color backgroundColor = Color.BLACK;
 
@@ -127,8 +128,6 @@ public class GameWindow implements GUI
   private Label hillChildrenLabel = new Label();      // amount of hill-climb children
   private Label crossChildrenLabel = new Label();     // amount of cross over children
   private Label nonPausedTime = new Label();          // non paused time since the most recent population initialization hh:mm:ss
-  private AnimationTimer stopwatch;     // Keeps track of all nonPausedTime
-
 
   private Button pauseButton;             // pauses game
   private Button nextButton;              // Runs the next generation
@@ -377,7 +376,7 @@ public class GameWindow implements GUI
     }
     try
     {
-      WritableWorkbook workbook = Workbook.createWorkbook(new File("Thread" + getTribes() + "-Image1-" + "Run" + run +".xls"));
+      WritableWorkbook workbook = Workbook.createWorkbook(new File("Thread" + getTribes() + "-Image" + imageNum +"-" + "Run" + run +".xls"));
       WritableSheet sheet = workbook.createSheet("First Sheet", 0);
       int labelCounter = 0;
         for(String str: graphInformationLabels)
@@ -460,7 +459,7 @@ public class GameWindow implements GUI
 
     int tribeNum = 0;                   // Counter to know which tribe for info string
 
-    String baseInfoString = "Thread" + tribeAmt + "-Image1-Run" + run;
+    String baseInfoString = "Thread" + tribeAmt + "-Image" + imageNum +"-Run" + run;
     String infoString = baseInfoString;
 
     // Get Fitness level for top Genomes
@@ -472,7 +471,7 @@ public class GameWindow implements GUI
       currentFitness = bestGenomeInTribe.getFitness();
       temp += currentFitness;
 
-      infoString += "-" + "Tribe" + tribeNum + "-Update" + updateCount + "-Fitness" + formatterGraph.format(currentFitness);
+      infoString += "-" + "Tribe" + tribeNum + "-Update"+ updateCount + "-Fitness" + formatterGraph.format(currentFitness);
       graphInformation.add(infoString);
       graphInformationLabels.add("Tribe" + tribeNum);
       graphInformationNumbers.add(currentFitness);
@@ -484,7 +483,7 @@ public class GameWindow implements GUI
     average = temp/tribeNum;
 
     infoString = baseInfoString;
-    infoString += "-Average-"+"Update" + updateCount + "-Fitness" + average;
+    infoString += "-Average-"+"Update" + updateCount + "-Image" + imageNum +"-Run" + run+ "-Fitness" + average;
     graphInformation.add(infoString);
     graphInformationLabels.add("Average-Update " + updateCount);
     graphInformationNumbers.add(average);
@@ -498,11 +497,16 @@ public class GameWindow implements GUI
    */
   private void graphSaveData()
   {
-    int time1 = 28;
-    int time2 = 58;
+    int time1 = 9;
+    int time2 = 19;
+    int time3 = 29;
+    int time4 = 39;
+    int time5 = 49;
+    int time6 = 58;
     // Every thirty seconds print out fitness data and save genome file
     if(((engine.getSeconds() == 0 && engine.getMinutes() == 0 && engine.getHours() == 0) ||
-      (engine.getSeconds() == time1 || engine.getSeconds() == time2))&& updateOkay)
+      (engine.getSeconds() == time1 || engine.getSeconds() == time2 || engine.getSeconds() == time3
+        || engine.getSeconds() == time4 || engine.getSeconds() == time5 || engine.getSeconds() == time6))&& updateOkay)
     {
       updateCount ++;
       graphSaveWrittenData();
@@ -510,21 +514,27 @@ public class GameWindow implements GUI
       System.out.println("---- wrote data ---");
     }
     if(((engine.getSeconds() == 1 && engine.getMinutes() == 0 && engine.getHours() == 0) ||
-      (engine.getSeconds() == time1+1 || engine.getSeconds() == time2+1)) && !updateOkay)
+      (engine.getSeconds() == time1+1 || engine.getSeconds() == time2+1 || engine.getSeconds() == time3+1
+        || engine.getSeconds() == time4+1 || engine.getSeconds() == time5+1 || engine.getSeconds() == time6+1)) && !updateOkay)
     {
       updateOkay = true;
     }
 
     // After five minutes kill the program
-    if(engine.getMinutes() == 1)
+    if(engine.getMinutes() >= 15)
     {
       oldTribeSize = tribeSize;
       tribeSize = 0;
       mustChangeTribes = true;
-      File writtenFile = new File( "Thread"+ getTribes() + "-Image1-Run"+ run+ "FinalOutput.txt");
+      File writtenFile = new File( "Thread"+ getTribes() + "-Image"+ imageNum + "-Run"+ run+ "FinalOutput.txt");
       graphWriteData(writtenFile);
+      graphInformation.clear();
+      graphInformationLabels.clear();
+      graphInformationNumbers.clear();
+      graphInformationAverages.clear();
+      updateCount = 0;
       run ++;
-      //userWantsToClose = true;
+      if(run >= 6) userWantsToClose = true;
     }
   }
 
@@ -571,7 +581,7 @@ public class GameWindow implements GUI
     FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Open Resource File");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Genome Files (.genome)", "*.genome"));
+      new FileChooser.ExtensionFilter("Genome Files (*.genome)", "*.genome"));
     File textFile = fileChooser.showSaveDialog(stage);
 
     // Error check for null pointer exceptions, if true then return from the method
