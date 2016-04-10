@@ -16,6 +16,7 @@ import java.util.List;
 
 import cs351.utility.Vector2f;
 import cs351.utility.Vector4f;
+import jxl.*;                                      // Used to create Excel spreadsheet
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.beans.property.SimpleFloatProperty;
@@ -43,6 +44,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.WindowEvent;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
+import jxl.write.WriteException;
 
 /**
  * GameWindow creates the GUI. The GUI is responsible for showing two images: the original image and the
@@ -54,6 +58,9 @@ public class GameWindow implements GUI
   private int updateCount = 0;
   private boolean updateOkay = true;
   private ArrayList<String> graphInformation = new ArrayList<>();
+  private ArrayList<String> graphInformationLabels = new ArrayList<>();
+  private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
+  private ArrayList<Double> graphInformationAverages = new ArrayList<>();
 
   private int startingTribes = 3;
   private int sceneWidth = 1100;
@@ -364,6 +371,39 @@ public class GameWindow implements GUI
     {
       System.out.println("Well ... I guess something broke");
     }
+    try
+    {
+      WritableWorkbook workbook = Workbook.createWorkbook(new File("Thread" + getTribes() + "-Image1.xls"));
+      WritableSheet sheet = workbook.createSheet("First Sheet", 0);
+      int labelCounter = 0;
+        for(String str: graphInformationLabels)
+        {
+          jxl.write.Label label = new jxl.write.Label(0, labelCounter,str);
+          jxl.write.Number number = new jxl.write.Number(2, labelCounter, graphInformationNumbers.get(labelCounter));
+          sheet.addCell(label);
+          sheet.addCell(number);
+          labelCounter ++;
+        }
+      labelCounter ++;
+      int labelUpdateCounter = 1;
+        for(Double dbl: graphInformationAverages)
+        {
+          jxl.write.Label label = new jxl.write.Label(0, labelCounter,"update " + labelUpdateCounter);
+          jxl.write.Number number = new jxl.write.Number(2, labelCounter, graphInformationAverages.get(labelUpdateCounter-1));
+          sheet.addCell(label);
+          sheet.addCell(number);
+          labelCounter ++;
+          labelUpdateCounter ++;
+        }
+      workbook.write();
+      workbook.close();
+    } catch (WriteException e )
+    {
+
+    } catch(IOException e)
+    {
+
+    }
   }
 
   /**
@@ -430,6 +470,8 @@ public class GameWindow implements GUI
 
       infoString += "-" + "Tribe" + tribeNum + "-Update" + updateCount + "-Fitness" + formatterGraph.format(currentFitness);
       graphInformation.add(infoString);
+      graphInformationLabels.add("Tribe" + tribeNum);
+      graphInformationNumbers.add(currentFitness);
 
       File genomeFile = new File( infoString + ".genome");
       graphSaveGenomeFile(genomeFile, bestGenomeInTribe);
@@ -440,6 +482,9 @@ public class GameWindow implements GUI
     infoString = baseInfoString;
     infoString += "-Average-"+"Update" + updateCount + "-Fitness" + average;
     graphInformation.add(infoString);
+    graphInformationLabels.add("Average-Update " + updateCount);
+    graphInformationNumbers.add(average);
+    graphInformationAverages.add(average);
     graphInformation.add("\n");
   }
 
@@ -450,20 +495,20 @@ public class GameWindow implements GUI
   private void graphSaveData()
   {
     // Every thirty seconds print out fitness data and save genome file
-    if((engine.getSeconds() == 10 || engine.getSeconds() == 20)&& updateOkay)
+    if((engine.getSeconds() == 10 || engine.getSeconds() == 30)&& updateOkay)
     {
       updateCount ++;
       graphSaveWrittenData();
       updateOkay = false;
       System.out.println("---- wrote data ---");
     }
-    if((engine.getSeconds() == 28 || engine.getSeconds() == 58) && !updateOkay)
+    if((engine.getSeconds() == 11 || engine.getSeconds() == 31) && !updateOkay)
     {
       updateOkay = true;
     }
 
     // After five minutes kill the program
-    if(engine.getMinutes() >= 5)
+    if(engine.getMinutes() >= 1)
     {
       File writtenFile = new File( "Thread"+ getTribes() + "-Image1-FinalOutput.txt");
       graphWriteData(writtenFile);
