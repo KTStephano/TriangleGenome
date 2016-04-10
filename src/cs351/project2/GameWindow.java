@@ -62,7 +62,7 @@ public class GameWindow implements GUI
   private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
   private ArrayList<Double> graphInformationAverages = new ArrayList<>();
 
-  private int startingTribes = 3;
+  private int startingTribes = 1;
   private int sceneWidth = 1100;
   private int sceneHeight = 720;
 
@@ -494,6 +494,8 @@ public class GameWindow implements GUI
    */
   private void graphSaveData()
   {
+    int time1 = 28;
+    int time2 = 58;
     // Every thirty seconds print out fitness data and save genome file
     if((engine.getSeconds() == 28 || engine.getSeconds() == 58)&& updateOkay)
     {
@@ -502,13 +504,13 @@ public class GameWindow implements GUI
       updateOkay = false;
       System.out.println("---- wrote data ---");
     }
-    if((engine.getSeconds() == 29 || engine.getSeconds() == 58) && !updateOkay)
+    if((engine.getSeconds() == time1+1 || engine.getSeconds() == time2+1) && !updateOkay)
     {
       updateOkay = true;
     }
 
     // After five minutes kill the program
-    if(engine.getMinutes() >= 30)
+    if(engine.getMinutes() >= 15)
     {
       File writtenFile = new File( "Thread"+ getTribes() + "-Image1-FinalOutput.txt");
       graphWriteData(writtenFile);
@@ -991,7 +993,7 @@ public class GameWindow implements GUI
       // Draw the Mona Lisa
       gcOriginal.setFill(Color.BLACK);
       gcOriginal.setStroke(Color.BLACK);
-      String defaultImage = pictureUrls[1];
+      String defaultImage = pictureUrls[2];
       setTargetImage(defaultImage);
       resizeTargetImage();
       gcOriginal.drawImage(getTargetImage(), 0, 0, getTargetImage().getWidth(), getTargetImage().getHeight(), 0, 0, getTargetImageWidthCropped(), getTargetImageHeightCropped());
@@ -1359,6 +1361,7 @@ public class GameWindow implements GUI
 
       stage.setOnCloseRequest(this::windowClosed);
       stage.setTitle("Triangle Genome Project");
+
       stage.setScene(scene);
       stage.show();
     } catch (Exception e)
