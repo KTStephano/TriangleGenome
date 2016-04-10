@@ -54,7 +54,7 @@ import jxl.write.WriteException;
  */
 public class GameWindow implements GUI
 {
-  private boolean graphBuilding = true;
+  private boolean graphBuilding = false;
   private int updateCount = 0;
   private boolean updateOkay = true;
   private ArrayList<String> graphInformation = new ArrayList<>();
