@@ -12,7 +12,7 @@ import cs351.utility.Job;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class CrossMutateSelection implements Job
+public class CrossMutateSelector implements Job
 {
   private final EvolutionEngine ENGINE;
   private final Tribe TRIBE;
@@ -24,7 +24,7 @@ public class CrossMutateSelection implements Job
   private float crossWithGlobalChance = 0.1f;
   private final Random RAND = new Random();
 
-  public CrossMutateSelection(Engine engine, Tribe tribe, Cross cross)
+  public CrossMutateSelector(Engine engine, Tribe tribe, Cross cross)
   {
     ENGINE = engine;
     TRIBE = tribe;

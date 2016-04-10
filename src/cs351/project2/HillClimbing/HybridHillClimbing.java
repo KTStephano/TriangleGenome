@@ -16,7 +16,7 @@ import java.util.Random;
  * Performs simple hill climbing by mutating different parts of a triangle's
  * genetic sequence.
  */
-public class SimpleHillClimbing implements Mutator
+public class HybridHillClimbing implements Mutator
 {
   private Genome genome = null;
   private final float DEFAULT_MUTATION_CHANCE = 0.006f;
