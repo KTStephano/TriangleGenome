@@ -3,6 +3,8 @@ package cs351.project2;
 import cs351.core.Engine.*;
 import cs351.core.Genome;
 import cs351.core.Tribe;
+import cs351.project2.crossover.CrossMutateSelection;
+import cs351.project2.crossover.TwoPointCrossMutate;
 import cs351.utility.Job;
 import cs351.utility.JobList;
 import cs351.utility.ParallelJobSystem;

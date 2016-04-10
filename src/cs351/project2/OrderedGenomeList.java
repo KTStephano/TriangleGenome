@@ -4,6 +4,7 @@ import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Genome;
 import cs351.core.Mutator;
 import cs351.core.Tribe;
+import cs351.project2.hillclimbing.AdaptiveHillClimbing;
 
 import java.util.*;
 

@@ -1,7 +1,8 @@
-package cs351.project2;
+package cs351.project2.hillclimbing;
 
 import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
+import cs351.project2.crossover.UniformCrossMutate;
 
 public class CrossMutateHillClimbing implements Mutator
 {

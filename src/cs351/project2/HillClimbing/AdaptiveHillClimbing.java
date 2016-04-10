@@ -1,10 +1,11 @@
-package cs351.project2;
+package cs351.project2.hillclimbing;
 
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.FitnessFunction;
 import cs351.core.Genome;
 import cs351.core.Mutator;
 import cs351.core.TriangleManager;
+import cs351.project2.Engine;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

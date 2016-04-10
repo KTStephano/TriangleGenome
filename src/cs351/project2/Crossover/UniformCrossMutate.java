@@ -1,10 +1,11 @@
-package cs351.project2;
+package cs351.project2.crossover;
 
 import cs351.core.Cross;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.GUI;
 import cs351.core.Genome;
 import cs351.core.TriangleManager;
+import cs351.project2.Engine;
 
 import java.util.Iterator;
 import java.util.Random;

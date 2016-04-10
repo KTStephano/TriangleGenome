@@ -1,4 +1,4 @@
-package cs351.project2;
+package cs351.project2.crossover;
 
 import cs351.core.Cross;
 

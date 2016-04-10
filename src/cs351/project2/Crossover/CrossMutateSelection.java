@@ -1,10 +1,12 @@
-package cs351.project2;
+package cs351.project2.crossover;
 
 import cs351.core.Cross;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.core.Engine.Globals;
 import cs351.core.Genome;
 import cs351.core.Tribe;
+import cs351.project2.Engine;
+import cs351.project2.OrderedGenomeList;
 import cs351.utility.Job;
 
 import java.util.ArrayList;
