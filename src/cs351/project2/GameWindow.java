@@ -54,8 +54,9 @@ import jxl.write.WriteException;
  */
 public class GameWindow implements GUI
 {
-  private boolean graphBuilding = true;
+  private boolean graphBuilding = false;
   private int updateCount = 0;
+  private int run = 0; // for graph building re-write issues
   private boolean updateOkay = true;
   private ArrayList<String> graphInformation = new ArrayList<>();
   private ArrayList<String> graphInformationLabels = new ArrayList<>();
@@ -174,7 +175,7 @@ public class GameWindow implements GUI
     "images/the_great_wave_off_kanagawa-100x69.png", "images/the_great_wave_off_kanagawa-250x172.png",
     "images/the_great_wave_off_kanagawa-512x352.png", "images/Piet_Mondrian-100x75.png", "images/Piet_Mondrian-250x188.png",
     "images/Piet_Mondrian-512x385.png", "images/trianglePic-100x80.png", "images/trianglePic-250x201.png", "images/trianglePic-512x412.png",
-    "images/MonaClose - 200x161.png", "images/TriangleOcean.png" };
+    "images/MonaClose - 200x161.png", "images/TriangleOcean.png", "images/petronas_towers-512x352.png", "images/petronas_towers-250x172.png" };
 
 
   /**
@@ -376,7 +377,7 @@ public class GameWindow implements GUI
     }
     try
     {
-      WritableWorkbook workbook = Workbook.createWorkbook(new File("Thread" + getTribes() + "-Image1.xls"));
+      WritableWorkbook workbook = Workbook.createWorkbook(new File("Thread" + getTribes() + "-Image1-" + "Run" + run +".xls"));
       WritableSheet sheet = workbook.createSheet("First Sheet", 0);
       int labelCounter = 0;
         for(String str: graphInformationLabels)
@@ -459,7 +460,7 @@ public class GameWindow implements GUI
 
     int tribeNum = 0;                   // Counter to know which tribe for info string
 
-    String baseInfoString = "Thread" + tribeAmt + "-" + "Image1";
+    String baseInfoString = "Thread" + tribeAmt + "-Image1-Run" + run;
     String infoString = baseInfoString;
 
     // Get Fitness level for top Genomes
@@ -500,26 +501,29 @@ public class GameWindow implements GUI
     int time1 = 28;
     int time2 = 58;
     // Every thirty seconds print out fitness data and save genome file
-    if((engine.getSeconds() == 28 || engine.getSeconds() == 58)&& updateOkay)
+    if(((engine.getSeconds() == 0 && engine.getMinutes() == 0 && engine.getHours() == 0) ||
+      (engine.getSeconds() == time1 || engine.getSeconds() == time2))&& updateOkay)
     {
       updateCount ++;
       graphSaveWrittenData();
       updateOkay = false;
       System.out.println("---- wrote data ---");
     }
-    if((engine.getSeconds() == time1+1 || engine.getSeconds() == time2+1) && !updateOkay)
+    if(((engine.getSeconds() == 1 && engine.getMinutes() == 0 && engine.getHours() == 0) ||
+      (engine.getSeconds() == time1+1 || engine.getSeconds() == time2+1)) && !updateOkay)
     {
       updateOkay = true;
     }
 
     // After five minutes kill the program
-    if(engine.getSeconds() == 28)
+    if(engine.getMinutes() == 1)
     {
       oldTribeSize = tribeSize;
       tribeSize = 0;
       mustChangeTribes = true;
-      File writtenFile = new File( "Thread"+ getTribes() + "-Image1-FinalOutput.txt");
+      File writtenFile = new File( "Thread"+ getTribes() + "-Image1-Run"+ run+ "FinalOutput.txt");
       graphWriteData(writtenFile);
+      run ++;
       //userWantsToClose = true;
     }
   }
@@ -1237,7 +1241,7 @@ public class GameWindow implements GUI
         "MonaLisa - 100x81","MonaLisa - 250x202","MonaLisa - 512x413", "PoppyFields - 100x75", "PoppyFields - 250x188",
         "PoppyFields - 512x384", "The Great Wave - 100x69", "The Great Wave - 250x172", "The Great Wave - 512x352",
         "Piet Mondrian - 100x75", "Piet Mondrian - 250x188", "Piet Mondrian - 512385", "TriangePic - 100x80",
-        "TriangePic - 250x201", "TriangePic - 512x412", "MonaClose", "TriangleOcean")
+        "TriangePic - 250x201", "TriangePic - 512x412", "MonaClose", "TriangleOcean", "Petronas Towers - 512x352" , "Petronas Towers 250x172")
       );
       pictureSelect.setMinWidth(50);
       pictureSelect.setTooltip(new Tooltip("Select an image"));
