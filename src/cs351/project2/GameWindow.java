@@ -58,7 +58,8 @@ public class GameWindow implements GUI
   private int updateCount = 0;
   private int run = 1;      // for graph building re-write issues
   private int imageNum = 1; // for graph building re-write issues
-  private int tribeSize = 1;
+  private int timeLimit = 15; // written in minutes, is used for graph building
+  private int tribeSize = 9;  // Amount of default starting tribes
   private int genomeSize = 200;
   private double[] xVals = new double [3];
   private double[] yVals = new double [3];
@@ -446,7 +447,7 @@ public class GameWindow implements GUI
   /**
    * This saves all written data to an array list that will eventually be written to a text document
    */
-  private void graphSaveWrittenData()
+  private void graphSaveWrittenData(int seconds)
   {
     ArrayList<Tribe> tribes = new ArrayList<>();
     tribes.addAll(engine.getPopulation().getTribes());
@@ -477,7 +478,7 @@ public class GameWindow implements GUI
       graphInformationNumbers.add(currentFitness);
 
       File genomeFile = new File( infoString + ".genome");
-      graphSaveGenomeFile(genomeFile, bestGenomeInTribe);
+      if(seconds == 0 || seconds == 58)graphSaveGenomeFile(genomeFile, bestGenomeInTribe);
     }
 
     average = temp/tribeNum;
@@ -503,25 +504,28 @@ public class GameWindow implements GUI
     int time4 = 39;
     int time5 = 49;
     int time6 = 58;
+    int seconds = engine.getSeconds();
+    int minutes = engine.getMinutes();
+    int hours   = engine.getHours();
     // Every thirty seconds print out fitness data and save genome file
-    if(((engine.getSeconds() == 0 && engine.getMinutes() == 0 && engine.getHours() == 0) ||
-      (engine.getSeconds() == time1 || engine.getSeconds() == time2 || engine.getSeconds() == time3
-        || engine.getSeconds() == time4 || engine.getSeconds() == time5 || engine.getSeconds() == time6))&& updateOkay)
+    if(((seconds == 0 && minutes == 0 && hours == 0) ||
+      (seconds == time1 || seconds == time2 || seconds == time3
+        || seconds == time4 || seconds == time5 || seconds == time6))&& updateOkay)
     {
       updateCount ++;
-      graphSaveWrittenData();
+      graphSaveWrittenData(seconds);
       updateOkay = false;
       System.out.println("---- wrote data ---");
     }
-    if(((engine.getSeconds() == 1 && engine.getMinutes() == 0 && engine.getHours() == 0) ||
-      (engine.getSeconds() == time1+1 || engine.getSeconds() == time2+1 || engine.getSeconds() == time3+1
-        || engine.getSeconds() == time4+1 || engine.getSeconds() == time5+1 || engine.getSeconds() == time6+1)) && !updateOkay)
+    if(((seconds == 1 && minutes == 0 && hours == 0) ||
+      (seconds == time1+1 || seconds == time2+1 || seconds == time3+1
+        || seconds == time4+1 || seconds == time5+1 || seconds == time6+1)) && !updateOkay)
     {
       updateOkay = true;
     }
 
     // After five minutes kill the program
-    if(engine.getMinutes() >= 15)
+    if(minutes >= timeLimit)
     {
       oldTribeSize = tribeSize;
       tribeSize = 0;
