@@ -54,13 +54,16 @@ import jxl.write.WriteException;
  */
 public class GameWindow implements GUI
 {
-  private boolean graphBuilding = false;
+  private boolean graphBuilding = true;
   private int updateCount = 0;
   private boolean updateOkay = true;
   private ArrayList<String> graphInformation = new ArrayList<>();
   private ArrayList<String> graphInformationLabels = new ArrayList<>();
   private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
   private ArrayList<Double> graphInformationAverages = new ArrayList<>();
+
+  private boolean mustChangeTribes = false;
+  private int oldTribeSize;
 
   private int startingTribes = 1;
   private int sceneWidth = 1100;
@@ -510,11 +513,14 @@ public class GameWindow implements GUI
     }
 
     // After five minutes kill the program
-    if(engine.getMinutes() >= 15)
+    if(engine.getSeconds() == 28)
     {
+      oldTribeSize = tribeSize;
+      tribeSize = 0;
+      mustChangeTribes = true;
       File writtenFile = new File( "Thread"+ getTribes() + "-Image1-FinalOutput.txt");
       graphWriteData(writtenFile);
-      userWantsToClose = true;
+      //userWantsToClose = true;
     }
   }
 
@@ -1401,6 +1407,12 @@ public class GameWindow implements GUI
     // If we are only running the TG project. We should save our data every
     if(graphBuilding)
     {
+      if (mustChangeTribes)
+      {
+        mustChangeTribes = false;
+        tribeSize = oldTribeSize;
+        return;
+      }
       graphSaveData();
       disableButtons();
       return;
