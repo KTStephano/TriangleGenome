@@ -291,14 +291,15 @@ public final class Engine implements EvolutionEngine
       // TODO add rest of loop here
       //GENERATIONS.getAndIncrement();
 
-      if (currentNumMutatorPhasesRun < 1000 || population.getOverallBest().getFitness() < .95)
+      double percentToCross = .95;
+      if (currentNumMutatorPhasesRun < 500 || population.getOverallBest().getFitness() < percentToCross)
       {
         mutatorJobList.submitJobs(false);
         ++currentNumMutatorPhasesRun;
       }
-      // Don't start crossover until 95% fitness which in testing is where
-      // out hill climber started to slow down
-      else if (population.getOverallBest().getFitness() > .95)
+      // Don't start crossover until 90% fitness which in testing is where
+      // our hill climber started to slow down
+      else if (population.getOverallBest().getFitness() > percentToCross)
       {
         crossJobList.submitJobs(false);
         //++currentNumMutatorPhasesRun;

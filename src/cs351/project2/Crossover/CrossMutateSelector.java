@@ -51,7 +51,7 @@ public class CrossMutateSelector implements Job
     //CROSS.setShouldMutate(false); // for pure crossover
     for (int i = 0; i < selectCount; i++)
     {
-      int choice = Math.abs(RAND.nextInt(size) - RAND.nextInt(size));
+      //int choice = Math.abs(RAND.nextInt(size) - RAND.nextInt(size));
       for (int j = 0; j < randCount; j++)
       {
         try
@@ -69,7 +69,7 @@ public class CrossMutateSelector implements Job
 
           Genome randGenome = shouldCrossWithGlobal ? Globals.CONCURRENT_GENOME_LIST.get(randTriangle) :
                                                       tribe.get(randTriangle);
-          OFFSPRING.add(CROSS.cross(ENGINE, tribe.get(choice), randGenome));
+          OFFSPRING.add(CROSS.cross(ENGINE, tribe.get(i), randGenome));
           ++numCreated;
         }
         finally
