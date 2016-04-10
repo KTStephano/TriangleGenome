@@ -50,6 +50,11 @@ import javafx.stage.WindowEvent;
  */
 public class GameWindow implements GUI
 {
+  private boolean graphBuilding = false;
+  private int updateCount = 0;
+  private boolean updateOkay = true;
+  private ArrayList<String> graphInformation = new ArrayList<>();
+
   private int startingTribes = 3;
   private int sceneWidth = 1100;
   private int sceneHeight = 720;
@@ -61,7 +66,7 @@ public class GameWindow implements GUI
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
   private double canvasStartY = 10;
 
-  private int tribeSize = 1;
+  private int tribeSize = 3;
   private int genomeSize = 200;
   private double[] xVals = new double [3];
   private double[] yVals = new double [3];
@@ -137,6 +142,7 @@ public class GameWindow implements GUI
   private int triangleCounter;
   private NumberFormat formatter = new DecimalFormat("#0.0000");
   private NumberFormat formatterTime = new DecimalFormat("#00");
+  private NumberFormat formatterGraph = new DecimalFormat("#0.0000");
   private EvolutionEngine engine;
   private Stage stage;
 
@@ -337,6 +343,131 @@ public class GameWindow implements GUI
     }
     public void setGeneValueAlpha(Float value) {
       geneValueAlpha.set(value);
+    }
+  }
+
+
+  private void graphWriteData(File file)
+  {
+    // Error check for null pointer exceptions, if true then return from the method
+    if (file == null) return;
+
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file)))
+    {
+      for(String str: graphInformation)
+      {
+        bw.write(str);
+        bw.write("\n");
+      }
+      bw.close();
+    } catch (IOException e)
+    {
+      System.out.println("Well ... I guess something broke");
+    }
+  }
+
+  /**
+   * This will save the genome file for every tribe
+   */
+  private void graphSaveGenomeFile(File file, Genome genome)
+  {
+    // Error check for null pointer exceptions, if true then return from the method
+    if (file == null) return;
+
+    // Otherwise write the file
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(file)))
+    {
+      // Get list of triangles from current Genome
+      Collection<float[]> triangles = new ArrayList<>();
+      triangles = genome.getTriangles();
+
+      // Loop through triangle list
+      for(float[] triangle: triangles)
+      {
+        // Loop through each index of the array
+        for(int i = 0; i < 10; i++)
+        {
+          bw.write(Float.toString(triangle[i]));
+          bw.write(" ");
+        }
+        bw.newLine();
+      }
+      bw.close();
+    } catch (IOException e)
+    {
+      e.printStackTrace();
+
+    }
+  }
+
+  /**
+   * This saves all written data to an array list that will eventually be written to a text document
+   */
+  private void graphSaveWrittenData()
+  {
+    ArrayList<Tribe> tribes = new ArrayList<>();
+    tribes.addAll(engine.getPopulation().getTribes());
+    Genome bestGenomeInTribe = tribes.get(0).getBest();
+
+    double temp = 0;                    // The sum of all fitness
+    double currentFitness = 0;          // Fitness of the current genome
+    double tribeAmt = tribes.size();    // Tribe number, to be used when computing the average
+    double average = 0;                 // Average fitness among all threads
+
+    int tribeNum = 0;                   // Counter to know which tribe for info string
+
+    String baseInfoString = "Thread" + tribeAmt + "-" + "Image1";
+    String infoString = baseInfoString;
+
+    // Get Fitness level for top Genomes
+    for(Tribe tribe: tribes)
+    {
+      infoString = baseInfoString;
+      tribeNum ++;
+      bestGenomeInTribe = tribe.getBest();
+      currentFitness = bestGenomeInTribe.getFitness();
+      temp += currentFitness;
+
+      infoString += "-" + "Tribe" + tribeNum + "-Update" + updateCount + "-Fitness" + formatterGraph.format(currentFitness);
+      graphInformation.add(infoString);
+
+      File genomeFile = new File( infoString + ".genome");
+      graphSaveGenomeFile(genomeFile, bestGenomeInTribe);
+    }
+
+    average = temp/tribeNum;
+
+    infoString = baseInfoString;
+    infoString += "-Average-"+"Update" + updateCount + "-Fitness" + average;
+    graphInformation.add(infoString);
+    graphInformation.add("\n");
+  }
+
+  /**
+   * This method is used when the game is running in console mode. This allows the program to automatically
+   * print out graphical information.
+   */
+  private void graphSaveData()
+  {
+    // Every thirty seconds print out fitness data and save genome file
+    if((engine.getSeconds() == 10 || engine.getSeconds() == 20)&& updateOkay)
+    {
+      updateCount ++;
+      graphSaveWrittenData();
+      updateOkay = false;
+      System.out.println("---- wrote data ---");
+    }
+    if((engine.getSeconds() == 28 || engine.getSeconds() == 58) && !updateOkay)
+    {
+      updateOkay = true;
+    }
+
+    // After five minutes kill the program
+    if(engine.getMinutes() >= 5)
+    {
+      File writtenFile = new File( "Thread"+ getTribes() + "-Image1-FinalOutput.txt");
+      graphWriteData(writtenFile);
+      userWantsToClose = true;
     }
   }
 
@@ -930,6 +1061,7 @@ public class GameWindow implements GUI
       pauseButton = new Button("Play");
       pauseButton.setMinWidth(buttonSize);
       genomePaused = true;
+      if(graphBuilding) genomePaused = false;
       pauseButton.setOnAction(new EventHandler<ActionEvent>()
       {
         /**
@@ -1218,6 +1350,14 @@ public class GameWindow implements GUI
   @Override
   public void update(EvolutionEngine engine)
   {
+    // If we are only running the TG project. We should save our data every
+    if(graphBuilding)
+    {
+      graphSaveData();
+      disableButtons();
+      return;
+    }
+
     int selectedTribe = getSelectedTribe();
     int rColor, gColor, bColor = 0;
     double alpha = 0;
