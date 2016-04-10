@@ -288,17 +288,18 @@ public final class Engine implements EvolutionEngine
 
       // TODO add rest of loop here
       //GENERATIONS.getAndIncrement();
-      if (currentNumCrossPhasesRun < 1)
-      {
-        //crossJobList.submitJobs(false);
-        //++currentNumMutatorPhasesRun;
-        ++currentNumCrossPhasesRun;
-      }
-      else
+
+      if (currentNumMutatorPhasesRun < 1000)
       {
         mutatorJobList.submitJobs(false);
         ++currentNumMutatorPhasesRun;
-        if (currentNumMutatorPhasesRun >= 50)
+      }
+      else
+      {
+        crossJobList.submitJobs(false);
+        //++currentNumMutatorPhasesRun;
+        ++currentNumCrossPhasesRun;
+        if (currentNumCrossPhasesRun >= 5)
         {
           currentNumMutatorPhasesRun = 0;
           currentNumCrossPhasesRun = 0;

@@ -13,7 +13,7 @@ import java.util.Random;
 /**
  * Please be the last one.
  */
-public class AdaptiveMutator3 implements Mutator
+public class AdaptiveHillClimbing implements Mutator
 {
   private final ArrayList<float[]> TRIANGLE_LIST = new ArrayList<>(200);
   private final LinkedList<TriangleGeneWrapper> TRIANGLE_GENE_PROBABILITY_MAP = new LinkedList<>();
@@ -128,32 +128,42 @@ public class AdaptiveMutator3 implements Mutator
   {
     TriangleManager manager = new TriangleManager();
     int size = TRIANGLE_GENE_PROBABILITY_MAP.size();
-    int choiceTriangleGene = Math.abs(RAND.nextInt(size) - RAND.nextInt(size));
-    TriangleGeneWrapper wrapper = TRIANGLE_GENE_PROBABILITY_MAP.get(choiceTriangleGene);
-    float[] triangle = TRIANGLE_LIST.get(wrapper.getTriangleIndex());
-    manager.setTriangleData(engine.getGUI(), triangle);
-    float[] normalizedTriangle = manager.getNormalizedDNA();
-    float mutateAmount = wrapper.getStep() * wrapper.getDirection();
-    float prevValue = triangle[wrapper.getGeneIndex()];
-    double prevFitness = genome.getFitness();
-    normalizedTriangle[wrapper.getGeneIndex()] += mutateAmount;
-    normalizedTriangle[wrapper.getGeneIndex()] = bound(normalizedTriangle[wrapper.getGeneIndex()], 0.0f, 1.0f);
-    triangle[wrapper.getGeneIndex()] = manager.revertNormalization(normalizedTriangle)[wrapper.getGeneIndex()];
-    genome.setFitness(function.generateFitness(engine, genome));
-    if (genome.getFitness() < prevFitness)
+    int numTries = 0;
+    while (numTries < 10)
     {
-      triangle[wrapper.getGeneIndex()] = prevValue;
-      genome.setFitness(prevFitness);
-      wrapper.setDirection(wrapper.getDirection() * -1);
-      wrapper.setStep(bound(wrapper.getStep() - STEP_CHANGE, 0.0f, 1.0f));
-      wrapper.setProbability(bound(wrapper.getProbability() - PROBABILITY_CHANGE, 0.0f, 1.0f));
+      numTries++;
+      int choiceTriangleGene = Math.abs(RAND.nextInt(size) - RAND.nextInt(size));
+      TriangleGeneWrapper wrapper = TRIANGLE_GENE_PROBABILITY_MAP.get(choiceTriangleGene);
+      float[] triangle = TRIANGLE_LIST.get(wrapper.getTriangleIndex());
+      manager.setTriangleData(engine.getGUI(), triangle);
+      float[] normalizedTriangle = manager.getNormalizedDNA();
+      float mutateAmount = wrapper.getStep() * wrapper.getDirection();
+      float prevValue = triangle[wrapper.getGeneIndex()];
+      double prevFitness = genome.getFitness();
+      normalizedTriangle[wrapper.getGeneIndex()] += mutateAmount;
+      normalizedTriangle[wrapper.getGeneIndex()] = bound(normalizedTriangle[wrapper.getGeneIndex()], 0.02f, 1.0f);
+      triangle[wrapper.getGeneIndex()] = manager.revertNormalization(normalizedTriangle)[wrapper.getGeneIndex()];
+      genome.setFitness(function.generateFitness(engine, genome));
+      ((Engine) engine).incrementGenerationCount();
+      final float minStep = START_STEP;
+      final float minProbability = 0.02f;
+      if (genome.getFitness() < prevFitness)
+      {
+        triangle[wrapper.getGeneIndex()] = prevValue;
+        genome.setFitness(prevFitness);
+        wrapper.setDirection(wrapper.getDirection() * -1);
+        wrapper.setStep(bound(wrapper.getStep() - STEP_CHANGE, minStep, 1.0f));
+        wrapper.setProbability(bound(wrapper.getProbability() - PROBABILITY_CHANGE, minProbability, 1.0f));
+        sortProbabilityMap();
+      }
+      else
+      {
+        wrapper.setStep(bound(wrapper.getStep() + STEP_CHANGE, minStep, 1.0f));
+        wrapper.setProbability(bound(wrapper.getProbability() + PROBABILITY_CHANGE, minProbability, 1.0f));
+        sortProbabilityMap();
+        break;
+      }
     }
-    else
-    {
-      wrapper.setStep(bound(wrapper.getStep() + STEP_CHANGE, 0.0f, 1.0f));
-      wrapper.setProbability(bound(wrapper.getProbability() + PROBABILITY_CHANGE, 0.0f, 1.0f));
-    }
-    sortProbabilityMap();
   }
 
   private void sortProbabilityMap()

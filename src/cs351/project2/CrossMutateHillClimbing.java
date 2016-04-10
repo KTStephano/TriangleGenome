@@ -3,7 +3,7 @@ package cs351.project2;
 import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
 
-public class AdaptiveMutator2 implements Mutator
+public class CrossMutateHillClimbing implements Mutator
 {
   private final Cross CROSS = new UniformCrossMutate();
   private Genome genome = null;
