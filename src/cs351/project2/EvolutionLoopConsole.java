@@ -19,6 +19,15 @@ public class EvolutionLoopConsole extends EvolutionLoop
     }
   }
 
+  @Override
+  protected void closeApplication()
+  {
+    // Let the engine know it's time to quit
+    engine.beginShutdown();
+    // Engine needs to keep updating to eventually close
+    while (!engine.isEngineShutdown()) engine.generation();
+  }
+
   protected void init(String[] cmdArgs)
   {
     engine = new Engine();

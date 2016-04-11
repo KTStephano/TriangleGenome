@@ -73,7 +73,7 @@ public class ConsoleGUIWrapper extends GameWindow implements GUI
   @Override
   public boolean hasUserSignaledQuit()
   {
-    return false;
+    return super.hasUserSignaledQuit();
   }
 
   /**
