@@ -98,7 +98,7 @@ public class JobList
       ACTIVE_COUNTERS.add(JOB_SYSTEM.submit(entry.getValue(), entry.getKey(), clearExistingData));
     }
     // Reset the size
-    size = 0;
+    if (clearExistingData) size = 0;
     //System.out.println("Here I am");
   }
 

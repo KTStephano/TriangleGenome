@@ -29,7 +29,7 @@ public final class Engine implements EvolutionEngine
   private int numUpdates = 0;
   private ParallelJobSystem jobSystem;
   private Statistics statistics;
-  private boolean isRunningConsoleMode;
+  private boolean isRunningConsoleMode = false;
   private JobList mutatorJobList;
   private JobList crossJobList;
   private String[] cmdArgs; // set during init()
@@ -193,6 +193,7 @@ public final class Engine implements EvolutionEngine
     log = new Log("GeneticLog" + "-RuntimeCode_" + System.currentTimeMillis() + ".txt");
 
     this.cmdArgs = cmdArgs;
+    isRunningConsoleMode = false;
     // Initialize the engine
     generateStartingState(cmdArgs, stage, true);
   }
@@ -292,7 +293,8 @@ public final class Engine implements EvolutionEngine
       if (isRunningConsoleMode && numUpdates % 1000 == 0)
       {
         enginePrint(GENERATIONS.get() + " generations have passed");
-        enginePrint("Best fitness: " + population.getOverallBest().getFitness());
+        // getOverallBest returns null in very few situations, but check anyway
+        if (population.getOverallBest() != null) enginePrint("Best fitness: " + population.getOverallBest().getFitness());
       }
 
       // TODO add rest of loop here
@@ -496,10 +498,6 @@ public final class Engine implements EvolutionEngine
     System.out.println("Valid Population: " + (population != null));
     System.out.println("Console Mode: " + (gui == null));
 
-    // This if can execute if generateStartingState is called multiple times during
-    // execution
-    if (isRunningConsoleMode) gui = null; // prevents code below from breaking
-
     currentNumMutatorPhasesRun = 0;
     currentNumCrossPhasesRun = 0;
 
@@ -515,7 +513,6 @@ public final class Engine implements EvolutionEngine
     //
     // This needs to be done *after* printLogHeader() or the log will say that we
     // were never running in console mode
-    isRunningConsoleMode = false;
     if (gui == null)
     {
       isRunningConsoleMode = true;
