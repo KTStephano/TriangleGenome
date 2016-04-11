@@ -292,6 +292,7 @@ public final class Engine implements EvolutionEngine
       if (isRunningConsoleMode && numUpdates % 1000 == 0)
       {
         enginePrint(GENERATIONS.get() + " generations have passed");
+        enginePrint("Best fitness: " + population.getOverallBest().getFitness());
       }
 
       // TODO add rest of loop here

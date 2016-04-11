@@ -166,10 +166,18 @@ public final class ParallelJobSystem
     if (threadID < 0 || threadID >= NUM_WORKER_THREADS) throw new RuntimeException("Invalid thread id");
     RUNNING_THREADS.getAndDecrement();
     // All threads have finished
-    if (RUNNING_THREADS.get() == 0)
+    try
     {
-      WAS_DESTROYED.getAndSet(true);
-      System.out.println("--- ParallelJobSystem Shutdown Successfully ---");
+      LOCK.lock();
+      if (RUNNING_THREADS.get() == 0)
+      {
+        WAS_DESTROYED.getAndSet(true);
+        System.out.println("--- ParallelJobSystem Shutdown Successfully ---");
+      }
+    }
+    finally
+    {
+      LOCK.unlock();
     }
   }
 
