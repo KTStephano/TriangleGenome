@@ -126,12 +126,17 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     list[index] = null;
     for (int i = index; i < size - 1; i++) list[i] = list[i + 1];
     --size;
+    engine.decrementPopulationCount();
   }
 
   @Override
   public void clear()
   {
-    for (int i = 0; i < size; i++) list[i] = null;
+    for (int i = 0; i < size; i++)
+    {
+      engine.decrementPopulationCount();
+      list[i] = null;
+    }
     size = 0;
   }
 
@@ -165,8 +170,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   }
 
   @Override
-  public void sort()
-  {
+  public void sort() {
     isDirty = false;
     Arrays.sort(list, 0, size, (first, second) -> -1 * Double.compare(first.getFitness(), second.getFitness()));
   }

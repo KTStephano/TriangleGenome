@@ -377,6 +377,14 @@ public final class Engine implements EvolutionEngine
   }
 
   /**
+   * Total generations averaged with all non-paused time.
+   */
+  public double getAverageGenerationsPerSecondSinceLastInit()
+  {
+    return GENERATIONS.get() / (double)(getHours() * 60 * 60 + getMinutes() * 60 + getSeconds());
+  }
+
+  /**
    *
    * @return double of generations per second
    */

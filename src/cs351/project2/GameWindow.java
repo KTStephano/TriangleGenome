@@ -159,6 +159,7 @@ public class GameWindow implements GUI
   private NumberFormat formatterFit = new DecimalFormat("#0.00000000");
   private NumberFormat formatterTime = new DecimalFormat("#00");
   private NumberFormat formatterGraph = new DecimalFormat("#0.0000");
+  private NumberFormat tinyFormat = new DecimalFormat("#0.0");
   private Stage stage;
 
   // Image and Image View Stuff
@@ -644,8 +645,8 @@ public class GameWindow implements GUI
     fitnessPerSecondLabel.setText("Fitness/Sec: " + formatterFit.format(((Engine) engine).getFitnessPerSecond()));
     populationLabel.setText("Population (Genomes): " + getPopulationCount());
     generationLabel.setText("Amount of Generations: " + engine.getGenerationCount());
-    if(hasSecondElapsed)generationPerSecondLabel.setText("Generations/Sec: " + formatter.format(engine.getAverageGenerationsPerSecond()));
-    generationAvgLabel.setText("Generations on Average: " + ((Engine)engine).getGenerationsLastSecond());
+    if(hasSecondElapsed)generationPerSecondLabel.setText("Generations/Sec: " + tinyFormat.format(((Engine)engine).getAverageGenerationsPerSecondSinceLastInit()));
+    generationAvgLabel.setText("Generations on Average: " + tinyFormat.format(((Engine)engine).getGenerationsLastSecond()));
     hillChildrenLabel.setText("Children from Hill Climbing: " + ((Engine)engine).getMutationCount());
     crossChildrenLabel.setText("Children from Crossover: " + ((Engine)engine).getCrossCount());
     nonPausedTime.setText("Running: " + formatterTime.format(engine.getHours()) + ":" +
