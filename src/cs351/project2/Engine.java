@@ -33,9 +33,14 @@ public final class Engine implements EvolutionEngine
   private JobList mutatorJobList;
   private JobList crossJobList;
   private String[] cmdArgs; // set during init()
+  private double previousBest;
+  private double totalSeconds;
+  private double totalFitness = 0.0;
+  private int tempGeneration = 0; // Used for generations per second over the last second
 
   // Atomic objects - these are the values that need to be thread safe
   private final AtomicInteger GENERATIONS;
+  private final AtomicInteger GENERATION_SNAPSHOT;
   private final AtomicInteger CROSSOVER_GENS;
   private final AtomicInteger HILLCLIMB_GENS;
   private final AtomicInteger NUM_WORKING_JOBS;
@@ -126,6 +131,7 @@ public final class Engine implements EvolutionEngine
   {
     //crossJobList = new JobList(Globals.JOB_SYSTEM);
     GENERATIONS = new AtomicInteger(0);
+    GENERATION_SNAPSHOT = new AtomicInteger(0);
     CROSSOVER_GENS = new AtomicInteger(0);
     HILLCLIMB_GENS = new AtomicInteger(0);
     NUM_WORKING_JOBS = new AtomicInteger(0);
@@ -258,6 +264,11 @@ public final class Engine implements EvolutionEngine
     return CROSSOVER_GENS.get();
   }
 
+  public double getFitnessPerSecond()
+  {
+    return totalFitness / totalSeconds;
+  }
+
   public void incrementCrossCount()
   {
     CROSSOVER_GENS.getAndIncrement();
@@ -324,6 +335,14 @@ public final class Engine implements EvolutionEngine
       // TODO add rest of loop here
       //GENERATIONS.getAndIncrement();
 
+      // If null then pr = 0
+      if (getMinutes()*60 + getSeconds() > 0)
+      {
+        totalSeconds = getMinutes()*60 + getSeconds();
+        totalFitness = totalFitness + (population.getOverallBest().getFitness() - previousBest);
+        previousBest = population.getOverallBest().getFitness();
+      }
+
       double percentToCross = .95;
       if (currentNumMutatorPhasesRun < 500 || population.getOverallBest().getFitness() < percentToCross)
       {
@@ -355,6 +374,15 @@ public final class Engine implements EvolutionEngine
     for (int i = 0; i < LAST_100_FRAME_TIMESTAMPS.length; i++) totalMilliseconds += LAST_100_FRAME_TIMESTAMPS[i];
     double averageTime = totalMilliseconds / (double) LAST_100_FRAME_TIMESTAMPS.length;
     return averageTime / 1000.0; // convert to seconds
+  }
+
+  /**
+   *
+   * @return double of generations per second
+   */
+  public int getGenerationsLastSecond()
+  {
+    return tempGeneration;
   }
 
   /**
@@ -426,9 +454,12 @@ public final class Engine implements EvolutionEngine
     if(time > 1000) return;
     middleMan += time;
 
+    // Check if 1 second has elapsed
     if(middleMan >= 1000)
     {
       middleMan = middleMan - 1000;
+      tempGeneration = GENERATION_SNAPSHOT.get();
+      GENERATION_SNAPSHOT.set(0);
       seconds ++;
     }
 
@@ -439,7 +470,7 @@ public final class Engine implements EvolutionEngine
       this.minutes += 1;
     }
 
-    // Check if 1 second has elapsed
+    // Check if 1 hour has elapsed
     if(this.minutes >= 60)
     {
       this.minutes = this.minutes - 60;
@@ -482,6 +513,7 @@ public final class Engine implements EvolutionEngine
 
   public void incrementGenerationCount()
   {
+    GENERATION_SNAPSHOT.getAndIncrement();
     GENERATIONS.getAndIncrement();
   }
 
@@ -581,9 +613,13 @@ public final class Engine implements EvolutionEngine
     }
 
     numUpdates = 0;
+    totalFitness = 0;
+    previousBest = 0;
+    totalSeconds = 0;
     IS_INITIALIZED.set(true);
     IS_SHUTDOWN.set(false);
     GENERATIONS.set(0);
+    GENERATION_SNAPSHOT.set(0);
     CROSSOVER_GENS.set(0);
     HILLCLIMB_GENS.set(0);
     NUM_WORKING_JOBS.set(0);

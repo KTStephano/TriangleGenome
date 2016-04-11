@@ -156,6 +156,7 @@ public class GameWindow implements GUI
   private Triangle currentTriangle;
   private int triangleCounter;
   private NumberFormat formatter = new DecimalFormat("#0.0000");
+  private NumberFormat formatterFit = new DecimalFormat("#0.00000000");
   private NumberFormat formatterTime = new DecimalFormat("#00");
   private NumberFormat formatterGraph = new DecimalFormat("#0.0000");
   private Stage stage;
@@ -640,11 +641,11 @@ public class GameWindow implements GUI
   private void updateStatistics(EvolutionEngine engine)
   {
     fitnessLabel.setText("Selected Genome Fitness: " + formatter.format(currentGenome.getFitness()));
-    fitnessPerSecondLabel.setText("Fitness/Sec: N/A");
+    fitnessPerSecondLabel.setText("Fitness/Sec: " + formatterFit.format(((Engine) engine).getFitnessPerSecond()));
     populationLabel.setText("Population (Genomes): " + getPopulationCount());
     generationLabel.setText("Amount of Generations: " + engine.getGenerationCount());
     if(hasSecondElapsed)generationPerSecondLabel.setText("Generations/Sec: " + formatter.format(engine.getAverageGenerationsPerSecond()));
-    generationAvgLabel.setText("Generations on Average: " );
+    generationAvgLabel.setText("Generations on Average: " + ((Engine)engine).getGenerationsLastSecond());
     hillChildrenLabel.setText("Children from Hill Climbing: " + ((Engine)engine).getMutationCount());
     crossChildrenLabel.setText("Children from Crossover: " + ((Engine)engine).getCrossCount());
     nonPausedTime.setText("Running: " + formatterTime.format(engine.getHours()) + ":" +
