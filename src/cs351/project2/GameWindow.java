@@ -54,17 +54,18 @@ import jxl.write.WriteException;
  */
 public class GameWindow implements GUI
 {
-  protected boolean graphBuilding = false;
+  protected boolean graphBuilding = false; // <----- MAKE TRUE for graph building!!!
   protected EvolutionEngine engine;
   protected boolean mustChangeTribes = false;
   protected int oldTribeSize;
-  protected int tribeSize = 1;
+  protected int tribeSize = 1; // <---- CHANGE HERE
 
   private int updateCount = 0;
-  private int run = 0; // for graph building re-write issues
+  private int run = 1; // for graph building re-write issues
   private boolean updateOkay = true;
-  private int imageNum = 1; // for graph building re-write issues
-  private int timeLimit = 15; // written in minutes, is used for graph building
+  private int imageNum = 1; // for graph building re-write issues  <---- CHANGE HERE
+  private int timeLimit = 1; // written in minutes, is used for graph building  <----LEAVE AT 10 MINUTES
+  private int imageSelect = 2; // 2 (MonaLisa), 5 (PoppyFields), 8 (Oceans), 11 (Piet Mondrian), 17 (Petronas Towers) <---- CHANGE FOR IMAGES
   private ArrayList<String> graphInformation = new ArrayList<>();
   private ArrayList<String> graphInformationLabels = new ArrayList<>();
   private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
@@ -379,7 +380,7 @@ public class GameWindow implements GUI
     }
     try
     {
-      WritableWorkbook workbook = Workbook.createWorkbook(new File("Thread" + getTribes() + "-Image" + imageNum +"-" + "Run" + run +".xls"));
+      WritableWorkbook workbook = Workbook.createWorkbook(new File("Thread" + oldTribeSize + "-Image" + imageNum +"-" + "Run" + run +".xls"));
       WritableSheet sheet = workbook.createSheet("First Sheet", 0);
       int labelCounter = 0;
         for(String str: graphInformationLabels)
@@ -526,13 +527,13 @@ public class GameWindow implements GUI
       updateOkay = true;
     }
 
-    // After five minutes kill the program
+    // After alloted run time, reset to go for another run of data
     if(minutes >= timeLimit)
     {
       oldTribeSize = tribeSize;
       tribeSize = 0;
       mustChangeTribes = true;
-      File writtenFile = new File( "Thread"+ getTribes() + "-Image"+ imageNum + "-Run"+ run+ "FinalOutput.txt");
+      File writtenFile = new File( "Thread"+ oldTribeSize + "-Image"+ imageNum + "-Run"+ run+ "FinalOutput.txt");
       graphWriteData(writtenFile);
       graphInformation.clear();
       graphInformationLabels.clear();
@@ -540,6 +541,7 @@ public class GameWindow implements GUI
       graphInformationAverages.clear();
       updateCount = 0;
       run ++;
+      // If we have done 5 runs then close the game
       if(run >= 6) userWantsToClose = true;
     }
   }
