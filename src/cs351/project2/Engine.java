@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class Engine implements EvolutionEngine
 {
   // Engine version info
-  private final int VERSION_MINOR = 1;
-  private final int VERSION_MAJOR = 0;
+  private final int VERSION_MINOR = 0;
+  private final int VERSION_MAJOR = 1;
 
   // General class members
   private Population population;
