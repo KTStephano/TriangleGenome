@@ -645,8 +645,8 @@ public class GameWindow implements GUI
     generationLabel.setText("Amount of Generations: " + engine.getGenerationCount());
     if(hasSecondElapsed)generationPerSecondLabel.setText("Generations/Sec: " + formatter.format(engine.getAverageGenerationsPerSecond()));
     generationAvgLabel.setText("Generations on Average: " );
-    hillChildrenLabel.setText("Children from Hill Climbing: ");
-    crossChildrenLabel.setText("Children from Crossover: ");
+    hillChildrenLabel.setText("Children from Hill Climbing: " + ((Engine)engine).getMutationCount());
+    crossChildrenLabel.setText("Children from Crossover: " + ((Engine)engine).getCrossCount());
     nonPausedTime.setText("Running: " + formatterTime.format(engine.getHours()) + ":" +
       formatterTime.format(engine.getMinutes()) + ":" + formatterTime.format(engine.getSeconds()));
   }

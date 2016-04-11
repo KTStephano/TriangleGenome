@@ -17,7 +17,7 @@ public class CrossMutateSelector implements Job
   private final EvolutionEngine ENGINE;
   private final Tribe TRIBE;
   private final Cross CROSS;
-  private final int MAX_GENOMES = 10_000;
+  private final int MAX_GENOMES = 4_000;
   private int sampleSize = 100;
   private float selectionCutoff = 0.25f;
   private float globalSubmitChance = 0.1f;

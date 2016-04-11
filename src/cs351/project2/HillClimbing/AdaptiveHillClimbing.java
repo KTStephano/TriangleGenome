@@ -151,6 +151,7 @@ public class AdaptiveHillClimbing implements Mutator
       triangle[wrapper.getGeneIndex()] = manager.revertNormalization(normalizedTriangle)[wrapper.getGeneIndex()];
       genome.setFitness(function.generateFitness(engine, genome));
       ((Engine) engine).incrementGenerationCount();
+      ((Engine)engine).incrementMutationCount();
       if (genome.getFitness() < prevFitness)
       {
         triangle[wrapper.getGeneIndex()] = prevValue;

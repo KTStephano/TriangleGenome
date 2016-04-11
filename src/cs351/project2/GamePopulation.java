@@ -97,7 +97,7 @@ public class GamePopulation implements Population
     this.numTribes = numTribes;
     tribesCollection = new ArrayList<>();
     numGenerator = new Random();
-    numGenomes = numGenerator.nextInt(8000) + 2000;
+    numGenomes = numGenerator.nextInt(2000) + 2000;
     function = new FitnessCalculator();
 
     if (engine.getGUI() != null) function.setTargetImage(engine.getGUI().getTargetImage());

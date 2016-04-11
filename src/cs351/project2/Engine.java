@@ -36,6 +36,8 @@ public final class Engine implements EvolutionEngine
 
   // Atomic objects - these are the values that need to be thread safe
   private final AtomicInteger GENERATIONS;
+  private final AtomicInteger CROSSOVER_GENS;
+  private final AtomicInteger HILLCLIMB_GENS;
   private final AtomicInteger NUM_WORKING_JOBS;
   private final AtomicBoolean IS_INITIALIZED;
   private final AtomicBoolean IS_PENDING_SHUTDOWN;
@@ -123,7 +125,9 @@ public final class Engine implements EvolutionEngine
   // Initialize atomic objects
   {
     //crossJobList = new JobList(Globals.JOB_SYSTEM);
-    GENERATIONS = new AtomicInteger(1);
+    GENERATIONS = new AtomicInteger(0);
+    CROSSOVER_GENS = new AtomicInteger(0);
+    HILLCLIMB_GENS = new AtomicInteger(0);
     NUM_WORKING_JOBS = new AtomicInteger(0);
     IS_INITIALIZED = new AtomicBoolean(false);
     IS_PENDING_SHUTDOWN = new AtomicBoolean(false);
@@ -242,6 +246,26 @@ public final class Engine implements EvolutionEngine
   public int getGenerationCount()
   {
     return GENERATIONS.get();
+  }
+
+  public int getMutationCount()
+  {
+    return HILLCLIMB_GENS.get();
+  }
+
+  public int getCrossCount()
+  {
+    return CROSSOVER_GENS.get();
+  }
+
+  public void incrementCrossCount()
+  {
+    CROSSOVER_GENS.getAndIncrement();
+  }
+
+  public void incrementMutationCount()
+  {
+    HILLCLIMB_GENS.getAndIncrement();
   }
 
   @Override
@@ -559,7 +583,9 @@ public final class Engine implements EvolutionEngine
     numUpdates = 0;
     IS_INITIALIZED.set(true);
     IS_SHUTDOWN.set(false);
-    GENERATIONS.set(1);
+    GENERATIONS.set(0);
+    CROSSOVER_GENS.set(0);
+    HILLCLIMB_GENS.set(0);
     NUM_WORKING_JOBS.set(0);
   }
 }

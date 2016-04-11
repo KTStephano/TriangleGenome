@@ -79,6 +79,7 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   @Override
   public Mutator getMutatorForGenome(Genome genome) throws RuntimeException
   {
+    /*
     if (!mutatorMap.containsKey(genome))
     {
       //AdaptiveMutator mutator = new AdaptiveMutator();
@@ -87,6 +88,10 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
       mutatorMap.put(genome, mutator);
     }
     return mutatorMap.get(genome);
+    */
+    Mutator mutator = new AdaptiveHillClimbing();
+    mutator.setGenome(genome);
+    return mutator;
   }
 
   @Override

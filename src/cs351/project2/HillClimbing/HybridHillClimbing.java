@@ -125,6 +125,7 @@ public class HybridHillClimbing implements Mutator
 
       //System.out.println(numMutations);
       ((Engine) engine).incrementGenerationCount();
+      ((Engine)engine).incrementMutationCount();
       spinoff.setFitness(function.generateFitness(engine, spinoff));
       best = evaluate(best, spinoff);
     }

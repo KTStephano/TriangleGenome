@@ -70,6 +70,7 @@ public class UniformCrossMutate implements Cross
 
       offspring.setFitness(engine.getPopulation().getFitnessFunction().generateFitness(engine, offspring));
       ((Engine) engine).incrementGenerationCount();
+      ((Engine)engine).incrementCrossCount();
       if (best == null) best = offspring;
       else best = engine.getPopulation().getFitnessFunction().compare(best, offspring);
     }

@@ -5,6 +5,7 @@ import cs351.core.FitnessFunction;
 import cs351.core.Genome;
 import cs351.core.Mutator;
 import cs351.core.TriangleManager;
+import cs351.project2.Engine;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -69,6 +70,8 @@ public class BasicHillClimbing implements Mutator
     currTriangle[currGeneIndex] = manager.revertNormalization(normalizedTriangle)[currGeneIndex];
     double prevFitness = genome.getFitness();
     genome.setFitness(function.generateFitness(engine, genome));
+    ((Engine)engine).incrementGenerationCount();
+    ((Engine)engine).incrementMutationCount();
     if (genome.getFitness() > prevFitness)
     {
       prevTriangle = currTriangle;
