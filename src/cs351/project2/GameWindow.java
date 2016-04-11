@@ -64,8 +64,8 @@ public class GameWindow implements GUI
   private int run = 1; // for graph building re-write issues
   private boolean updateOkay = true;
   private int imageNum = 1; // for graph building re-write issues  <---- CHANGE HERE
-  private int timeLimit = 1; // written in minutes, is used for graph building  <----LEAVE AT 10 MINUTES
-  private int imageSelect = 2; // 2 (MonaLisa), 5 (PoppyFields), 8 (Oceans), 11 (Piet Mondrian), 17 (Petronas Towers) <---- CHANGE FOR IMAGES
+  private int timeLimit = 10; // written in minutes, is used for graph building  <----LEAVE AT 10 MINUTES
+  private int imageSelect = 11; // 2 (MonaLisa), 5 (PoppyFields), 8 (Oceans), 11 (Piet Mondrian), 17 (Petronas Towers) <---- CHANGE FOR IMAGES
   private ArrayList<String> graphInformation = new ArrayList<>();
   private ArrayList<String> graphInformationLabels = new ArrayList<>();
   private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
@@ -542,7 +542,10 @@ public class GameWindow implements GUI
       updateCount = 0;
       run ++;
       // If we have done 5 runs then close the game
-      if(run >= 6) userWantsToClose = true;
+      if(run >= 6) {
+        userWantsToClose = true;
+        System.exit(0);
+      }
     }
   }
 
@@ -1031,7 +1034,7 @@ public class GameWindow implements GUI
       // Draw the Mona Lisa
       gcOriginal.setFill(Color.BLACK);
       gcOriginal.setStroke(Color.BLACK);
-      String defaultImage = pictureUrls[2];
+      String defaultImage = pictureUrls[imageSelect];
       setTargetImage(defaultImage);
       resizeTargetImage();
       gcOriginal.drawImage(getTargetImage(), 0, 0, getTargetImage().getWidth(), getTargetImage().getHeight(), 0, 0, getTargetImageWidthCropped(), getTargetImageHeightCropped());
