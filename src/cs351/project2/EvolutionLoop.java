@@ -11,15 +11,14 @@ import javafx.stage.WindowEvent;
  */
 public class EvolutionLoop extends Application
 {
-  private EvolutionEngine engine;
-  private GUI game;
-  private boolean jobSystemShutdown = false;
-  private Stage stage;
+  protected EvolutionEngine engine;
+  protected GUI game;
+  protected boolean jobSystemShutdown = false;
+  protected Stage stage;
 
   @Override
   public void start(Stage stage)
   {
-    new Log();
     this.stage = stage;
     stage.setTitle("The Triangle Genome");
     stage.setWidth(350);
@@ -28,12 +27,12 @@ public class EvolutionLoop extends Application
     engine = new Engine();
     Globals.CONCURRENT_GENOME_LIST.init(engine);
     // null for population and gui for now until those classes are up and running
-    engine.init(stage, new GamePopulation(), new GameWindow());
+    engine.init(new String[] {"images/MonaLisa.jpg", "1"}, stage, new GamePopulation(), new GameWindow());
     if (!stage.isShowing()) stage.show();
     loop();
   }
 
-  private void loop()
+  protected void loop()
   {
     // Main loop
     new AnimationTimer()
@@ -42,15 +41,7 @@ public class EvolutionLoop extends Application
       public void handle(long now)
       {
         // Check to see if we need to quit
-        if (engine.getGUI() != null)
-        {
-          if (engine.getGUI().hasUserSignaledQuit() && !engine.isEnginePendingShutdown())
-          {
-            closeApplication();
-            return;
-          }
-          engine.togglePause(engine.getGUI().isGenomePaused());
-        }
+        checkForShutdown();
 
         if (engine.isEngineShutdown())
         {
@@ -64,12 +55,25 @@ public class EvolutionLoop extends Application
     }.start();
   }
 
-  private void windowClosed(WindowEvent event)
+  protected void checkForShutdown()
+  {
+    if (engine.getGUI() != null)
+    {
+      if (engine.getGUI().hasUserSignaledQuit() && !engine.isEnginePendingShutdown())
+      {
+        closeApplication();
+        return;
+      }
+      engine.togglePause(engine.getGUI().isGenomePaused());
+    }
+  }
+
+  protected void windowClosed(WindowEvent event)
   {
     closeApplication();
   }
 
-  private void closeApplication()
+  protected void closeApplication()
   {
     // Let the engine know it's time to quit
     engine.beginShutdown();

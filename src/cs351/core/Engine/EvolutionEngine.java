@@ -76,11 +76,14 @@ public interface EvolutionEngine
    * Initializes the engine with the given image file (also calls the renderer's
    * init function at a good point during the engine's init sequence).
    *
+   * @param cmdArgs (OPTIONAL) list of command line arguments for the engine to use, but this
+   *                should be completely optional - just don't pass it a null value (pass in
+   *                a length 0 String array)
    * @param stage stage object so the engine can initialize the main GUI
    * @param population population to use to run the simulation
    * @param mainGUI gui to use
    */
-  void init(Stage stage, Population population, GUI mainGUI);
+  void init(String[] cmdArgs, Stage stage, Population population, GUI mainGUI);
 
   /**
    * Tells the engine that it needs to begin shutting down. Things that might

@@ -1,8 +1,10 @@
 package cs351.project2;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 public class HistogramTest
 {
-
   public static void main(String[] args)
   {
     Histogram histogram = new Histogram("images/mona-lisa-cropted-512x413.png");

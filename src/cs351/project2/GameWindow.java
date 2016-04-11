@@ -54,24 +54,21 @@ import jxl.write.WriteException;
  */
 public class GameWindow implements GUI
 {
-  private boolean graphBuilding = false;
+  protected boolean graphBuilding = false;
+  protected EvolutionEngine engine;
+  protected boolean mustChangeTribes = false;
+  protected int oldTribeSize;
+  protected int tribeSize = 1;
+
   private int updateCount = 0;
-  private int run = 1;      // for graph building re-write issues
+  private int run = 0; // for graph building re-write issues
+  private boolean updateOkay = true;
   private int imageNum = 1; // for graph building re-write issues
   private int timeLimit = 15; // written in minutes, is used for graph building
-  private int tribeSize = 9;  // Amount of default starting tribes
-  private int genomeSize = 200;
-  private double[] xVals = new double [3];
-  private double[] yVals = new double [3];
-
-  private boolean updateOkay = true;
   private ArrayList<String> graphInformation = new ArrayList<>();
   private ArrayList<String> graphInformationLabels = new ArrayList<>();
   private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
   private ArrayList<Double> graphInformationAverages = new ArrayList<>();
-
-  private boolean mustChangeTribes = false;
-  private int oldTribeSize;
 
   private int startingTribes = 1;
   private int sceneWidth = 1100;
@@ -83,6 +80,10 @@ public class GameWindow implements GUI
   private double canvasMargin = 40;
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
   private double canvasStartY = 10;
+
+  private int genomeSize = 200;
+  private double[] xVals = new double [3];
+  private double[] yVals = new double [3];
 
   private Color backgroundColor = Color.BLACK;
 
@@ -120,15 +121,17 @@ public class GameWindow implements GUI
   private VBox stats3;
 
   private Label statsLabel;             // Just states, "Statistics:"
-  private Label fitnessLabel = new Label();           // shows fitness level of current, selected genome
-  private Label fitnessPerSecondLabel = new Label();  // displays change of fitness per second of most fit genome in the population
-  private Label populationLabel = new Label();        // shows total current amount of generation
-  private Label generationLabel = new Label();        // amount of generations calculated by all tribes since the last population initialization
-  private Label generationPerSecondLabel = new Label(); // (avg of just last second) current generations per second averaged over the past second (not including paused time);
-  private Label generationAvgLabel = new Label();     // current generations averaged over all non-paused time since population initialization
-  private Label hillChildrenLabel = new Label();      // amount of hill-climb children
-  private Label crossChildrenLabel = new Label();     // amount of cross over children
-  private Label nonPausedTime = new Label();          // non paused time since the most recent population initialization hh:mm:ss
+  private Label fitnessLabel;           // shows fitness level of current, selected genome
+  private Label fitnessPerSecondLabel;  // displays change of fitness per second of most fit genome in the population
+  private Label populationLabel;        // shows total current amount of generation
+  private Label generationLabel;        // amount of generations calculated by all tribes since the last population initialization
+  private Label generationPerSecondLabel; // (avg of just last second) current generations per second averaged over the past second (not including paused time);
+  private Label generationAvgLabel;     // current generations averaged over all non-paused time since population initialization
+  private Label hillChildrenLabel;      // amount of hill-climb children
+  private Label crossChildrenLabel;     // amount of cross over children
+  private Label nonPausedTime;          // non paused time since the most recent population initialization hh:mm:ss
+  private AnimationTimer stopwatch;     // Keeps track of all nonPausedTime
+
 
   private Button pauseButton;             // pauses game
   private Button nextButton;              // Runs the next generation
@@ -154,7 +157,6 @@ public class GameWindow implements GUI
   private NumberFormat formatter = new DecimalFormat("#0.0000");
   private NumberFormat formatterTime = new DecimalFormat("#00");
   private NumberFormat formatterGraph = new DecimalFormat("#0.0000");
-  private EvolutionEngine engine;
   private Stage stage;
 
   // Image and Image View Stuff
@@ -358,7 +360,7 @@ public class GameWindow implements GUI
   }
 
 
-  private void graphWriteData(File file)
+  protected void graphWriteData(File file)
   {
     // Error check for null pointer exceptions, if true then return from the method
     if (file == null) return;
@@ -413,7 +415,7 @@ public class GameWindow implements GUI
   /**
    * This will save the genome file for every tribe
    */
-  private void graphSaveGenomeFile(File file, Genome genome)
+  protected void graphSaveGenomeFile(File file, Genome genome)
   {
     // Error check for null pointer exceptions, if true then return from the method
     if (file == null) return;
@@ -447,7 +449,7 @@ public class GameWindow implements GUI
   /**
    * This saves all written data to an array list that will eventually be written to a text document
    */
-  private void graphSaveWrittenData(int seconds)
+  protected void graphSaveWrittenData(int seconds)
   {
     ArrayList<Tribe> tribes = new ArrayList<>();
     tribes.addAll(engine.getPopulation().getTribes());
@@ -496,7 +498,7 @@ public class GameWindow implements GUI
    * This method is used when the game is running in console mode. This allows the program to automatically
    * print out graphical information.
    */
-  private void graphSaveData()
+  protected void graphSaveData()
   {
     int time1 = 9;
     int time2 = 19;
@@ -547,7 +549,7 @@ public class GameWindow implements GUI
    * Sets the background color
    * @param color Color to what the background should be
    */
-  private void setBackgroundColor(Color color)
+  protected void setBackgroundColor(Color color)
   {
     backgroundColor = color;
   }
@@ -556,7 +558,7 @@ public class GameWindow implements GUI
    *
    * @return color, returns the background color value
    */
-  private Color getBackgroundColor()
+  protected Color getBackgroundColor()
   {
     return backgroundColor;
   }
@@ -565,7 +567,7 @@ public class GameWindow implements GUI
    * Used to write a genome file for the user. User will be able to save this file to their
    * own space to reuse at another time
    */
-  private void writeNewGenomeFile() {
+  protected void writeNewGenomeFile() {
     java.util.Date date2= new java.util.Date();
     //int tribeNumber = Integer.parseInt(str);
 
@@ -986,6 +988,16 @@ public class GameWindow implements GUI
   {
     // Ask user for amount of tribes that they would like to use
     //setSelectedTribe(startingTribes);
+
+    fitnessLabel = new Label();           // shows fitness level of current, selected genome
+    fitnessPerSecondLabel = new Label();  // displays change of fitness per second of most fit genome in the population
+    populationLabel = new Label();        // shows total current amount of generation
+    generationLabel = new Label();        // amount of generations calculated by all tribes since the last population initialization
+    generationPerSecondLabel = new Label(); // (avg of just last second) current generations per second averaged over the past second (not including paused time);
+    generationAvgLabel = new Label();     // current generations averaged over all non-paused time since population initialization
+    hillChildrenLabel = new Label();      // amount of hill-climb children
+    crossChildrenLabel = new Label();     // amount of cross over children
+    nonPausedTime = new Label();          // non paused time since the most recent population initialization hh:mm:ss
 
     this.engine = engine;
     this.stage = stage;

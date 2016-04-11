@@ -26,11 +26,13 @@ public final class Engine implements EvolutionEngine
   private Image target;
   private Log log;
   private int numTribes;
+  private int numUpdates = 0;
   private ParallelJobSystem jobSystem;
   private Statistics statistics;
   private boolean isRunningConsoleMode;
   private JobList mutatorJobList;
   private JobList crossJobList;
+  private String[] cmdArgs; // set during init()
 
   // Atomic objects - these are the values that need to be thread safe
   private final AtomicInteger GENERATIONS;
@@ -166,8 +168,19 @@ public final class Engine implements EvolutionEngine
     //return null;
   }
 
+  /**
+   * NOTE :: For cmdArgs, the Engine (if cmdArgs is not length 0) expects exactly 2 arguments -
+   *         the first in the form of "images/*imgName.ext*" and the second as a number to use
+   *         to initialize the number of tribes
+   * @param cmdArgs (OPTIONAL) list of command line arguments for the engine to use, but this
+   *                should be completely optional - just don't pass it a null value (pass in
+   *                a length 0 String array)
+   * @param stage stage object so the engine can initialize the main GUI
+   * @param population population to use to run the simulation
+   * @param mainGUI gui to use
+   */
   @Override
-  public void init(Stage stage, Population population, GUI mainGUI)
+  public void init(String[] cmdArgs, Stage stage, Population population, GUI mainGUI)
   {
     // Error handling
     if (IS_PENDING_SHUTDOWN.get()) throw new IllegalStateException("Engine is shutting down - can't initialize");
@@ -179,8 +192,9 @@ public final class Engine implements EvolutionEngine
     // Create the log
     log = new Log("GeneticLog" + "-RuntimeCode_" + System.currentTimeMillis() + ".txt");
 
+    this.cmdArgs = cmdArgs;
     // Initialize the engine
-    generateStartingState(stage, true);
+    generateStartingState(cmdArgs, stage, true);
   }
 
   @Override
@@ -248,18 +262,10 @@ public final class Engine implements EvolutionEngine
     if (mutatorJobList.containsActiveJobs() || crossJobList.containsActiveJobs()) return;//crossJobList.waitForCompletion();
     // Tell the GUI it's a good time to do a rendering update since the previous
     // frame is done
-    if (!isRunningConsoleMode)
-    {
-      if (gui.getTargetImage() != target && population != null)
-      {
-        generateStartingState(null, false);
-        //population.generateStartingState(this, numTribes);
-        //crossJobList.clear();
-        //for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
-      }
-      gui.update(this);
-      if (numTribes != gui.getTribes()) generateStartingState(null, false);
-    }
+    if (gui.getTargetImage() != target && population != null) generateStartingState(cmdArgs, null, false);
+
+    gui.update(this);
+    if (numTribes != gui.getTribes()) generateStartingState(cmdArgs, null, false);
 
     if (!IS_PAUSED.get())
     {
@@ -283,7 +289,7 @@ public final class Engine implements EvolutionEngine
         statistics.update(null);
       }
 
-      if (isRunningConsoleMode && GENERATIONS.get() % 100 == 0)
+      if (isRunningConsoleMode && numUpdates % 1000 == 0)
       {
         enginePrint(GENERATIONS.get() + " generations have passed");
       }
@@ -310,6 +316,8 @@ public final class Engine implements EvolutionEngine
           currentNumCrossPhasesRun = 0;
         }
       }
+
+      ++numUpdates; // number of full generation updates
     }
   }
 
@@ -479,7 +487,7 @@ public final class Engine implements EvolutionEngine
 
   }
 
-  private void generateStartingState(Stage stage, boolean initializeGUI)
+  private void generateStartingState(String[] cmdArgs, Stage stage, boolean initializeGUI)
   {
     System.out.println("--- Initializing Engine ---");
     System.out.println("Engine Version: " + getFullVersion());
@@ -497,13 +505,23 @@ public final class Engine implements EvolutionEngine
     resetRunningTime();
     resetPopulationCount();
 
-    // Init the population and main GUI if they are not null
-    if (gui == null) isRunningConsoleMode = true;
-    else if (initializeGUI)
+    // If there are command line arguments, create a console gui wrapper object
+    // to stand in place of a full-fledged gui
+    //
+    // This needs to be done *after* printLogHeader() or the log will say that we
+    // were never running in console mode
+    isRunningConsoleMode = false;
+    if (gui == null)
     {
-      isRunningConsoleMode = false;
-      gui.init(stage, this);
+      isRunningConsoleMode = true;
+      if (cmdArgs.length != 2)
+      {
+        throw new IllegalArgumentException("Command line arguments must be of length 2 and be of the form: " +
+                                           "<images/imageFile.extension> <numTribes> (minus the < >)");
+      }
+      gui = new ConsoleGUIWrapper(cmdArgs[0], Integer.parseInt(cmdArgs[1]));
     }
+    if (initializeGUI) gui.init(stage, this);
     target = gui.getTargetImage();
 
     numTribes = gui == null ? 1 : gui.getTribes();
@@ -536,6 +554,7 @@ public final class Engine implements EvolutionEngine
       Globals.LOCK.unlock();
     }
 
+    numUpdates = 0;
     IS_INITIALIZED.set(true);
     IS_SHUTDOWN.set(false);
     GENERATIONS.set(1);
