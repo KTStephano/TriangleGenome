@@ -496,6 +496,10 @@ public final class Engine implements EvolutionEngine
     System.out.println("Valid Population: " + (population != null));
     System.out.println("Console Mode: " + (gui == null));
 
+    // This if can execute if generateStartingState is called multiple times during
+    // execution
+    if (isRunningConsoleMode) gui = null; // prevents code below from breaking
+
     currentNumMutatorPhasesRun = 0;
     currentNumCrossPhasesRun = 0;
 
