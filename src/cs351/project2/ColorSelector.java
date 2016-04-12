@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 /**
  * ColorSelector is tasked with providing methods to get different color values from the target image.
  * Currently color selector will return the average used color in the target image
+ *
+ * @author George
  */
 public class ColorSelector
 {

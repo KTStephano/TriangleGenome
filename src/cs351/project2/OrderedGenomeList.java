@@ -9,8 +9,13 @@ import cs351.project2.hillclimbing.AdaptiveHillClimbing;
 import java.util.*;
 
 /**
- * This is a replacement for GenomeTree. This version completely guarantees
- * that asking for a list of its Genomes will
+ * An OrderedGenomeList provides an easy way for storing Genomes and for
+ * maintaining their order. If external sources modify the Genome fitness values,
+ * sort() can be called manually. Otherwise, sort() will be called internally
+ * whenever it is critical that the list be resorted (such as when returning an
+ * iterator for the list after things had been added).
+ *
+ * @author Justin
  */
 public final class OrderedGenomeList implements Tribe, Iterable<Genome>
 {
@@ -18,10 +23,13 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   private int size = 0;
   private int internalCapacity;
   private Genome[] list;
-  private HashMap<Genome, Mutator> mutatorMap = new HashMap<>();
   private boolean isDirty = false; // true if the list needs reordering
   private EvolutionEngine engine;
 
+  /**
+   * Genome Iterator that is returned by the iterator() function.
+   * @author Justin
+   */
   private final class GenomeIterator implements Iterator<Genome>
   {
     int currIndex = 0;
@@ -79,16 +87,6 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
   @Override
   public Mutator getMutatorForGenome(Genome genome) throws RuntimeException
   {
-    /*
-    if (!mutatorMap.containsKey(genome))
-    {
-      //AdaptiveMutator mutator = new AdaptiveMutator();
-      Mutator mutator = new AdaptiveHillClimbing();//new HybridHillClimbing();
-      mutator.setGenome(genome);
-      mutatorMap.put(genome, mutator);
-    }
-    return mutatorMap.get(genome);
-    */
     Mutator mutator = new AdaptiveHillClimbing();
     mutator.setGenome(genome);
     return mutator;
@@ -119,6 +117,10 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     engine.decrementPopulationCount();
   }
 
+  /**
+   * Removes the Genome stored at the specified index.
+   * @param index valid index into this OrderedGenomeList
+   */
   public void removeAt(int index)
   {
     if (!isValidIndex(index)) throw new IllegalArgumentException("Index out of bounds");
@@ -208,7 +210,6 @@ public final class OrderedGenomeList implements Tribe, Iterable<Genome>
     if (!isValidIndex(index)) throw new IllegalArgumentException(index + " is not valid");
     return list[index];
   }
-
 
   private boolean needsToGrow()
   {

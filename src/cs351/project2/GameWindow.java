@@ -50,6 +50,8 @@ import jxl.write.WriteException;
 /**
  * GameWindow creates the GUI. The GUI is responsible for showing two images: the original image and the
  * image created by the Genetic Algorithm.
+ *
+ * @author George
  */
 public class GameWindow implements GUI
 {

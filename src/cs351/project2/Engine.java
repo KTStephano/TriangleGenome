@@ -15,6 +15,16 @@ import javafx.stage.Stage;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * This implementation of EvolutionEngine currently manages the entire program. The
+ * upside to using this is that it is thread-safe and provides a very useful way
+ * of performing an update sequence: while multi-threaded operations are occurring,
+ * certain parts of the code are not told to update as it may be unsafe. Then, as soon
+ * as these operations complete, it will move to update different parts of the program
+ * and provide a guarantee that they will not be exposed to half-updated data.
+ *
+ * @author Justin, George
+ */
 public final class Engine implements EvolutionEngine
 {
   // Engine version info
@@ -66,12 +76,22 @@ public final class Engine implements EvolutionEngine
   private int hours = 0;
   private int populationCount = 0; // sum of genomes among all tribes
 
+  /**
+   * MutatorJob that performs mutations on the given tribe.
+   * @author Justin
+   */
   private final class MutatorJob implements Job
   {
     private final Population POPULATION;
     private final Tribe TRIBE;
     private final Engine ENGINE;
 
+    /**
+     * Creates a new mutator job with the given references.
+     * @param population population to work with
+     * @param tribe tribe to pull the best genome from
+     * @param engine engine reference for callbacks
+     */
     public MutatorJob(Population population, Tribe tribe, Engine engine)
     {
       POPULATION = population;
@@ -90,11 +110,18 @@ public final class Engine implements EvolutionEngine
 
   /**
    * Generations per second data field.
+   *
+   * @author Justin Hall
    */
   private final class GenerationsPerSecond extends DataField<Double>
   {
     private final String LOG_TAG;
 
+    /**
+     * Creates a new DataField to update generations per second.
+     * @param dataTag data tag for this field
+     * @param logTag log tag (used to interface with a logging system)
+     */
     public GenerationsPerSecond(String dataTag, String logTag)
     {
       super(dataTag);
@@ -110,10 +137,20 @@ public final class Engine implements EvolutionEngine
     }
   }
 
+  /**
+   * DataField representing the total generations that have passed.
+   * @author Justin
+   */
   private final class TotalGenerations extends DataField<Integer>
   {
     private final String LOG_TAG;
 
+    /**
+     * Creates a new data field that updates the total generations since
+     * the last population initialization.
+     * @param dataTag data tag to associate with this data field
+     * @param logTag log tag (used when interfacing with a logging system)
+     */
     public TotalGenerations(String dataTag, String logTag)
     {
       super(dataTag);
@@ -131,7 +168,6 @@ public final class Engine implements EvolutionEngine
 
   // Initialize atomic objects
   {
-    //twoPointCrossList = new JobList(Globals.JOB_SYSTEM);
     GENERATIONS = new AtomicInteger(0);
     GENERATION_SNAPSHOT = new AtomicInteger(0);
     CROSSOVER_GENS = new AtomicInteger(0);
@@ -177,7 +213,6 @@ public final class Engine implements EvolutionEngine
   public Image getTarget()
   {
     throw new RuntimeException("getTarget() not finished");
-    //return null;
   }
 
   /**
@@ -256,26 +291,44 @@ public final class Engine implements EvolutionEngine
     return GENERATIONS.get();
   }
 
+  /**
+   * Gets the total mutations (in generations) done by hillclimbing since the last reset.
+   * @return total mutations (in generations)
+   */
   public int getMutationCount()
   {
     return HILLCLIMB_GENS.get();
   }
 
+  /**
+   * Gets the total number of crossover generations since the last reset.
+   * @return crossover generations
+   */
   public int getCrossCount()
   {
     return CROSSOVER_GENS.get();
   }
 
+  /**
+   * Gets the fitness per second.
+   * @return fitness per second
+   */
   public double getFitnessPerSecond()
   {
     return totalFitness / totalSeconds;
   }
 
+  /**
+   * Increments the number of crossover generations that have passed.
+   */
   public void incrementCrossCount()
   {
     CROSSOVER_GENS.getAndIncrement();
   }
 
+  /**
+   * Increments the number of mutation generations (hillclimbing) that have passed.
+   */
   public void incrementMutationCount()
   {
     HILLCLIMB_GENS.getAndIncrement();
@@ -460,6 +513,43 @@ public final class Engine implements EvolutionEngine
     if(populationCount > 0) populationCount --;
   }
 
+  /**
+   * Gets the minor version of this engine (ex: 0.X where X is the minor version).
+   * @return minor version of this engine
+   */
+  public int getVersionMinor()
+  {
+    return VERSION_MINOR;
+  }
+
+  /**
+   * Gets the major version of this engine (ex: X.0 where X is the major version).
+   * @return major version of this engine
+   */
+  public int getVersionMajor()
+  {
+    return VERSION_MAJOR;
+  }
+
+  /**
+   * Helper method that combined getVersionMajor() and getVersionMinor(), returning a formatted
+   * string containing both.
+   * @return fotmatted version string for this engine
+   */
+  public String getFullVersion()
+  {
+    return Integer.toString(getVersionMajor()) + "." + Integer.toString(getVersionMinor());
+  }
+
+  /**
+   * Increments the total number of generations since the last reset.
+   */
+  public void incrementGenerationCount()
+  {
+    GENERATION_SNAPSHOT.getAndIncrement();
+    GENERATIONS.getAndIncrement();
+  }
+
   private void addToRunningTime(long time)
   {
     if(time > 1000) return;
@@ -507,27 +597,6 @@ public final class Engine implements EvolutionEngine
     populationCount = 0;
   }
 
-  public int getVersionMinor()
-  {
-    return VERSION_MINOR;
-  }
-
-  public int getVersionMajor()
-  {
-    return VERSION_MAJOR;
-  }
-
-  public String getFullVersion()
-  {
-    return Integer.toString(getVersionMajor()) + "." + Integer.toString(getVersionMinor());
-  }
-
-  public void incrementGenerationCount()
-  {
-    GENERATION_SNAPSHOT.getAndIncrement();
-    GENERATIONS.getAndIncrement();
-  }
-
   private void enginePrint(String message)
   {
     System.out.println("(ENGINE) " + message);
@@ -554,7 +623,7 @@ public final class Engine implements EvolutionEngine
    */
   private void validateEngineState()
   {
-
+    // Do nothing
   }
 
   private void generateStartingState(String[] cmdArgs, Stage stage, boolean initializeGUI)

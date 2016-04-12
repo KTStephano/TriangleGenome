@@ -9,6 +9,8 @@ import java.awt.image.VolatileImage;
 
 /**
  * Draws triangles to a buffered image. This is not thread safe.
+ *
+ * @author Justin
  */
 public class TriangleRenderer
 {
@@ -20,6 +22,11 @@ public class TriangleRenderer
   private boolean isComplete = true;
   private BufferedImage snapshot;
 
+  /**
+   * Creates a new TriangleRenderer with the given width and height (in pixels).
+   * @param width width (in pixels)
+   * @param height height (in pixels)
+   */
   public TriangleRenderer(int width, int height)
   {
     this.width = width;
@@ -56,6 +63,9 @@ public class TriangleRenderer
     CONTEXT.fillPolygon(xVertBuffer, yVertBuffer, 3);
   }
 
+  /**
+   * Clears all pixel data that had been previously written.
+   */
   public void clear()
   {
     isComplete = false;
@@ -75,16 +85,30 @@ public class TriangleRenderer
     //snapshot = IMAGE.getSnapshot();
   }
 
+  /**
+   * Gets the width of the BufferedImage in pixels.
+   * @return BufferedImage width in pixels
+   */
   public int getWidth()
   {
     return width;
   }
 
+  /**
+   * Gets the height of the BufferedImage in pixels.
+   * @return BufferedImage height in pixels
+   */
   public int getHeight()
   {
     return height;
   }
 
+  /**
+   * Returns an int with the ARGB values packed into it.
+   * @param x x-coordinate into the BufferedImage
+   * @param y y-coordinated into the BufferedImage
+   * @return packed int
+   */
   public int getPackedARGB(int x, int y)
   {
     return IMAGE.getRGB(x, y);
@@ -92,6 +116,12 @@ public class TriangleRenderer
     //return snapshot.getRGB(x, y);
   }
 
+  /**
+   * Returns an array containing the unpacked RGBA values.
+   * @param x x-coordinate into the BufferedImage
+   * @param y y-coordinated into the BufferedImage
+   * @return float[] array with the unpacked RGBA values
+   */
   public float[] getRGBA(int x, int y)
   {
     return unpackData(IMAGE.getRGB(x, y));
@@ -99,6 +129,10 @@ public class TriangleRenderer
     //return unpackData(snapshot.getRGB(x, y));
   }
 
+  /**
+   * Converts the internal BufferedImage to a JavaFX Image.
+   * @return JavaFX Image representing the internal BufferedImage
+   */
   public javafx.scene.image.Image convertToImage()
   {
     javafx.scene.image.WritableImage image = new WritableImage(width, height);

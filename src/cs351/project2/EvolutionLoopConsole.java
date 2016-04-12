@@ -2,6 +2,12 @@ package cs351.project2;
 
 import cs351.core.Engine.Globals;
 
+/**
+ * This performs the same base functionality as EvolutionLoop but provides
+ * a way of operating outside of the JavaFX thread without a real GUI.
+ *
+ * @author Justin
+ */
 public class EvolutionLoopConsole extends EvolutionLoop
 {
   @Override
@@ -10,7 +16,7 @@ public class EvolutionLoopConsole extends EvolutionLoop
     while (true)
     {
       // Check to see if we need to quit
-      checkForShutdown();
+      checkForShutdownOrPause();
 
       if (engine.isEngineShutdown()) break;
 
@@ -28,6 +34,10 @@ public class EvolutionLoopConsole extends EvolutionLoop
     while (!engine.isEngineShutdown()) engine.generation();
   }
 
+  /**
+   * Initializes the program using the supplied command line arguments.
+   * @param cmdArgs command line arguments
+   */
   protected void init(String[] cmdArgs)
   {
     engine = new Engine();
@@ -36,6 +46,10 @@ public class EvolutionLoopConsole extends EvolutionLoop
     engine.init(cmdArgs, null, new GamePopulation(), null);
   }
 
+  /**
+   * Entry point.
+   * @param args command line arguments
+   */
   public static void main(String[] args)
   {
     EvolutionLoopConsole loop = new EvolutionLoopConsole();

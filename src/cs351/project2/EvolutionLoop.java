@@ -8,6 +8,8 @@ import javafx.stage.WindowEvent;
 
 /**
  * This is where the whole application starts and contains the main loop.
+ *
+ * @author Justin
  */
 public class EvolutionLoop extends Application
 {
@@ -32,6 +34,9 @@ public class EvolutionLoop extends Application
     loop();
   }
 
+  /**
+   * Starts the main loop.
+   */
   protected void loop()
   {
     // Main loop
@@ -41,7 +46,7 @@ public class EvolutionLoop extends Application
       public void handle(long now)
       {
         // Check to see if we need to quit
-        checkForShutdown();
+        checkForShutdownOrPause();
 
         if (engine.isEngineShutdown())
         {
@@ -55,7 +60,11 @@ public class EvolutionLoop extends Application
     }.start();
   }
 
-  protected void checkForShutdown()
+  /**
+   * Checks to see if the user has signalled to quit. Also toggles the engine's
+   * pause state if the user has requested the application pause.
+   */
+  protected void checkForShutdownOrPause()
   {
     if (engine.getGUI() != null)
     {
@@ -68,11 +77,18 @@ public class EvolutionLoop extends Application
     }
   }
 
+  /**
+   * Handle that is called when the window is closed (unless overwritten by the GUI).
+   * @param event window event supplied by the window close
+   */
   protected void windowClosed(WindowEvent event)
   {
     closeApplication();
   }
 
+  /**
+   * Initiates the application's close process.
+   */
   protected void closeApplication()
   {
     // Let the engine know it's time to quit
@@ -83,6 +99,10 @@ public class EvolutionLoop extends Application
     if (stage.isShowing()) stage.close();
   }
 
+  /**
+   * Entry point.
+   * @param args command line arguments
+   */
   public static void main(String[] args)
   {
     launch(args);

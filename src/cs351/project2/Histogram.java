@@ -9,6 +9,8 @@ import java.util.HashMap;
 
 /**
  * Extracts data from an image so it can be used for comparisons.
+ *
+ * @author Justin
  */
 public class Histogram
 {
@@ -17,10 +19,19 @@ public class Histogram
   private final HashMap<Integer, Integer> GREEN_SHADE_FREQUENCY;
   private final HashMap<Integer, Integer> BLUE_SHADE_FREQUENCY;
 
+  /**
+   * Wrapper for the data created during the extraction of color information.
+   * @author Justin
+   */
   public class ColorData
   {
     private final HashMap<Integer, Integer> DATA;
 
+    /**
+     * Creates a new ColorData object with the given HashMap to use.
+     * @param data hash map containing the data where the first Integer is the color
+     *             value and the second Integer is the number of occurrences
+     */
     public ColorData(HashMap<Integer, Integer> data)
     {
       DATA = data;
@@ -62,28 +73,48 @@ public class Histogram
     }
   }
 
+  /**
+   * Creates a new Histogram object with the supplied image.
+   * @param image reference to a valid JavaFX image
+   */
   public Histogram(Image image)
   {
     IMAGE = image;
     extractImageData();
   }
 
+  /**
+   * Creates a new Histogram by loading an image pointed to by the relativePath.
+   * @param relativePath relativePath used to load the image
+   */
   public Histogram(String relativePath)
   {
     IMAGE = loadImage(relativePath);
     extractImageData();
   }
 
+  /**
+   * Returns a ColorData object with only the red-values and their occurrences present.
+   * @return red color data
+   */
   public ColorData getRedColorData()
   {
     return new ColorData(RED_SHADE_FREQUENCY);
   }
 
+  /**
+   * Returns a ColorData object with only the green-values and their occurrences present.
+   * @return green color data
+   */
   public ColorData getGreenColorData()
   {
     return new ColorData(GREEN_SHADE_FREQUENCY);
   }
 
+  /**
+   * Returns a ColorData object with only the blue-values and their occurrences present.
+   * @return blue color data
+   */
   public ColorData getBlueColorData()
   {
     return new ColorData(BLUE_SHADE_FREQUENCY);

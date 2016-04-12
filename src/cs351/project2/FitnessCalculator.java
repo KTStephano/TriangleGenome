@@ -11,6 +11,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Given a target image and a genome, this will calculate the fitness (but not set it)
+ * for the genome in question.
+ *
+ * @author Justin
+ */
 public class FitnessCalculator implements FitnessFunction
 {
   private final ReentrantLock LOCK = new ReentrantLock();

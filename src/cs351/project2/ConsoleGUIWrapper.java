@@ -12,6 +12,8 @@ import java.io.InputStream;
  * This is a very simple "GUI" that serves as an wrapper so that the engine can keep
  * working even when it is in console mode. It provides all of the base GUI functionality
  * but instead does not require a valid JavaFX stage.
+ *
+ * @author Justin
  */
 public class ConsoleGUIWrapper extends GameWindow implements GUI
 {
