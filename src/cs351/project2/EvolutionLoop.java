@@ -27,7 +27,7 @@ public class EvolutionLoop extends Application
     engine = new Engine();
     Globals.CONCURRENT_GENOME_LIST.init(engine);
     // null for population and gui for now until those classes are up and running
-    engine.init(new String[] {"images/MonaLisa.jpg", "1"}, stage, new GamePopulation(), new GameWindow());
+    engine.init(new String[0], stage, new GamePopulation(), new GameWindow());
     if (!stage.isShowing()) stage.show();
     loop();
   }

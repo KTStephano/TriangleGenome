@@ -4,6 +4,7 @@ import cs351.core.Engine.*;
 import cs351.core.Genome;
 import cs351.core.Tribe;
 import cs351.project2.crossover.CrossMutateSelector;
+import cs351.project2.crossover.SinglePointCrossMutate;
 import cs351.project2.crossover.TwoPointCrossMutate;
 import cs351.utility.Job;
 import cs351.utility.JobList;
@@ -31,7 +32,8 @@ public final class Engine implements EvolutionEngine
   private Statistics statistics;
   private boolean isRunningConsoleMode = false;
   private JobList mutatorJobList;
-  private JobList crossJobList;
+  private JobList singlePointCrossList;
+  private JobList twoPointCrossList;
   private String[] cmdArgs; // set during init()
   private double previousBest;
   private double totalSeconds;
@@ -129,7 +131,7 @@ public final class Engine implements EvolutionEngine
 
   // Initialize atomic objects
   {
-    //crossJobList = new JobList(Globals.JOB_SYSTEM);
+    //twoPointCrossList = new JobList(Globals.JOB_SYSTEM);
     GENERATIONS = new AtomicInteger(0);
     GENERATION_SNAPSHOT = new AtomicInteger(0);
     CROSSOVER_GENS = new AtomicInteger(0);
@@ -285,7 +287,7 @@ public final class Engine implements EvolutionEngine
     if (!IS_INITIALIZED.get()) throw new RuntimeException("Engine was not initialized before generation() call");
     if (IS_PENDING_SHUTDOWN.get())
     {
-      crossJobList.waitForCompletion();
+      twoPointCrossList.waitForCompletion();
       IS_PENDING_SHUTDOWN.set(false);
       IS_INITIALIZED.set(false);
       IS_SHUTDOWN.set(true);
@@ -295,7 +297,7 @@ public final class Engine implements EvolutionEngine
       return; // finish here
     }
     // Check the status of the last queued frame
-    if (mutatorJobList.containsActiveJobs() || crossJobList.containsActiveJobs()) return;//crossJobList.waitForCompletion();
+    if (mutatorJobList.containsActiveJobs() || twoPointCrossList.containsActiveJobs()) return;//twoPointCrossList.waitForCompletion();
     // Tell the GUI it's a good time to do a rendering update since the previous
     // frame is done
     if (gui.getTargetImage() != target && population != null) generateStartingState(cmdArgs, null, false);
@@ -353,7 +355,8 @@ public final class Engine implements EvolutionEngine
       // our hill climber started to slow down
       else if (population.getOverallBest().getFitness() > percentToCross)
       {
-        crossJobList.submitJobs(false);
+        if (currentNumCrossPhasesRun < 3) twoPointCrossList.submitJobs(false);
+        else singlePointCrossList.submitJobs(false);
         //++currentNumMutatorPhasesRun;
         ++currentNumCrossPhasesRun;
         if (currentNumCrossPhasesRun >= 5)
@@ -595,7 +598,8 @@ public final class Engine implements EvolutionEngine
     jobSystem = new ParallelJobSystem(numTribes);
     jobSystem.init();
     mutatorJobList = new JobList(jobSystem);
-    crossJobList = new JobList(jobSystem);
+    singlePointCrossList = new JobList(jobSystem);
+    twoPointCrossList = new JobList(jobSystem);
     GENERATIONS.set(0);
     if (population != null)
     {
@@ -603,10 +607,11 @@ public final class Engine implements EvolutionEngine
       for (Tribe tribe : population.getTribes())
       {
         mutatorJobList.add(new MutatorJob(population, tribe, this), 1);
-        //crossJobList.add(new CrossPhase(this, tribe), 1);
-        crossJobList.add(new CrossMutateSelector(this, tribe, new TwoPointCrossMutate()), 1);
+        singlePointCrossList.add(new CrossMutateSelector(this, tribe, new SinglePointCrossMutate()), 1);
+        //twoPointCrossList.add(new CrossPhase(this, tribe), 1);
+        twoPointCrossList.add(new CrossMutateSelector(this, tribe, new TwoPointCrossMutate()), 1);
       }
-      //for (Tribe tribe : population.getTribes()) crossJobList.add(new MutatorJob(population, tribe, this), 1);
+      //for (Tribe tribe : population.getTribes()) twoPointCrossList.add(new MutatorJob(population, tribe, this), 1);
     }
 
     // Clear the global genome list
