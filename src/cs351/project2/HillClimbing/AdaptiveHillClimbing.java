@@ -12,7 +12,14 @@ import java.util.LinkedList;
 import java.util.Random;
 
 /**
- * Please be the last one.
+ * AdaptiveHillClimbing decides which elements to mutate based on probabilities
+ * which either increase or decrease with each success/failure when updating
+ * that single element alone. So, if a gene is mutated and it produces a better
+ * result, the probability of selecting that same gene and mutating it in the same
+ * direction in the future increases along with the mutation amount. If a worse result is achieved,
+ * that probability decreases, the amount of mutation decreases and the direction is flipped.
+ *
+ * @author Justin
  */
 public class AdaptiveHillClimbing implements Mutator
 {
@@ -26,6 +33,13 @@ public class AdaptiveHillClimbing implements Mutator
   private final Random RAND = new Random();
   private Genome genome = null;
 
+  /**
+   * Helper class that allows the AdaptiveHillClimbing to map triangles to genes. So for
+   * triangle 1, there will be 10 TriangleGeneWrappers created where TRIANGLE_INDEX
+   * is 1 (triangle 1) and the GENE_INDEX is on the range [0, 10).
+   *
+   * @author Justin Hall
+   */
   private final class TriangleGeneWrapper
   {
     private final int TRIANGLE_INDEX, GENE_INDEX;
@@ -33,6 +47,14 @@ public class AdaptiveHillClimbing implements Mutator
     private float step;
     private int direction;
 
+    /**
+     * Creates a new TriangleGeneWrapper with the given starting values.
+     * @param startStep amount of mutation to produce if selected
+     * @param direction direction of mutation
+     * @param triangleIndex triangle index (maps to outer list)
+     * @param geneIndex gene index (maps to an element in the triangle's float[] array)
+     * @param initialProbability probability of being selected
+     */
     public TriangleGeneWrapper(float startStep, int direction, int triangleIndex, int geneIndex, float initialProbability)
     {
       step = startStep;
@@ -48,46 +70,84 @@ public class AdaptiveHillClimbing implements Mutator
       return Float.toString(probability);
     }
 
+    /**
+     * Returns 1 if the given TriangleGeneWrapper is worse than this one, 0 if identical and -1
+     * if the given TriangleGeneWrapper is better (probability-wise).
+     * @param other TriangleGeneWrapper to compare to
+     * @return 1 if other is worse, 0 if equal, -1 if other is better
+     */
     public int compareTo(TriangleGeneWrapper other)
     {
       return -1 * Float.compare(probability, other.probability);
     }
 
+    /**
+     * Changes the amount of mutation associated with this object.
+     * @param step amoung of mutation
+     */
     public void setStep(float step)
     {
       this.step = step;
     }
 
+    /**
+     * Gets the amount of mutation associated with this object.
+     * @return amount of mutation
+     */
     public float getStep()
     {
       return step;
     }
 
+    /**
+     * Sets the direction to dictate whether the mutation amount is positive or negative.
+     * @param direction mutation direction
+     */
     public void setDirection(int direction)
     {
       this.direction = direction;
     }
 
+    /**
+     * Gets the direction associated with this object.
+     * @return direction (-1 or 1)
+     */
     public int getDirection()
     {
       return direction;
     }
 
+    /**
+     * Gets the probability of selecting this object.
+     * @return probability
+     */
     public float getProbability()
     {
       return probability;
     }
 
+    /**
+     * Sets the probability to be associated with this object.
+     * @param probability new probability
+     */
     public void setProbability(float probability)
     {
       this.probability = probability;
     }
 
+    /**
+     * Gets the triangle index associated with this object.
+     * @return triangle index (maps to some outer list containing the triangle)
+     */
     public int getTriangleIndex()
     {
       return TRIANGLE_INDEX;
     }
 
+    /**
+     * Gets the gene index associated with this object.
+     * @return gene index (maps to triangle's float[] array)
+     */
     public int getGeneIndex()
     {
       return GENE_INDEX;

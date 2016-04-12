@@ -11,7 +11,16 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * CITATION: http://chriscummins.cc/s/genetics/#
+ * This class serves as the base class for all Cross objects for this program.
+ * By itself, it selects among the top genomes and crosses them with other
+ * genomes (either inside the same Tribe or from the global genome list) where
+ * selection is random and based on a simple triangular distribution to achieve
+ * fitness-proportionate selection.
+ *
+ * CITATION: http://chriscummins.cc/s/genetics/
+ * CITATION: https://github.com/ChrisCummins/chriscummins.github.io
+ *
+ * @author Justin Hall
  */
 public class UniformCrossMutate implements Cross
 {
@@ -19,12 +28,6 @@ public class UniformCrossMutate implements Cross
   protected int dnaLength = 10;
   protected float mutationChance = 0.006f;
   protected float mutateAmount = 0.1f;
-  protected boolean shouldMutate = true;
-
-  public void setShouldMutate(boolean value)
-  {
-    shouldMutate = value;
-  }
 
   /**
    * This should cross the genes from this genome and another genome, creating a brand
@@ -101,7 +104,7 @@ public class UniformCrossMutate implements Cross
    */
   protected float checkForMutation(float geneVal)
   {
-    if (RAND.nextFloat() < mutationChance && shouldMutate)
+    if (RAND.nextFloat() < mutationChance)
     {
       float mutation = RAND.nextFloat() * mutateAmount * 2;// - mutateAmount;
       if (RAND.nextFloat() < 0.5f) mutation *= -1;

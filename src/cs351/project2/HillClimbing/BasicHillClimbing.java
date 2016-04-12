@@ -6,10 +6,19 @@ import cs351.core.Genome;
 import cs351.core.Mutator;
 import cs351.core.TriangleManager;
 import cs351.project2.Engine;
-
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Basic hill climbing makes no assumptions about the given list of triangles/genes
+ * and does not store the results of its mutations to guide its efforts in the future.
+ *
+ * During mutation, it simply picks a random triangle/gene, mutates it by some random amount,
+ * and if it works it will try that same amount/direction next time. If not then it forgets
+ * that it ever tried that mutation.
+ *
+ * @author Justin
+ */
 public class BasicHillClimbing implements Mutator
 {
   private Genome genome = null;

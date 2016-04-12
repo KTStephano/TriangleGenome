@@ -11,10 +11,19 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * CITATION: http://katrinaeg.com/simulated-annealing.html
+ * Performs hill climbing by mutating different parts of a triangle's
+ * genetic sequence. It will attempt 10 different mutations on a single genome
+ * and choose the best of those mutations (usually). However, it implements
+ * a version of the simulated annealing algorithm which gives it the chance
+ * to select the worse of the changes it makes. This helps it to (hopefully) avoid
+ * the common pitfall of other hill climbers that get stuck on the first local
+ * maximum that they encounter that is not also the global maximum.
  *
- * Performs simple hill climbing by mutating different parts of a triangle's
- * genetic sequence.
+ * CITATION: http://katrinaeg.com/simulated-annealing.html
+ * CITATION: https://rogeralsing.com/2008/12/07/genetic-programming-evolution-of-mona-lisa/
+ * CITATION: https://rogeralsing.com/2008/12/11/genetic-programming-mona-lisa-source-code-and-binaries/
+ *
+ * @author Justin Hall
  */
 public class HybridHillClimbing implements Mutator
 {
