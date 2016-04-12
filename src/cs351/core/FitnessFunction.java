@@ -4,8 +4,6 @@ import cs351.core.Engine.EvolutionEngine;
 import javafx.scene.image.Image;
 
 /**
- * See slide 17.
- *
  * A FitnessFunction provides a way to quickly evaluate the fitness
  * of a given genome. No matter how a fitness function represents
  * fitness values internally, the outputted result should always

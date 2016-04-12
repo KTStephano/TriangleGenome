@@ -3,8 +3,6 @@ package cs351.core;
 import cs351.core.Engine.EvolutionEngine;
 
 /**
- * See slide 19.
- *
  * A mutator should manage one Genome from generation to generation.
  * It is up to the mutator to decide not only what type of mutation
  * to perform on the genome, but which mutations should be favored

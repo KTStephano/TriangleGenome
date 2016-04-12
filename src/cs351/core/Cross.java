@@ -3,8 +3,6 @@ package cs351.core;
 import cs351.core.Engine.EvolutionEngine;
 
 /**
- * See slide 25.
- *
  * The whole purpose of this class is to take two separate genomes and mix them
  * together. The result will be a brand new genome that inherits traits
  * from both of its parents.
