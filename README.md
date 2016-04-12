@@ -1,17 +1,17 @@
 # The Triangle Genome Project
 
 Authors: (Alphabetical by Last Name)
-George Boujaoude, Justin Hall
+<br>George Boujaoude, Justin Hall
 
 Project: Triangle Genome Project
 
 ********************************************
 Instructions:
-1. Run executable cs351_project2_justin_george.jar 
-2. A window will open that contains a starting image, control buttons, as well as statistics.
-3. Press play to start
+<br>1. Run executable cs351_project2_justin_george.jar 
+<br>2. A window will open that contains a starting image, control buttons, as well as statistics.
+<br>3. Press play to start
 
-Note: If The Triangle Genome Project is to be compiled and run based from the source code, one must add jxl.jar as a dependency. The file, jxl.jar can be found under the src/351 folder.
+<br>Note: If The Triangle Genome Project is to be compiled and run based from the source code, one must add jxl.jar as a dependency. The file, jxl.jar can be found under the src/351 folder.
 
 ********************************************
 About "The Triangle Genome Project"
@@ -20,6 +20,7 @@ About "The Triangle Genome Project"
 
 - Project Default Image: Mona Lisa - 512x413
 - Project Default Amount of Tribes: 1
+
 ********************************************
 Additional Information
 * CITATION: http://chriscummins.cc/s/genetics/
@@ -28,4 +29,4 @@ Additional Information
 * CITATION: https://rogeralsing.com/2008/12/07/genetic-programming-evolution-of-mona-lisa/
 * CITATION: https://rogeralsing.com/2008/12/11/genetic-programming-mona-lisa-source-code-and-binaries/
 * RESOURCE: https://sourceforge.net/projects/jexcelapi/files/jexcelapi/2.6.12/
-Note: The jxl.jar was used to create excel sheets to further speed up the process of data collecting.
+<br>Note: The jxl.jar was used to create excel sheets to further speed up the process of data collecting.
