@@ -108,6 +108,7 @@ public final class ParallelJobSystem
    *
    * @param jobs list of jobs to execute
    * @param priority their priority (lower numbers being higher priority)
+   * @param clearGivenJobList if true, the given job list is wiped
    * @return an atomic integer representing a counter - when the counter is 0, the job list
    *         has been completed by the worker threads
    * @throws IllegalStateException thrown if used after destruction or before init
@@ -196,6 +197,7 @@ public final class ParallelJobSystem
   /**
    * Checks to see whether the job system is available for work or not - using it
    * when this returns false will likely throw an exception.
+   * @return true if initialized and false if not
    */
   public boolean isInitialized()
   {

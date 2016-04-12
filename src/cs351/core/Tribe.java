@@ -88,6 +88,7 @@ public interface Tribe
 
   /**
    * Passes the address of the engine to this tribe
+   * @param engine EvolutionEngine reference for callbacks
    */
   void init(EvolutionEngine engine);
 }

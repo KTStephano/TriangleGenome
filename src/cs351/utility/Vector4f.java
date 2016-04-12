@@ -28,6 +28,7 @@ final public class Vector4f
    * @param x x value
    * @param y y value
    * @param z z value
+   * @param w w value
    */
   public Vector4f(double x, double y, double z, double w)
   {

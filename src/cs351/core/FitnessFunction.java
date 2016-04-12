@@ -42,6 +42,7 @@ public interface FitnessFunction
    * Takes the given genome, compares it to the target genome and outputs
    * a normalized fitness value.
    *
+   * @param engine EvolutionEngine reference for callbacks
    * @param genome genome to generate a fitness for
    * @return normalized fitness for the given genome
    */

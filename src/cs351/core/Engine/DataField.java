@@ -50,7 +50,7 @@ public abstract class DataField<E>
    * in a video game could be "Delta Seconds", and the actual data could be an int
    * or double.
    *
-   * @return
+   * @return data tag
    */
   public String getDataTag()
   {

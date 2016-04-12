@@ -291,6 +291,7 @@ public class GameWindow implements GUI
 
     /**
      * Gets and sets per method name
+     * @return the triangle's first x value
      */
     public Float getGeneValueX1() {
       return geneValueX1.get();

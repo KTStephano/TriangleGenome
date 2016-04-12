@@ -59,18 +59,20 @@ public interface Triangle
 
   /**
    * set the maximum distance between any vertex of the triangle
+   * @param maxSize maximum distance between vertices
    */
   void setMaxSize(int maxSize);
 
   /**
    * set the maximum distance between any vertex of the triangle
+   * @param minSize minimum distance between vertices
    */
   void setMinSize(int minSize);
 
   /**
    * Randomly generates 10 genes for this triangle. Uses passed generator for any randomization
-   *
-   * @return a float array representing
+   * @param numGenerator random number generator to use
+   * @param mainGUI GUI reference for callbacks
    */
   void init(Random numGenerator, GUI mainGUI);
 

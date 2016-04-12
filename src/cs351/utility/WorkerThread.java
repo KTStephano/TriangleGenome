@@ -21,6 +21,8 @@ public final class WorkerThread extends Thread
   /**
    * Creates a new WorkerThread object with the given threadID and a parallel job system
    * reference for callbacks.
+   * @param threadID id to associate with this worker
+   * @param jobSystem parallel job system reference for callbacks
    */
   public WorkerThread(int threadID, ParallelJobSystem jobSystem)
   {

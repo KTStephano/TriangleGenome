@@ -434,6 +434,7 @@ public final class Engine implements EvolutionEngine
 
   /**
    * Total generations averaged with all non-paused time.
+   * @return average generations per second since the last reset
    */
   public double getAverageGenerationsPerSecondSinceLastInit()
   {

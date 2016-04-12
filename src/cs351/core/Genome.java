@@ -41,6 +41,7 @@ public final class Genome
   /**
    * Adds a triangle to the genome. The order that TRIANGLES are added
    * should be maintained.
+   * @param triangle triangle data to add
    */
   public void add(float[] triangle)
   {
