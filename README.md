@@ -15,8 +15,8 @@ Instructions:
 
 ********************************************
 About "The Triangle Genome Project"
-1. Written by George Boujaoude and Justin Hall
-2. Main method is found in EvolutionLoop.java
+<br>1. Written by George Boujaoude and Justin Hall
+<br>2. Main method is found in EvolutionLoop.java
 
 - Project Default Image: Mona Lisa - 512x413
 - Project Default Amount of Tribes: 1
