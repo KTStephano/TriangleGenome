@@ -8,6 +8,8 @@ import javafx.stage.Stage;
  * all triangle rendering. During an update, the gui should decide
  * which genomes are highlighted for the user to see (Ex: selects the
  * most fit genomes and renders them to the screen).
+ *
+ * @author Justin, George
  */
 public interface GUI
 {

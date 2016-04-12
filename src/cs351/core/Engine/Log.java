@@ -24,6 +24,8 @@ import java.util.Locale;
  *    debug/03_25_16/
  *
  * and within the date folder it will put the debug logs.
+ *
+ * @author Justin
  */
 public class Log
 {

@@ -1,7 +1,5 @@
 package cs351.core.Engine;
 
-import cs351.core.Genome;
-import cs351.utility.Job;
 import cs351.utility.ParallelJobSystem;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -18,6 +16,8 @@ import javafx.stage.Stage;
  * function, which should perform all necessary steps to move from the current
  * generation to the next and then signal the GUI when it is a good and thread-safe
  * time to update.
+ *
+ * @author Justin, George
  */
 public interface EvolutionEngine
 {
@@ -135,16 +135,6 @@ public interface EvolutionEngine
    * @return number of generations on average per second
    */
   double getAverageGenerationsPerSecond();
-
-  /**
-   * The engine may have any number of jobs running as part of a generation,
-   * and this is an easy way for jobs to let the engine know when they are done
-   * so it knows when the generation is complete.
-   *
-   * @param job job that just completed
-   */
-  //void notifyEngineOfJobCompletion(Job job);
-
 
   /**
    * Hours that have elapsed when the game is running

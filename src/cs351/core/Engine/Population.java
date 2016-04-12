@@ -12,6 +12,8 @@ import java.util.Collection;
  * Another use of the population is to maintain a reference to the active
  * fitness function, selector function, cross function, and whenever a new genome is added
  * to the population, the population object should assign a mutator to that genome.
+ *
+ * @author Justin
  */
 public interface Population
 {

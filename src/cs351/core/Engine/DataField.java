@@ -3,17 +3,27 @@ package cs351.core.Engine;
 /**
  * A data field represents some piece of data that is either being
  * actively computed or is static after being initially set.
+ * @author Justin
  */
 public abstract class DataField<E>
 {
   private final String TAG;
   protected E data;
 
+  /**
+   * Creates a DataField with a starting TAG but with no data mapped to it.
+   * @param tag key for this data
+   */
   public DataField(String tag)
   {
     TAG = tag;
   }
 
+  /**
+   * Creates a DataField with a starting TAG with associated data
+   * @param tag key for this data
+   * @param dataObj data to associate with key
+   */
   public DataField(String tag, E dataObj)
   {
     this(tag);
@@ -47,11 +57,19 @@ public abstract class DataField<E>
     return TAG;
   }
 
+  /**
+   * Sets the data.
+   * @param data data to set
+   */
   public void setData(E data)
   {
     this.data = data;
   }
 
+  /**
+   * Gets the data associated with this field.
+   * @return reference to data
+   */
   public E getData()
   {
     return data;
