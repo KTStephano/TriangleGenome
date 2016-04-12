@@ -49,7 +49,8 @@ import jxl.write.WriteException;
 
 /**
  * GameWindow creates the GUI. The GUI is responsible for showing two images: the original image and the
- * image created by the Genetic Algorithm.
+ * image created by the Genetic Algorithm. The GUI also supports buttons that play, pause, save, load, and show the
+ * genome file. The GUI displays statistical information that is constantly updated along with the game.
  *
  * @author George
  */
@@ -72,7 +73,6 @@ public class GameWindow implements GUI
   private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
   private ArrayList<Double> graphInformationAverages = new ArrayList<>();
 
-  private int startingTribes = 1;
   private int sceneWidth = 1100;
   private int sceneHeight = 720;
 
@@ -83,13 +83,10 @@ public class GameWindow implements GUI
   private double canvasStartX = sceneWidth / 2 - canvasWidth - canvasMargin / 2;
   private double canvasStartY = 10;
 
-  private int genomeSize = 200;
   private double[] xVals = new double [3];
   private double[] yVals = new double [3];
 
   private Color backgroundColor = Color.BLACK;
-
-  private Random randNum = new Random();
 
   private Canvas canvasOriginal;      // Holds the target image
   private Canvas canvasGenetic;       // Holds the triangles painting
@@ -122,7 +119,6 @@ public class GameWindow implements GUI
   private VBox stats2;
   private VBox stats3;
 
-  private Label statsLabel;             // Just states, "Statistics:"
   private Label fitnessLabel;           // shows fitness level of current, selected genome
   private Label fitnessPerSecondLabel;  // displays change of fitness per second of most fit genome in the population
   private Label populationLabel;        // shows total current amount of generation
@@ -132,7 +128,6 @@ public class GameWindow implements GUI
   private Label hillChildrenLabel;      // amount of hill-climb children
   private Label crossChildrenLabel;     // amount of cross over children
   private Label nonPausedTime;          // non paused time since the most recent population initialization hh:mm:ss
-  private AnimationTimer stopwatch;     // Keeps track of all nonPausedTime
 
 
   private Button pauseButton;             // pauses game
@@ -142,7 +137,6 @@ public class GameWindow implements GUI
   private Button saveGenome;              // saves the current genome to a file
   private Button loadGenome;              // writes the uploaded genome to the game
   private FileChooser fileChooser;
-  private FileChooser loadGenomeChooser;
   private boolean genomePaused = false;
   private boolean nextGen = false;
   private boolean tribeCountChanged = false;
@@ -154,7 +148,6 @@ public class GameWindow implements GUI
   private double buttonSize = (canvasWidth*2 + canvasMargin) / amtButtons - 20;
 
   private Genome currentGenome = new Genome();
-  private Triangle currentTriangle;
   private int triangleCounter;
   private NumberFormat formatter = new DecimalFormat("#0.0000");
   private NumberFormat formatterFit = new DecimalFormat("#0.00000000");
@@ -165,8 +158,6 @@ public class GameWindow implements GUI
 
   // Image and Image View Stuff
   private Image targetImage = null;
-  private double targetImageWidth = 0;
-  private double targetImageHeight = 0;
   private double targetImageWidthCropped = 0;
   private double targetImageHeightCropped = 0;
   private ColorSelector colorSelector;
@@ -1261,7 +1252,7 @@ public class GameWindow implements GUI
       pictureSelect = new ChoiceBox(FXCollections.observableArrayList(
         "MonaLisa - 100x81","MonaLisa - 250x202","MonaLisa - 512x413", "PoppyFields - 100x75", "PoppyFields - 250x188",
         "PoppyFields - 512x384", "The Great Wave - 100x69", "The Great Wave - 250x172", "The Great Wave - 512x352",
-        "Piet Mondrian - 100x75", "Piet Mondrian - 250x188", "Piet Mondrian - 512385", "Petronas Towers - 100x69", "Petronas Towers 250x172", "Petronas Towers - 512x352")
+        "Piet Mondrian - 100x75", "Piet Mondrian - 250x188", "Piet Mondrian - 512x385", "Petronas Towers - 100x69", "Petronas Towers 250x172", "Petronas Towers - 512x352")
       );
       pictureSelect.setMinWidth(50);
       pictureSelect.setTooltip(new Tooltip("Select an image"));
