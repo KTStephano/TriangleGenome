@@ -8,10 +8,16 @@ import cs351.core.Tribe;
 import cs351.project2.Engine;
 import cs351.project2.OrderedGenomeList;
 import cs351.utility.Job;
-
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * A CrossMutateSelector wraps around an existing Cross and Tribe object
+ * and provides an easy way to select members from the Tribe and perform
+ * crossover operations with them. This implementation should be thread-safe.
+ *
+ * @author Justin
+ */
 public class CrossMutateSelector implements Job
 {
   private final EvolutionEngine ENGINE;

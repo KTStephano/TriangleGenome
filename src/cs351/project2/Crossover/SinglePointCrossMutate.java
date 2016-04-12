@@ -5,6 +5,8 @@ import cs351.core.Cross;
 /**
  * Performs single point crossover between two genomes, including the possibility
  * for individual genes to mutate in the process.
+ *
+ * @author Justin
  */
 public class SinglePointCrossMutate extends UniformCrossMutate implements Cross
 {

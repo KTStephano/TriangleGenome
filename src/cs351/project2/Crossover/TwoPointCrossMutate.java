@@ -5,6 +5,8 @@ import cs351.core.Cross;
 /**
  * Almost identical to SinglePointCrossMutate except that it chooses two
  * cross points.
+ *
+ * @author Justin
  */
 public class TwoPointCrossMutate extends UniformCrossMutate implements Cross
 {
