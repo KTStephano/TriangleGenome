@@ -9,6 +9,8 @@ import cs351.core.Engine.EvolutionEngine;
  *
  * Different implementations of Cross might define different ways of mixing
  * the two parent genomes.
+ *
+ * @author Justin
  */
 public interface Cross
 {

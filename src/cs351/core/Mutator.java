@@ -7,6 +7,8 @@ import cs351.core.Engine.EvolutionEngine;
  * It is up to the mutator to decide not only what type of mutation
  * to perform on the genome, but which mutations should be favored
  * in the future (ex: if a mutation is particularly successful).
+ *
+ * @author Justin
  */
 public interface Mutator
 {

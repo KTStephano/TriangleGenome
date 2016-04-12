@@ -5,6 +5,8 @@ import java.util.*;
 
 /**
  * Manages DataField objects and updates/logs them to a logging system.
+ *
+ * @author Justin
  */
 public class Statistics implements Iterable<DataField>
 {
@@ -41,7 +43,7 @@ public class Statistics implements Iterable<DataField>
   /**
    * Adds a new data field to this statistics object. Its data tag will be extracted
    * and is guaranteed to be included in dataTagSet() unless the field is removed.
-   * @param field
+   * @param field data field to add to this statistics object
    */
   public void add(DataField field)
   {

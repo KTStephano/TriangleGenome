@@ -3,6 +3,7 @@ package cs351.core.Engine;
 /**
  * A data field represents some piece of data that is either being
  * actively computed or is static after being initially set.
+ *
  * @author Justin
  */
 public abstract class DataField<E>

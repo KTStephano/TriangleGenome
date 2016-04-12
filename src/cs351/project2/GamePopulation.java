@@ -13,6 +13,8 @@ import java.util.Random;
 /**
  * GamePopulation is called by EvolutionLoop. This class is used to manage the tribes, which in turn manages objects
  * that fall within its hierarchy.
+ *
+ * @author Justin, George
  */
 public class GamePopulation implements Population
 {

@@ -4,6 +4,13 @@ import cs351.core.*;
 import cs351.core.Engine.EvolutionEngine;
 import cs351.project2.crossover.UniformCrossMutate;
 
+/**
+ * This version of the hill climbing algorithm uses UniformCrossMutate
+ * to cross the best genome with itself, including the chance for genes
+ * to mutate in the process.
+ *
+ * @author Justin
+ */
 public class CrossMutateHillClimbing implements Mutator
 {
   private final Cross CROSS = new UniformCrossMutate();

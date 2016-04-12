@@ -31,6 +31,7 @@ public interface Population
    *
    * @return Cross object
    */
+  @Deprecated
   Cross getCrossObject();
 
   /**
@@ -38,6 +39,7 @@ public interface Population
    *
    * @return selector object
    */
+  @Deprecated
   Selector getSelector();
 
   /**
