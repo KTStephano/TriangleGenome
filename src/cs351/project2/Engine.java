@@ -387,9 +387,6 @@ public final class Engine implements EvolutionEngine
         if (population.getOverallBest() != null) enginePrint("Best fitness: " + population.getOverallBest().getFitness());
       }
 
-      // TODO add rest of loop here
-      //GENERATIONS.getAndIncrement();
-
       // If null then pr = 0
       if (getMinutes()*60 + getSeconds() > 0)
       {
