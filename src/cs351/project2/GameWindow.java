@@ -66,7 +66,7 @@ public class GameWindow implements GUI
   private boolean updateOkay = true;
   private int imageNum = 1; // for graph building re-write issues  <---- CHANGE HERE
   private int timeLimit = 10; // written in minutes, is used for graph building  <----LEAVE AT 10 MINUTES
-  private int imageSelect = 11; // 2 (MonaLisa), 5 (PoppyFields), 8 (Oceans), 11 (Piet Mondrian), 17 (Petronas Towers) <---- CHANGE FOR IMAGES
+  private int imageSelect = 2; // 2 (MonaLisa), 5 (PoppyFields), 8 (Oceans), 11 (Piet Mondrian), 14 (Petronas Towers) <---- CHANGE FOR DEFAULT IMAGE
   private ArrayList<String> graphInformation = new ArrayList<>();
   private ArrayList<String> graphInformationLabels = new ArrayList<>();
   private ArrayList<Double> graphInformationNumbers = new ArrayList<>();
@@ -180,8 +180,7 @@ public class GameWindow implements GUI
     "images/mona-lisa-cropted-512x413.png", "images/poppyfields-100x75.png", "images/poppyfields-250x188.png", "images/poppyfields-512x384.png",
     "images/the_great_wave_off_kanagawa-100x69.png", "images/the_great_wave_off_kanagawa-250x172.png",
     "images/the_great_wave_off_kanagawa-512x352.png", "images/Piet_Mondrian-100x75.png", "images/Piet_Mondrian-250x188.png",
-    "images/Piet_Mondrian-512x385.png", "images/trianglePic-100x80.png", "images/trianglePic-250x201.png", "images/trianglePic-512x412.png",
-    "images/MonaClose - 200x161.png", "images/TriangleOcean.png", "images/petronas_towers-512x352.png", "images/petronas_towers-250x172.png" };
+    "images/Piet_Mondrian-512x385.png", "images/petronas_towers-100x69.png", "images/petronas_towers-250x172.png", "images/petronas_towers-512x352.png"  };
 
 
   /**
@@ -578,19 +577,6 @@ public class GameWindow implements GUI
    */
   protected void writeNewGenomeFile() {
     java.util.Date date2= new java.util.Date();
-    //int tribeNumber = Integer.parseInt(str);
-
-//    Date dNow = new Date( );
-//    SimpleDateFormat ft =
-//      new SimpleDateFormat("hh-mm-ss");
-//    System.out.println("Current Date: " + ft.format(dNow));
-//    String time = String.valueOf(Calendar.HOUR_OF_DAY) + ":" +String.valueOf(Calendar.MINUTE) + ":"  + String.valueOf(Calendar.SECOND);
-//
-//    System.out.println(">> DATE: " + time);
-//    String fileName = "genome_" + ft.format(dNow) +  ".txt";
-
-//    String fileName = "genome.txt";
-//    String userHomeFolder = System.getProperty("user.home");
 
     // Create file chooser. User can only save .txt files
     FileChooser fileChooser = new FileChooser();
@@ -644,7 +630,7 @@ public class GameWindow implements GUI
   private void updateStatistics(EvolutionEngine engine)
   {
     fitnessLabel.setText("Selected Genome Fitness: " + formatter.format(currentGenome.getFitness()));
-    fitnessPerSecondLabel.setText("Fitness/Sec: " + formatterFit.format(((Engine) engine).getFitnessPerSecond()));
+    if(hasSecondElapsed)fitnessPerSecondLabel.setText("Fitness/Sec: " + formatterFit.format(((Engine) engine).getFitnessPerSecond()));
     populationLabel.setText("Population (Genomes): " + getPopulationCount());
     generationLabel.setText("Amount of Generations: " + engine.getGenerationCount());
     if(hasSecondElapsed)generationPerSecondLabel.setText("Generations/Sec: " + tinyFormat.format(((Engine)engine).getAverageGenerationsPerSecondSinceLastInit()));
@@ -1275,8 +1261,7 @@ public class GameWindow implements GUI
       pictureSelect = new ChoiceBox(FXCollections.observableArrayList(
         "MonaLisa - 100x81","MonaLisa - 250x202","MonaLisa - 512x413", "PoppyFields - 100x75", "PoppyFields - 250x188",
         "PoppyFields - 512x384", "The Great Wave - 100x69", "The Great Wave - 250x172", "The Great Wave - 512x352",
-        "Piet Mondrian - 100x75", "Piet Mondrian - 250x188", "Piet Mondrian - 512385", "TriangePic - 100x80",
-        "TriangePic - 250x201", "TriangePic - 512x412", "MonaClose", "TriangleOcean", "Petronas Towers - 512x352" , "Petronas Towers 250x172")
+        "Piet Mondrian - 100x75", "Piet Mondrian - 250x188", "Piet Mondrian - 512385", "Petronas Towers - 100x69", "Petronas Towers 250x172", "Petronas Towers - 512x352")
       );
       pictureSelect.setMinWidth(50);
       pictureSelect.setTooltip(new Tooltip("Select an image"));
