@@ -4,6 +4,8 @@ package cs351.utility;
 /**
  * A Vector4f can maintain double values for x/y/z components and perform
  * vector operations on them.
+ *
+ * @author Justin
  */
 final public class Vector4f
 {

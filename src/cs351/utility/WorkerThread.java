@@ -4,7 +4,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * This is the WorkerThread class used by the job system.
+ * This is the WorkerThread class used by the job system. Its threads
+ * are managed internally and there is no handle to get a reference to them
+ * from the job system itself.
+ *
+ * @author Justin
  */
 public final class WorkerThread extends Thread
 {
@@ -14,8 +18,13 @@ public final class WorkerThread extends Thread
   private final AtomicBoolean IS_RUNNING;
   private final ConcurrentLinkedQueue<ParallelJobGroup> JOB_QUEUE;
 
+  /**
+   * Creates a new WorkerThread object with the given threadID and a parallel job system
+   * reference for callbacks.
+   */
   public WorkerThread(int threadID, ParallelJobSystem jobSystem)
   {
+    super("ParallelWorkerThread-" + threadID);
     THREAD_ID = threadID;
     JOB_SYSTEM = jobSystem;
     IS_RUNNING = new AtomicBoolean(true);
@@ -25,7 +34,6 @@ public final class WorkerThread extends Thread
   @Override
   public void run()
   {
-    //System.out.println("Thread " + THREAD_ID + " started");
     while(IS_RUNNING.get())
     {
       if (JOB_QUEUE.size() == 0)
@@ -56,14 +64,23 @@ public final class WorkerThread extends Thread
       }
     }
     JOB_SYSTEM.notifyOfThreadTermination(THREAD_ID);
-    //System.out.println("Thread " + THREAD_ID + " terminated successfully");
   }
 
+  /**
+   * Lets the thread know it needs to terminate. It will not immediately kill itself
+   * as it may be in the middle of working on some jobs, but at the next check it will
+   * see that it needs to quit.
+   */
   public void terminate()
   {
     IS_RUNNING.getAndSet(false);
   }
 
+  /**
+   * Adds a job group to its internal list of jobs that it needs to work on in parallel
+   * with other worker threads.
+   * @param group job group to add to its internal list
+   */
   public void addJobGroup(ParallelJobGroup group)
   {
     JOB_QUEUE.add(group);

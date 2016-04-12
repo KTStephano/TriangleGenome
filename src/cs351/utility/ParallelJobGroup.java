@@ -13,6 +13,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * A job group represents a collection of jobs associated with an atomic
  * integer that points to the current job in the list that needs to be executed.
  * This way a group of threads can work on the same job list.
+ *
+ * @author Justin
  */
 public final class ParallelJobGroup
 {
@@ -22,22 +24,40 @@ public final class ParallelJobGroup
   private final AtomicInteger FRONT_COUNTER; // This is returned to other classes
   private ArrayList<Job> availableJobs;
 
+  /**
+   * Maps a Job object to an internal AtomicInteger representing the number
+   * of jobs left to execute from a (potentially) larger list of jobs.
+   *
+   * @author Justin
+   */
   public final class JobWrapper
   {
     private final Job JOB;
     private final AtomicInteger COUNTER;
 
+    /**
+     * Creates a new JobWrapper with the given Job and AtomicCounter.
+     * @param job job
+     * @param counter AtomicCounter (associated with a (potentially) larger list that the job is part of)
+     */
     public JobWrapper(Job job, AtomicInteger counter)
     {
       JOB = job;
       COUNTER = counter;
     }
 
+    /**
+     * Gets the job associated with this wrapper.
+     * @return job
+     */
     public Job getJob()
     {
       return JOB;
     }
 
+    /**
+     * Decrements the overall job counter by 1.
+     */
     public void markCompleted()
     {
       COUNTER.getAndDecrement();

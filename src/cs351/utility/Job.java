@@ -4,6 +4,8 @@ package cs351.utility;
  * A job can be added to any job list and submitted to a job system's worker
  * threads for execution. No job should run infinitely as it will prevent
  * the job system from being able to schedule any new jobs.
+ *
+ * @author Justin
  */
 public interface Job
 {

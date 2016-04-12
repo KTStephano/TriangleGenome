@@ -17,6 +17,8 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * Each separate job list can interact with the same job system so that its jobs can be
  * submitted to the job system's worker threads.
+ *
+ * @author Justin
  */
 public final class ParallelJobSystem
 {

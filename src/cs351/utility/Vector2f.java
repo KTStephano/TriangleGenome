@@ -3,6 +3,8 @@ package cs351.utility;
 /**
  * Vector2f can maintain double values for x/y components and perform some vector
  * operations with them.
+ *
+ * @author Justin
  */
 public class Vector2f
 {

@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Keep in mind that once you tell the list to submit the jobs it is managing,
  * it will submit all jobs to the job system for immediate execution and clear
  * its local list. This includes all job lists for all priorities.
+ *
+ * @author Justin
  */
 public class JobList
 {
