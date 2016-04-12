@@ -3,11 +3,12 @@ package cs351.core;
 import java.util.Collection;
 
 /**
- * See slide 20.
- *
  * Given a tribe, a selector uses some algorithm to create a list of
  * genomes that can be crossed with each other.
+ *
+ * @author Justin
  */
+@Deprecated
 public interface Selector
 {
   /**

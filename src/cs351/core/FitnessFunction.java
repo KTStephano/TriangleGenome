@@ -17,9 +17,16 @@ import javafx.scene.image.Image;
  * all the Genomes in the population have 200 TRIANGLES which each have
  * 10 genes, then the target Genome should also be represented with this
  * same structure.
+ *
+ * @author Justin
  */
 public interface FitnessFunction
 {
+  /**
+   * Sets the image that the fitness function compares the genomes to
+   * when calculating their fitness.
+   * @param image reference to a valid target image
+   */
   void setTargetImage(Image image);
 
   /**
@@ -47,5 +54,6 @@ public interface FitnessFunction
    *
    * @return maximum fitness for any genome as used by this fitness function
    */
+  @Deprecated
   int getMaxFitness();
 }

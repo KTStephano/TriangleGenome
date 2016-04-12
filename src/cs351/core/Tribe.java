@@ -5,8 +5,6 @@ import cs351.core.Engine.EvolutionEngine;
 import java.util.Collection;
 
 /**
- * See slide 29.
- *
  * A tribe is a useful structure for managing and manipulating
  * a large set of genomes. The efficiency of this class is very important
  * as its functions will be called very frequently during the generation
@@ -15,6 +13,8 @@ import java.util.Collection;
  * The genomes in a tribe should be ordered according to their
  * fitness values, where the first element is the most fit and the last
  * element is the least fit.
+ *
+ * @author Justin
  */
 public interface Tribe
 {

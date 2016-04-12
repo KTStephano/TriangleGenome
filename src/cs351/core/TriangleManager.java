@@ -8,6 +8,8 @@ import cs351.core.Engine.GUI;
  *
  * Note :: Be sure to call setTriangleData(float[] data) before using and each time
  *         you want to interpret a different set of triangle data
+ *
+ * @author Justin
  */
 public class TriangleManager
 {
@@ -18,6 +20,11 @@ public class TriangleManager
   protected float maxXValue; // pulled from GUI
   protected float maxYValue; // pulled from GUI
 
+  /**
+   * Enum representing the different coordinate possibilities.
+   *
+   * @author Justin
+   */
   public enum Coordinate
   {
     X1,
@@ -28,6 +35,11 @@ public class TriangleManager
     Y3
   }
 
+  /**
+   * Enum representing the different color values.
+   *
+   * @author Justin
+   */
   public enum ColorValue
   {
     RED,

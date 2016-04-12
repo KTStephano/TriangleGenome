@@ -1,11 +1,15 @@
 package cs351.core;
 
 import cs351.core.Engine.GUI;
-import cs351.utility.Vector2f;
-import cs351.utility.Vector4f;
-import java.util.Collection;
 import java.util.Random;
 
+/**
+ * A triangle maintains a single float[] array representing its genes and
+ * provides some useful methods for extracting data from it.
+ *
+ * @author Justin
+ */
+@Deprecated
 public interface Triangle
 {
   /**

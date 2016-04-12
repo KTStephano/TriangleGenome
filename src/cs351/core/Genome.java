@@ -3,6 +3,11 @@ package cs351.core;
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * A Genome maintains an ordered list of triangles that are stored as float arrays.
+ *
+ * @author Justin
+ */
 public final class Genome
 {
   private final static int ZERO_HASH = 341940517;
@@ -11,7 +16,6 @@ public final class Genome
   protected Double fitness = 0.0;
   protected final LinkedList<float[]> TRIANGLES = new LinkedList<>();
   protected Tribe tribe;
-  //protected final LinkedList<Integer> GENES = new LinkedList<>();
 
   {
     id = ++ID;
@@ -22,7 +26,6 @@ public final class Genome
   {
     return (int)(TRIANGLES.hashCode() *
                  (fitness > 0.0 || fitness < 0.0 ? fitness * 100 : ZERO_HASH));
-    //return TRIANGLES.hashCode() + GENES.hashCode() + fitness.hashCode();
   }
 
   @Override
